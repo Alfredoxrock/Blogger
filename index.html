@@ -1,30 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dream Journal</title>
   <!-- Link to the updated styles.css file -->
-  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
-  <div class="container">
-    <h1>🌙 Dream Journal</h1>
 
-    <form id="dreamForm">
-      <input type="date" id="date" required />
-      <input type="text" id="title" placeholder="Dream Title" required />
-      <textarea id="description" placeholder="Describe your dream..." required></textarea>
-      <input type="text" id="tags" placeholder="Tags (comma separated)" />
-      <button type="submit">Save Dream</button>
-    </form>
+  <section class="body">
+    <div class="container">
+      <h1>🌙 Dream Journal</h1>
 
-    <hr>
+      <form id="dreamForm">
+        <input type="date" id="date" required />
+        <input type="text" id="title" placeholder="Dream Title" required />
+        <textarea id="description" placeholder="Describe your dream..." required></textarea>
+        <input type="text" id="tags" placeholder="Tags (comma separated)" />
+        <button type="submit">Save Dream</button>
+      </form>
 
-    <h2>Your Dreams</h2>
-    <div id="dreamList"></div>
-  </div>
+      <hr>
+
+      <h2>Your Dreams</h2>
+      <div id="dreamList"></div>
+    </div>
+  </section>
+
+  <section class="clouds-section">
+    <h1>Dream Journal</h1>
+  </section>
+
+  <section class="panel-section">
+    <p>Your dream entries go here...</p>
+  </section>
+
+  <section class="footer-section">
+    <p>Footer or additional content here...</p>
+  </section>
 
   <script src="script.js"></script>
 </body>
+
 </html>

@@ -4,7 +4,40 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  background: linear-gradient(135deg, #f6d1f5, #d8aaff); /* Purple to Pink Gradient */
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #f8e1f4, #e7c8f5, #d4b3f9, #fbc3eb); /* Soft pastel pink to purple */
+  background-attachment: fixed; /* Optional: creates a parallax-like effect */
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+section {
+  width: 100%;
+  min-height: 100vh; /* Makes each section fill the screen */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* 1. Top with white background and orange clouds */
+.clouds-section {
+  background: white url('orange-clouds.png') repeat-x top center;
+  background-size: cover;
+  color: #333;
+}
+
+/* 2. Middle panel with solid or gradient background */
+.panel-section {
+  background: linear-gradient(to bottom, #ffdfc4, #ffe8d8); /* soft orange to peach */
+  color: #222;
+}
+
+/* 3. Footer or next section with a new look */
+.footer-section {
+  background: #d8aaff; /* pastel purple */
+  color: white;
 }
 
 /* Parallax Section */
