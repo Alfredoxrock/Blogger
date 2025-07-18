@@ -1,16 +1,119 @@
 /* Parallax Effect + Background */
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #f8e1f4, #e7c8f5, #d4b3f9, #fbc3eb); /* Soft pastel pink to purple */
-  background-attachment: fixed; /* Optional: creates a parallax-like effect */
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-color: rgba(40, 2, 73, 0.4);; /* Your solid purple background */
+  background-image: url('NightCity.jpg');
+  background-repeat: no-repeat;       /* Show only once */
+  background-position: center top; /* Center the image */
+  background-size: 100% 100vh;           /* Make the whole image fit */
+  display: block;
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(83, 3, 153, 0.096); /* dark purple overlay */
+  z-index: -1;
+}
+
+.dream-world {
+  margin: 20px auto;
+  padding: 15px 20px;
+  background: rgba(57, 1, 106, 0.4); /* soft pastel purple translucent bg */
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(148, 0, 211, 0.2);
+  font-family: 'Georgia', serif;
+  font-size: 1.6em;               /* bigger font */
+  color: #ffffff;                /* dark indigo for good contrast */
+  line-height: 1.4;              /* a bit more spacing for readability */
+  text-align: center;
+  letter-spacing: 0.04em;
+  user-select: text;
+}
+
+.top-center {
+  display: flex;
+  flex-direction: column; /* Stack vertically */
+  align-items: center;    /* Center horizontally */
+  justify-content: flex-start; /* Align to top */
+  padding-top: 60px;      /* Space from the top */
+  text-align: center;
+  margin-top: 0; /* remove default margin */
+  margin-bottom: 0;
+  padding-top: 0; /* just in case */
+  padding-bottom: 0;
+}
+
+.dream-button {
+  display: block;
+  margin: 20px auto; /* auto left & right = horizontal center */
+  padding: 14px 28px;
+  font-size: 1.1em;
+  background: linear-gradient(to right, #b58ded, #d8aaff);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(136, 72, 255, 0.3);
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+a {
+  text-decoration: none;
+}
+
+.dream-button:hover {
+  background: linear-gradient(to right, #a379dc, #c58fff);
+  box-shadow: 0 10px 20px rgba(136, 72, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.dream-button:active {
+  transform: scale(0.97);
+  box-shadow: 0 5px 12px rgba(136, 72, 255, 0.2);
+}
+
+.dream-title {
+  font-family: 'Georgia', serif;
+  font-size: 4em;
+  color: #fff;
+  text-align: center;
+  margin: 40px 0;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3),
+               0 0 20px rgba(148, 0, 211, 0.5),
+               0 0 30px rgba(148, 0, 211, 0.6);
+  letter-spacing: 2px;
+  animation: pulseGlow 3s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3),
+                 0 0 20px rgba(148, 0, 211, 0.5),
+                 0 0 30px rgba(148, 0, 211, 0.6);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5),
+                 0 0 30px rgba(148, 0, 211, 0.7),
+                 0 0 45px rgba(148, 0, 211, 0.9);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3),
+                 0 0 20px rgba(148, 0, 211, 0.5),
+                 0 0 30px rgba(148, 0, 211, 0.6);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 section {
   width: 100%;
@@ -64,7 +167,6 @@ section {
 /* Text and Form styling */
 h1 {
   color: #6a4c9c;  /* Soft purple color */
-  text-align: center;
   font-size: 3em;
 }
 
