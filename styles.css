@@ -133,8 +133,18 @@ section {
 
 /* 2. Middle panel with solid or gradient background */
 .panel-section {
-  background: linear-gradient(to bottom, #ffdfc4, #ffe8d8); /* soft orange to peach */
-  color: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* center items horizontally */
+  background: linear-gradient(to bottom, #62064b, #19092a);
+  color: #ede9d8;
+  padding: 40px 20px;
+}
+
+/* 3. Footer or next section with a new look */
+.panel-section2 {
+  background: #301ca2; /* pastel purple */
+  color: white;
 }
 
 /* 3. Footer or next section with a new look */
@@ -166,7 +176,7 @@ section {
 
 /* Text and Form styling */
 h1 {
-  color: #6a4c9c;  /* Soft purple color */
+  color: #f5e3bb;  /* Soft purple color */
   font-size: 3em;
 }
 
@@ -207,14 +217,50 @@ button:hover {
   background-color: #9e7fce;  /* Slightly darker pink on hover */
 }
 
+.dream-list {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.dream-list > * {
+  background: linear-gradient(135deg, #6a11cb, #2533fc);
+  border-radius: 16px;
+  padding: 25px 30px;
+  color: #f0f4ff;
+  box-shadow:
+    0 8px 20px rgba(38, 72, 190, 0.4),
+    0 0 8px 2px rgba(101, 88, 255, 0.6);
+  border: 1px solid rgba(101, 88, 255, 0.8);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.1rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  flex: 1 1 calc(33.333% - 16px); /* 3 columns with some space for gap */
+  box-sizing: border-box;
+}
+
+.dream-list > *:hover {
+  box-shadow:
+    0 12px 30px rgba(169, 31, 139, 0.7),
+    0 0 16px 4px rgba(219, 27, 184, 0.9);
+  transform: translateY(-6px) scale(1.03);
+  cursor: pointer;
+}
+
+
 /* Dream Entries Section */
 .dream-entry {
-  background: #f4e1f3;  /* Very soft pink background for each entry */
+  background: #fff;  /* Very soft pink background for each entry */
   padding: 15px;
   margin: 12px 0;
   border-left: 5px solid #d8aaff;  /* Purple border */
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);  /* Light shadow for entries */
+  color: #333;
 }
 
 /* Small adjustments for text and button color in entries */
