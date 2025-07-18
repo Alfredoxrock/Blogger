@@ -63,19 +63,35 @@ if (carouselContainer) {
 }
 
 function renderCarouselDreams() {
-  carouselContainer.innerHTML = '';
+  const dreams = JSON.parse(localStorage.getItem('dreams')) || [];
 
-  dreams.slice(0, 10).forEach((dream, index) => {
-    if (dream.image) {
-      const item = document.createElement('div');
-      item.className = 'carousel-item';
+  const newDreamsContainer = document.querySelector('.new-dreams');
+  const topVotedContainer = document.querySelector('.top-voted');
 
-      const img = document.createElement('img');
-      img.src = dream.image;
-      img.alt = dream.title || `Dream ${index + 1}`;
+  if (newDreamsContainer) {
+    newDreamsContainer.innerHTML = '';
+    dreams.slice(0, 10).forEach(dream => {
+      if (dream.image) {
+        const item = document.createElement('div');
+        item.className = 'carousel-item';
+        item.innerHTML = `<img src="${dream.image}" alt="${dream.title || 'Dream'}">`;
+        newDreamsContainer.appendChild(item);
+      }
+    });
+  }
 
-      item.appendChild(img);
-      carouselContainer.appendChild(item);
-    }
-  });
+  if (topVotedContainer) {
+    topVotedContainer.innerHTML = '';
+    dreams
+      .sort((a, b) => (b.votes || 0) - (a.votes || 0)) // Assuming you track votes
+      .slice(0, 10)
+      .forEach(dream => {
+        if (dream.image) {
+          const item = document.createElement('div');
+          item.className = 'carousel-item';
+          item.innerHTML = `<img src="${dream.image}" alt="${dream.title || 'Dream'}">`;
+          topVotedContainer.appendChild(item);
+        }
+      });
+  }
 }
