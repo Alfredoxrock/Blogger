@@ -7,20 +7,50 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <section class="body">
-    <div class="container">
-      <h1>🌙 New Dream Entry</h1>
+  <section class="editor-wrapper">
+    <div class="editor-container">
+      <!-- Image Upload Preview -->
+      <div class="image-upload-area">
+        <label for="image" class="image-label">
+          <span>Click to upload cover</span>
+          <input type="file" id="image" accept="image/*" hidden />
+          <img id="preview" alt="Image Preview" />
+        </label>
+      </div>
 
-      <form id="dreamForm">
-        <input type="date" id="date" required />
-        <input type="text" id="title" placeholder="Dream Title" required />
-        <textarea id="description" placeholder="Describe your dream..." required></textarea>
+      <!-- Title Field -->
+      <input type="text" id="title" placeholder="Dream Title" class="dream-title-input" required />
+
+      <hr class="editor-divider" />
+
+      <!-- Description -->
+      <textarea id="description" class="dream-description" placeholder="Start writing your dream..." required></textarea>
+
+      <!-- Hidden Fields + Button -->
+      <div class="editor-footer">
         <input type="text" id="tags" placeholder="Tags (comma separated)" />
-        <button type="submit">Save Dream</button>
-      </form>
+        <button type="submit" form="dreamForm">Save Dream</button>
+      </div>
     </div>
   </section>
 
+  <!-- Hidden Form to wrap the inputs for JS submission -->
+  <form id="dreamForm" style="display: none;"></form>
+
   <script src="script.js"></script>
+  <script>
+    // Show preview on image upload
+    document.getElementById('image').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (evt) {
+          document.getElementById('preview').src = evt.target.result;
+          document.getElementById('preview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
 </body>
 </html>
