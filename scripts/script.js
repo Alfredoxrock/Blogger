@@ -1,7 +1,13 @@
 const form = document.getElementById('postForm');
 const postsContainer = document.getElementById('postsContainer');
 
-let posts = JSON.parse(localStorage.getItem('blogPosts') || '[]');
+let posts = [];
+
+async function fetchPosts() {
+  const res = await fetch('http://localhost:3000/api/posts');
+  posts = await res.json();
+  displayPosts();
+}
 
 const postsPerPage = 10;
 let currentPage = 1;
@@ -114,19 +120,26 @@ function displayPagination(totalPages, currentPage) {
   postsContainer.after(pagination);
 }
 
-form.addEventListener('submit', e => {
+form.addEventListener('submit', async e => {
   e.preventDefault();
 
   const title = form.title.value.trim();
   const content = form.content.value.trim();
 
   if (title && content) {
-    posts.unshift({ title, content });
-    localStorage.setItem('blogPosts', JSON.stringify(posts));
+    await fetch('http://localhost:3000/api/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, content }),
+    });
+
     form.reset();
-    displayPosts(1); // reset to page 1 after new post
+    fetchPosts(); // Reload after post
   }
 });
+
+fetchPosts();
+
 
 // Initial render
 displayPosts(currentPage);
