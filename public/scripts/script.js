@@ -132,7 +132,7 @@ form.addEventListener('submit', async e => {
   const content = form.content.value.trim();
 
   if (title && content) {
-    await fetch('http://localhost:3000/api/posts', {
+    await fetch('https://dream-api.onrender.com/api/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, content }),
