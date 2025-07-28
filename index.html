@@ -3,62 +3,30 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dream Journal</title>
-  <!-- Link to the updated styles.css file -->
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Blog - Dark Mode</title>
+  <link rel="stylesheet" href="styles/styles.css" />
 </head>
 
 <body>
 
+  <h1>Dream Blog</h1>
 
-  <section class="top-center">
-    <h1 class="dream-title">🌙 Dream Journal ✨</h1>
+  <form id="postForm">
+    <label for="title">Title</label>
+    <input id="title" type="text" required placeholder="Post title" />
 
-    <a href="new-entry.html">
-      <button class="dream-button">➕ Add New Dream</button>
-    </a>
+    <label for="content">Content</label>
+    <textarea id="content" rows="5" required placeholder="Write your post here..."></textarea>
 
-    <p class="dream-world">
-      The world of dreaming is a mysterious realm where reality blends seamlessly with imagination. In this ethereal
-      space, our minds wander freely, weaving stories from fragments of memories, emotions, and desires. Dreams invite
-      us to explore hidden corners of ourselves, revealing truths and mysteries that daylight often conceals. Each
-      night, as we close our eyes, we embark on a unique journey—sometimes serene, sometimes wild—through landscapes
-      sculpted by our deepest thoughts and feelings. Embracing the magic of dreams helps us unlock creativity, find
-      solace, and better understand the depths of our own minds.
-    </p>
+    <button type="submit">Post</button>
+  </form>
+
+  <section id="postsContainer">
+    <!-- Blog posts will appear here -->
   </section>
 
-  <section class="panel-section">
-    <h1>✨ New Dreams ✨</h1>
-    <div class="dream-carousel new-dreams">
-      <!-- JS will fill this -->
-    </div>
-
-    <h1>✨ Most Voted ✨</h1>
-    <div class="dream-carousel top-voted">
-      <!-- JS will fill this -->
-    </div>
-  </section>
-
-  <!-- <section class="mosaic-entry">
-    <div class="dream-image">
-      <div class="dreamList">
-        <h3>Flying in Space</h3>
-        <p>I dreamed I was weightless among stars...</p>
-      </div>
-    </div>
-  </section> -->
-
-  <section class="panel-section2">
-    <h1>Your dream entries go here...</h1>
-  </section>
-
-  <section class="footer-section">
-    <h1>Footer or additional content here...</h1>
-  </section>
-
-  <script src="script.js"></script>
+  <script src="scripts/script.js"></script>
 </body>
 
 </html>
