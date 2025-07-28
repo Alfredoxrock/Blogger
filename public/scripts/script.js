@@ -4,9 +4,14 @@ const postsContainer = document.getElementById('postsContainer');
 let posts = [];
 
 async function fetchPosts() {
-  const res = await fetch('http://localhost:3000/api/posts');
-  posts = await res.json();
-  displayPosts();
+  try {
+    const res = await fetch('https://dream-api.onrender.com/api/posts');
+    if (!res.ok) throw new Error("Failed to fetch posts");
+    posts = await res.json();
+    displayPosts();
+  } catch (err) {
+    console.error("Error fetching posts:", err);
+  }
 }
 
 const postsPerPage = 10;
