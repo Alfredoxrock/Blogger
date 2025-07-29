@@ -104,6 +104,8 @@ button:hover {
 }
 
 .lucid-score-btn {
+  text-decoration: none;
+  /* no underline */
   position: fixed;
   top: 6rem;
   left: 11rem;
@@ -116,7 +118,7 @@ button:hover {
   border: none;
   border-radius: 50px;
   z-index: 9999;
-  cursor: not-allowed;
+  cursor: pointer;
   animation: rainbowShift 5s ease infinite;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
