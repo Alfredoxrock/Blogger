@@ -10,10 +10,7 @@ app.use(express.json());
 
 require('dotenv').config();
 
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
+mongoose.connect(process.env.MONGODB_URI);
 
 // Define schema and model
 const Post = mongoose.model('Post', {
