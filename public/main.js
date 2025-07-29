@@ -1,12 +1,16 @@
 const form = document.getElementById('postForm');
 const postsContainer = document.getElementById('postsContainer');
 
-const API_BASE_URL = 'https://blogger-txm3.onrender.com';
+const API_BASE_URL = 'https://blogger-txm3.onrender.com/api';
+
+let posts = [];
 
 async function fetchPosts() {
     const res = await fetch(`${API_BASE_URL}/posts`);
-    posts = await res.json();
-    displayPosts();
+    await res.json().then((result) => {
+        posts = result;
+        displayPosts();
+    });
 }
 
 const postsPerPage = 10;
