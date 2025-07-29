@@ -5,7 +5,7 @@ let posts = [];
 
 async function fetchPosts() {
   try {
-    const res = await fetch('https://blogger-txm3.onrender.com');
+    const res = await fetch('https://blogger-txm3.onrender.com/api/posts');
     if (!res.ok) throw new Error("Failed to fetch posts");
     posts = await res.json();
     displayPosts();
@@ -132,7 +132,7 @@ form.addEventListener('submit', async e => {
   const content = form.content.value.trim();
 
   if (title && content) {
-    await fetch('https://blogger-txm3.onrender.com', {
+    await fetch('https://blogger-txm3.onrender.com/api/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, content }),
