@@ -1,9 +1,7 @@
-import { db, collection, getDocs, addDoc } from './firebase.js';
-
 const form = document.getElementById('postForm');
 const postsContainer = document.getElementById('postsContainer');
 
-const API_BASE_URL = 'https://us-central1-dreamworld-f7a4b.cloudfunctions.net/api';
+const API_BASE_URL = 'https://blogger-txm3.onrender.com';
 
 async function fetchPosts() {
     const res = await fetch(`${API_BASE_URL}/posts`);

@@ -2,13 +2,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const PORT = process.env.PORT || 3000;
+const path = require('path');
+require('dotenv').config();
 
+const PORT = process.env.PORT || 3000;
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
-require('dotenv').config();
+// Serve static frontend files from 'public' folder (adjust if your folder is named differently)
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -32,7 +36,11 @@ app.get('/api/posts', async (req, res) => {
     res.json(posts);
 });
 
-// Start server
+// Fallback to serve index.html for SPA routing (optional, only if you need it)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
