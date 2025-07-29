@@ -5,15 +5,169 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Lucid Dreamer Score</title>
-    <link rel="stylesheet" href="styles/styles.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            padding: 2rem;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .question {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .question.selected {
+            text-decoration: line-through;
+            color: darkgray;
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        button {
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            background: linear-gradient(45deg, #ff6ec4, #7873f5);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            color: #fff;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #7873f5, #ff6ec4);
+        }
+
+        #score {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Use same background and layout as your main page -->
 
-    <h1>Your Lucid Dreamer Score</h1>
+    <h1>🌀 How Much of a Lucid Dreamer Are You?</h1>
 
-    <!-- Put your content here -->
+    <div id="questions"></div>
+
+    <div style="text-align: center;">
+        <button onclick="calculateScore()">Calculate Score</button>
+        <div id="score"></div>
+    </div>
+
+    <script>
+        const questions = [
+            { text: "I keep a dream journal", points: 2 },
+            { text: "I perform reality checks during the day", points: 2 },
+            { text: "I can remember at least one dream every night", points: 1 },
+            { text: "I've had a lucid dream before", points: 2 },
+            { text: "I use techniques like WILD (Wake-Initiated Lucid Dreaming)", points: 2 },
+            { text: "I use techniques like MILD (Mnemonic Induction of Lucid Dreams)", points: 2 },
+            { text: "I’ve flown in a dream", points: 1 },
+            { text: "I’ve talked to dream characters consciously", points: 2 },
+            { text: "I’ve changed the environment while dreaming", points: 2 },
+            { text: "I can wake up and re-enter the same dream", points: 2 },
+
+            { text: "I meditate regularly", points: 1 },
+            { text: "I visualize dream scenes before sleep", points: 1 },
+            { text: "I avoid screens before bedtime to help recall", points: 1 },
+            { text: "I can control my actions in a dream", points: 2 },
+            { text: "I have experienced sleep paralysis", points: 1 },
+            { text: "I’ve turned a nightmare into a positive dream", points: 2 },
+            { text: "I recognize dream signs in my dreams", points: 2 },
+            { text: "I intentionally wake up during the night to recall dreams", points: 2 },
+            { text: "I practice dream incubation (planting ideas for dreams)", points: 1 },
+            { text: "I lucid dream at least once a week", points: 2 },
+
+            { text: "I have experienced false awakenings", points: 1 },
+            { text: "I perform the 'hand check' reality test", points: 1 },
+            { text: "I perform the 'nose pinch' reality test", points: 1 },
+            { text: "I journal my emotions after dreams", points: 1 },
+            { text: "I set dream intentions before sleeping", points: 1 },
+            { text: "I use audio cues to induce lucidity", points: 2 },
+            { text: "I use visual triggers like totems or symbols", points: 2 },
+            { text: "I’ve shared my dreams with others regularly", points: 1 },
+            { text: "I’ve had a lucid dream that changed my perspective", points: 2 },
+            { text: "I’ve practiced dream yoga or similar spiritual dreaming", points: 2 },
+
+            { text: "I use supplements to increase dream vividness (e.g. B6, galantamine)", points: 2 },
+            { text: "I follow a consistent sleep schedule", points: 1 },
+            { text: "I have lucid dreams without trying", points: 2 },
+            { text: "I stay still after waking up to remember dreams", points: 1 },
+            { text: "I have created recurring dream environments", points: 2 },
+            { text: "I remember colors vividly in dreams", points: 1 },
+            { text: "I’ve been aware of my body while dreaming", points: 2 },
+            { text: "I’ve turned into a different being or form in a dream", points: 1 },
+            { text: "I’ve watched myself in third person while dreaming", points: 1 },
+            { text: "I lucid dream during naps", points: 1 },
+
+            { text: "I prioritize lucid dreaming in my life", points: 2 },
+            { text: "I read books or watch videos about lucid dreaming", points: 1 },
+            { text: "I’ve created a dream map or dream world", points: 2 },
+            { text: "I can summon dream characters intentionally", points: 2 },
+            { text: "I know how to stabilize a lucid dream", points: 2 },
+            { text: "I’ve lengthened a dream using spinning or rubbing hands", points: 2 },
+            { text: "I’ve encountered a guide or mentor in a dream", points: 1 },
+            { text: "I’ve written stories based on my dreams", points: 1 },
+            { text: "I’ve experienced precognitive dreams", points: 1 },
+            { text: "I consciously prepare my room for dream recall (dark, quiet, etc.)", points: 1 }
+        ];
+
+        const container = document.getElementById('questions');
+
+        questions.forEach((q, index) => {
+            const div = document.createElement('div');
+            div.className = 'question';
+            div.textContent = q.text;
+            div.dataset.points = q.points;
+            div.addEventListener('click', () => {
+                div.classList.toggle('selected');
+            });
+            container.appendChild(div);
+        });
+
+        function calculateScore() {
+            const selected = document.querySelectorAll('.question.selected');
+            let total = 0;
+            selected.forEach(el => {
+                total += Number(el.dataset.points);
+            });
+
+            const levels = [
+                { min: 90, message: "🌟 Lucid Dream God — You effortlessly command entire dream worlds." },
+                { min: 80, message: "🧠 Lucid Master — Your control is razor-sharp, and lucidity is your second nature." },
+                { min: 70, message: "🌌 Dream Architect — You design dreams with intention and artistry." },
+                { min: 60, message: "💫 Advanced Dream Shaper — You can shift scenes and direct your journey." },
+                { min: 50, message: "🌙 Skilled Lucid Dreamer — Awareness flows naturally in your sleep." },
+                { min: 40, message: "🔮 Conscious Dreamer — You're beginning to guide your inner world." },
+                { min: 30, message: "🌗 Dream Explorer — You're tuning into your dreams with curiosity." },
+                { min: 20, message: "💤 Aspiring Oneironaut — You're developing the habits of awareness." },
+                { min: 10, message: "😴 Sleepwalker — Your dreams pass like shadows. Begin paying attention." },
+                { min: 0, message: "🛏️ Dormant Dreamer — The dream world awaits your awakening." }
+            ];
+
+            const message = levels.find(level => total >= level.min)?.message || "No score available.";
+
+            document.getElementById('score').innerHTML = `
+        <p>Your Score: <strong>${total}</strong></p>
+        <p>${message}</p>
+    `;
+        }
+    </script>
 
 </body>
 
