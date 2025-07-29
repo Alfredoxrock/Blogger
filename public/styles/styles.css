@@ -103,6 +103,40 @@ button:hover {
   font-style: italic;
 }
 
+.lucid-score-btn {
+  position: fixed;
+  top: 6rem;
+  left: 11rem;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(135deg, #ff6ec4, #7873f5, #00f2fe, #7bff8c);
+  background-size: 300% 300%;
+  border: none;
+  border-radius: 50px;
+  z-index: 9999;
+  cursor: not-allowed;
+  animation: rainbowShift 5s ease infinite;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Optional glowing animation */
+@keyframes rainbowShift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 #pagination button {
   background: #007BFF;
   color: white;
