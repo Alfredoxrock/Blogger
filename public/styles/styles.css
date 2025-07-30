@@ -105,10 +105,10 @@ button:hover {
 
 .lucid-score-btn {
   text-decoration: none;
-  /* no underline */
-  position: fixed;
-  top: 6rem;
-  left: 11rem;
+  display: inline-block;
+  /* Keeps it only as wide as needed */
+  margin: 1rem auto;
+  /* Horizontally centers it */
   padding: 0.8rem 1.5rem;
   font-size: 1rem;
   font-weight: bold;
@@ -117,14 +117,15 @@ button:hover {
   background-size: 300% 300%;
   border: none;
   border-radius: 50px;
-  z-index: 9999;
   cursor: pointer;
   animation: rainbowShift 5s ease infinite;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  text-align: center;
 }
 
-/* Optional glowing animation */
+/* Glowing animation */
 @keyframes rainbowShift {
   0% {
     background-position: 0% 50%;
@@ -138,6 +139,7 @@ button:hover {
     background-position: 0% 50%;
   }
 }
+
 
 #pagination button {
   background: #007BFF;
