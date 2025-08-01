@@ -216,3 +216,110 @@ button:hover {
 #pagination button:not(:disabled):hover {
   background: #0056b3;
 }
+
+.feature-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 3rem 0;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  background-color: #1e1e1e;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+  width: 280px;
+  transition: box-shadow 0.3s ease;
+  cursor: default;
+}
+
+.card:hover {
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
+}
+
+.icon {
+  font-size: 2.5rem;
+  margin-right: 1rem;
+  user-select: none;
+  filter: drop-shadow(0 0 6px);
+}
+
+/* Neon colors for icons */
+.neon-purple {
+  color: #9e00ff;
+  text-shadow:
+    0 0 6px #9e00ff,
+    0 0 10px #9e00ff,
+    0 0 20px #bb33ff;
+}
+
+.neon-blue {
+  color: #4b9eff;
+  text-shadow:
+    0 0 6px #4b9eff,
+    0 0 10px #4b9eff,
+    0 0 20px #33bbff;
+}
+
+.neon-cyan {
+  color: #00d4ff;
+  text-shadow:
+    0 0 6px #00d4ff,
+    0 0 10px #00d4ff,
+    0 0 20px #33eeff;
+}
+
+.neon-pink {
+  color: #ff33cc;
+  text-shadow:
+    0 0 6px #ff33cc,
+    0 0 10px #ff33cc,
+    0 0 20px #ff66dd;
+}
+
+.neon-green {
+  color: #7bff8c;
+  text-shadow:
+    0 0 6px #7bff8c,
+    0 0 10px #7bff8c,
+    0 0 20px #99ffaa;
+}
+
+.neon-orange {
+  color: #ff9933;
+  text-shadow:
+    0 0 6px #ff9933,
+    0 0 10px #ff9933,
+    0 0 20px #ffaa44;
+}
+
+.neon-yellow {
+  color: #fff966;
+  text-shadow:
+    0 0 6px #fff966,
+    0 0 10px #fff966,
+    0 0 20px #ffff88;
+}
+
+.content h3 {
+  margin: 0 0 0.3rem 0;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.content p {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  color: #ccc;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
