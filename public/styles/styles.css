@@ -4,7 +4,9 @@ body {
   max-width: 700px;
   margin: 2rem auto;
   padding: 0 1rem;
-  background: url("../src/images/NightCity.jpg");
+  background-color: #0a0e2a;
+  /* deep dark blue */
+  /* background: url("../src/images/NightCity.jpg"); */
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -13,8 +15,23 @@ body {
 }
 
 h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3em;
+  background: linear-gradient(90deg, #50048f, #00cfff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   text-align: center;
-  color: #f0f0f0;
+  text-shadow: 0 0 10px rgba(158, 0, 255, 0.4), 0 0 20px rgba(0, 207, 255, 0.2);
+}
+
+h3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1em;
+  font-weight: normal;
+  color: #ffffff;
+  margin-top: 0.5em;
+  text-align: center;
+  opacity: 0.85;
 }
 
 form {
@@ -106,40 +123,40 @@ button:hover {
 .lucid-score-btn {
   text-decoration: none;
   display: inline-block;
-  /* Keeps it only as wide as needed */
   margin: 1rem auto;
-  /* Horizontally centers it */
   padding: 0.8rem 1.5rem;
   font-size: 1rem;
   font-weight: bold;
   color: #fff;
-  background: linear-gradient(135deg, #ff6ec4, #7873f5, #00f2fe, #7bff8c);
+  background: linear-gradient(135deg, #9e00ff, #4b9eff, #6a00ff);
   background-size: 300% 300%;
   border: none;
   border-radius: 50px;
   cursor: pointer;
-  animation: rainbowShift 5s ease infinite;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  animation: glowShift 6s ease infinite;
+  box-shadow: 0 0 15px rgba(158, 0, 255, 0.6), 0 0 25px rgba(75, 158, 255, 0.4);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
   text-align: center;
 }
 
-/* Glowing animation */
-@keyframes rainbowShift {
+/* Purple-blue animated shift */
+@keyframes glowShift {
   0% {
     background-position: 0% 50%;
+    box-shadow: 0 0 10px rgba(158, 0, 255, 0.4), 0 0 20px rgba(75, 158, 255, 0.3);
   }
 
   50% {
     background-position: 100% 50%;
+    box-shadow: 0 0 20px rgba(158, 0, 255, 0.6), 0 0 30px rgba(75, 158, 255, 0.4);
   }
 
   100% {
     background-position: 0% 50%;
+    box-shadow: 0 0 10px rgba(158, 0, 255, 0.4), 0 0 20px rgba(75, 158, 255, 0.3);
   }
 }
-
 
 #pagination button {
   background: #007BFF;
