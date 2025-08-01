@@ -20,8 +20,17 @@ h1 {
   background: linear-gradient(90deg, #50048f, #00cfff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent;
+  /* Ensure fallback doesn't interfere */
   text-align: center;
-  text-shadow: 0 0 10px rgba(158, 0, 255, 0.4), 0 0 20px rgba(0, 207, 255, 0.2);
+  text-shadow: none;
+  /* No glow */
+  filter: none;
+  /* Clear any accidental blur */
+  -webkit-font-smoothing: antialiased;
+  /* Improves sharpness */
+  -moz-osx-font-smoothing: grayscale;
+  /* For Firefox on Mac */
 }
 
 h3 {
@@ -128,10 +137,11 @@ button:hover {
   font-size: 1rem;
   font-weight: bold;
   color: #fff;
-  background: linear-gradient(135deg, #9e00ff, #4b9eff, #6a00ff);
+  background: linear-gradient(135deg, #a903eb, #4b9eff, #6a00ff);
   background-size: 300% 300%;
   border: none;
-  border-radius: 50px;
+  border-radius: 10px;
+  /* Less rounded, more squared */
   cursor: pointer;
   animation: glowShift 6s ease infinite;
   box-shadow: 0 0 15px rgba(158, 0, 255, 0.6), 0 0 25px rgba(75, 158, 255, 0.4);
@@ -156,6 +166,35 @@ button:hover {
     background-position: 0% 50%;
     box-shadow: 0 0 10px rgba(158, 0, 255, 0.4), 0 0 20px rgba(75, 158, 255, 0.3);
   }
+}
+
+.button-section {
+  display: flex;
+  justify-content: center;
+  gap: 1rem 1rem;
+  margin: 2rem 0;
+}
+
+.lucid-score-btn {
+  flex: 1 1 200px;
+  max-width: 220px;
+  text-align: center;
+  padding: 0.8rem 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  /* Slimmer font */
+  letter-spacing: 0.3px;
+  color: #000000;
+  background: linear-gradient(135deg, #a903eb, #4b9eff, #6a00ff);
+  background-size: 300% 300%;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  animation: glowShift 6s ease infinite;
+  box-shadow: 0 0 15px rgba(158, 0, 255, 0.6), 0 0 25px rgba(75, 158, 255, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
 #pagination button {
