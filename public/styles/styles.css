@@ -13,24 +13,46 @@ body {
   color: #eee;
 }
 
-h1 {
+.dreamy-header {
+  position: relative;
   font-family: 'Orbitron', sans-serif;
   font-size: 3em;
   background: linear-gradient(90deg, #50048f, #00cfff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  /* Ensure fallback doesn't interfere */
   text-align: center;
-  text-shadow: none;
-  /* No glow */
-  filter: none;
-  /* Clear any accidental blur */
   -webkit-font-smoothing: antialiased;
-  /* Improves sharpness */
   -moz-osx-font-smoothing: grayscale;
-  /* For Firefox on Mac */
+  user-select: none;
+  overflow: visible;
 }
+
+/* Container for sparks */
+.dreamy-header .spark {
+  position: absolute;
+  background: #fffacd;
+  /* pale golden spark color */
+  border-radius: 50%;
+  opacity: 0;
+  filter: drop-shadow(0 0 4px #fffacd);
+  animation: spark-flicker 2.5s infinite ease-in-out;
+  pointer-events: none;
+}
+
+/* Flicker animation for spark opacity */
+@keyframes spark-flicker {
+
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
 
 h3 {
   font-family: 'Inter', sans-serif;
