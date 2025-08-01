@@ -1,7 +1,6 @@
 /* Dark Mode Styles */
 body {
   font-family: Arial, sans-serif;
-  max-width: 700px;
   margin: 2rem auto;
   padding: 0 1rem;
   background-color: #0a0e2a;
@@ -171,8 +170,72 @@ button:hover {
 .button-section {
   display: flex;
   justify-content: center;
-  gap: 1rem 1rem;
+  gap: 1rem;
   margin: 2rem 0;
+}
+
+.gold-spark-btn {
+  flex: 1 1 180px;
+  max-width: 220px;
+  padding: 0.8rem 1.5rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #d4af37;
+  /* gold base color */
+  background: #1e1e1e;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 0 10px #d4af37aa,
+    0 0 20px #d4af37bb;
+  transition: box-shadow 0.3s ease;
+}
+
+.gold-spark-btn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -75%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(120deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.8) 50%,
+      transparent 100%);
+  transform: rotate(25deg);
+  animation: sparkle 2.5s linear infinite;
+  pointer-events: none;
+}
+
+/* Assign different animation delays to make sparkle start at different times */
+.gold-spark-btn:nth-child(1)::before {
+  animation-delay: 0s;
+}
+
+.gold-spark-btn:nth-child(2)::before {
+  animation-delay: 1.3s;
+}
+
+.gold-spark-btn:hover {
+  box-shadow:
+    0 0 20px #ffde59,
+    0 0 30px #ffde59;
+  color: #fff7c0;
+}
+
+@keyframes sparkle {
+  0% {
+    left: -75%;
+  }
+
+  100% {
+    left: 125%;
+  }
 }
 
 .lucid-score-btn {
@@ -217,13 +280,39 @@ button:hover {
   background: #0056b3;
 }
 
+.introduction {
+  max-width: 900px;
+  margin: 2rem auto;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  /* slim font */
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #b3cde0;
+  /* pastel light blue */
+  background: linear-gradient(45deg,
+      #a8dadc,
+      /* pastel cyan */
+      #f1faee,
+      /* pastel off-white */
+      #ffe066,
+      /* pastel yellow */
+      #f4a261
+      /* pastel orange */
+    );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  user-select: none;
+}
+
 .feature-cards {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 1.5rem;
   margin: 3rem 0;
-  max-width: 900px;
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 }
