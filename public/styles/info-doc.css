@@ -168,6 +168,12 @@
     animation: none !important;
 }
 
+/* Remove shimmer on container */
+.no-background-shimmer::before {
+    content: none !important;
+    animation: none !important;
+}
+
 /* Remove shimmer on tab buttons */
 .technique-tabs .tab::before {
     content: none !important;
