@@ -1,0 +1,48 @@
+.technique-index {
+    margin: 2rem auto;
+    padding: 1rem 2rem;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(196, 192, 0, 0.2);
+    color: #eee;
+}
+
+.technique-index h2 {
+    color: rgb(162, 100, 233);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.technique-index ul {
+    list-style: none;
+    padding: 0;
+}
+
+.technique-index li {
+    margin: 0.5rem 0;
+}
+
+.technique-index a {
+    text-decoration: none;
+    color: #fff7c0;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.technique-index a:hover {
+    color: #fff;
+    text-shadow: 0 0 5px #0ff;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+.technique-index-title {
+    text-align: center;
+}
