@@ -1,259 +1,533 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simple Blog - Dark Mode</title>
-  <link rel="stylesheet" href="styles/styles.css" />
-  <link rel="stylesheet" href="styles/info-doc.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet">
+  <title>Ink & Pages — A Writing Blog</title>
+  <meta name="description" content="Ink & Pages — short fiction, essays, craft notes, and tips for writers." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1724;
+      /* dark navy */
+      --card: #0b1220;
+      --muted: #9aa4b2;
+      --accent: #ff7a59;
+      --glass: rgba(255, 255, 255, 0.03);
+      --max-width: 1100px;
+      color-scheme: dark;
+      color-scheme: light;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      margin: 0;
+      background: linear-gradient(180deg, #071026 0%, #081226 70%);
+      color: #e6eef6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+      padding: 32px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: var(--max-width);
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center
+    }
+
+    .logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), #ffb07a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #071026;
+      font-size: 20px
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px
+    }
+
+    .nav {
+      display: flex;
+      gap: 14px;
+      align-items: center
+    }
+
+    .btn,
+    .chip {
+      background: var(--glass);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      padding: 8px 12px;
+      border-radius: 10px;
+      color: inherit;
+      text-decoration: none;
+      font-size: 14px
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+      margin-bottom: 28px
+    }
+
+    .hero-card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      padding: 22px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.03)
+    }
+
+    .lead {
+      font-size: 18px;
+      color: #cfe6ff;
+      margin: 0 0 12px
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px
+    }
+
+    .posts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px
+    }
+
+    .post {
+      background: var(--card);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .post h3 {
+      margin: 0;
+      font-size: 16px
+    }
+
+    .meta {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .tag {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.02)
+    }
+
+    footer {
+      margin-top: 36px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center
+    }
+
+    /* single-post overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(rgba(2, 6, 23, 0.7), rgba(2, 6, 23, 0.8));
+      padding: 36px
+    }
+
+    .overlay.show {
+      display: flex
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 820px;
+      max-height: 90vh;
+      overflow: auto;
+      background: linear-gradient(180deg, #071026, #08122b);
+      border-radius: 12px;
+      padding: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.04)
+    }
+
+    .close {
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      padding: 6px 8px
+    }
+
+    /* responsive */
+    @media (max-width:880px) {
+      .hero {
+        grid-template-columns: 1fr
+      }
+
+      body {
+        padding: 18px
+      }
+    }
+
+    /* small utilities */
+    .search {
+      display: flex;
+      gap: 8px
+    }
+
+    input[type=search] {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: inherit
+    }
+
+    .subscribe {
+      display: flex;
+      gap: 8px
+    }
+
+    input[type=email] {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: inherit
+    }
+
+    .muted-2 {
+      color: #9eaec2;
+      font-size: 13px
+    }
+
+    /* small animation */
+    .logo {
+      transition: transform .25s ease
+    }
+
+    .logo:hover {
+      transform: rotate(-6deg) scale(1.02)
+    }
+  </style>
 </head>
 
 <body>
-
-  <h1 class="dreamy-header">
-    Lucid Dreaming Blog
-    <span class="spark" style="top: 5%; left: 10%; width: 5px; height: 5px; animation-delay: 0s;"></span>
-    <span class="spark" style="top: 15%; left: 22%; width: 4px; height: 4px; animation-delay: 0.3s;"></span>
-    <span class="spark" style="top: 8%; left: 35%; width: 6px; height: 6px; animation-delay: 0.6s;"></span>
-    <span class="spark" style="top: 12%; left: 50%; width: 3px; height: 3px; animation-delay: 0.9s;"></span>
-    <span class="spark" style="top: 20%; left: 60%; width: 5px; height: 5px; animation-delay: 1.2s;"></span>
-    <span class="spark" style="top: 25%; left: 70%; width: 4px; height: 4px; animation-delay: 1.5s;"></span>
-    <span class="spark" style="top: 30%; left: 80%; width: 3px; height: 3px; animation-delay: 1.8s;"></span>
-    <span class="spark" style="top: 35%; left: 90%; width: 6px; height: 6px; animation-delay: 2.1s;"></span>
-    <span class="spark" style="top: 40%; left: 5%; width: 4px; height: 4px; animation-delay: 2.4s;"></span>
-    <span class="spark" style="top: 45%; left: 15%; width: 3px; height: 3px; animation-delay: 2.7s;"></span>
-    <span class="spark" style="top: 50%; left: 25%; width: 5px; height: 5px; animation-delay: 3s;"></span>
-    <span class="spark" style="top: 55%; left: 35%; width: 4px; height: 4px; animation-delay: 3.3s;"></span>
-    <span class="spark" style="top: 60%; left: 45%; width: 3px; height: 3px; animation-delay: 3.6s;"></span>
-    <span class="spark" style="top: 65%; left: 55%; width: 6px; height: 6px; animation-delay: 3.9s;"></span>
-    <span class="spark" style="top: 70%; left: 65%; width: 4px; height: 4px; animation-delay: 4.2s;"></span>
-    <span class="spark" style="top: 75%; left: 75%; width: 3px; height: 3px; animation-delay: 4.5s;"></span>
-    <span class="spark" style="top: 80%; left: 85%; width: 5px; height: 5px; animation-delay: 4.8s;"></span>
-    <span class="spark" style="top: 85%; left: 95%; width: 4px; height: 4px; animation-delay: 5.1s;"></span>
-    <span class="spark" style="top: 90%; left: 20%; width: 3px; height: 3px; animation-delay: 5.4s;"></span>
-    <span class="spark" style="top: 95%; left: 40%; width: 6px; height: 6px; animation-delay: 5.7s;"></span>
-  </h1>
-
-
-  <section>
-    <h4 class="introduction">
-      Welcome to your gateway into the mysterious world of dreams. Where reality blurs and imagination takes flight.
-      This lucid dreaming blog is your personal guide to unlocking the secrets of your subconscious, mastering the art
-      of dream control, and exploring vivid dreamscapes like never before. Whether you're here to record your nightly
-      journeys, test your lucid awareness, or dive deep into expert guides and experiments, get ready to embark on a
-      transformative adventure that bridges the waking world and the limitless realm of your dreams. Sweet dreams start
-      here.
-    </h4>
-  </section>
-
-  <section class="button-section">
-    <a href="dreamerlucidscore.html" class="gold-spark-btn">Lucid Score</a>
-    <a href="dream-journal.html" class="gold-spark-btn">Dream Journal</a>
-  </section>
-
-  <section class="feature-cards">
-    <div class="card" onclick="location.href='dream-guides.html'" style="cursor: pointer;">
-      <div class="icon neon-cyan">📚</div>
-      <div class="content">
-        <h2>Dream Guides</h2>
-        <p>Explore step-by-step guides to enhance your lucid dreaming skills.</p>
+  <div class="wrap" id="app">
+    <header>
+      <div class="brand">
+        <div class="logo">IP</div>
+        <div>
+          <h1>Ink & Pages</h1>
+          <div class="muted">Short fiction, craft notes, and writing prompts</div>
+        </div>
       </div>
-    </div>
+      <nav class="nav">
+        <div class="search">
+          <input id="q" type="search" placeholder="Search posts..." aria-label="Search posts" />
+          <button class="btn" id="searchBtn">Search</button>
+        </div>
+        <a class="btn" id="newPostBtn">New post</a>
+      </nav>
+    </header>
 
-    <div class="card">
-      <div class="icon neon-pink">⏰</div>
-      <div class="content">
-        <h2>Reality Check Reminders</h2>
-        <p>Set reminders to perform reality checks throughout your day.</p>
-      </div>
-    </div>
+    <main>
+      <section class="hero">
+        <div class="hero-card">
+          <p class="lead">Welcome — this is a small personal corner for short fiction, craft reflections, prompts, and
+            publication notes. Read, rip, remix, write.</p>
+          <p class="muted">This single-file demo includes: a posts index, single-post overlay, search, tag filtering,
+            and a tiny new-post editor that saves to localStorage so you can experiment offline.</p>
 
-    <div class="card">
-      <div class="icon neon-green">😊</div>
-      <div class="content">
-        <h2>Dream Mood Tracker</h2>
-        <p>Track your emotions before and after your dreams to notice patterns.</p>
-      </div>
-    </div>
+          <div style="display:flex; gap:10px; margin-top:14px; align-items:center">
+            <div class="chip">Writing</div>
+            <div class="chip">Craft</div>
+            <div class="chip">Prompts</div>
+          </div>
 
-    <div class="card">
-      <div class="icon neon-orange">🧠</div>
-      <div class="content">
-        <h2>Dream Experiments</h2>
-        <p>Try different techniques and record their effects on your dreams.</p>
-      </div>
-    </div>
+          <hr style="margin:14px 0; border:none; border-top:1px solid rgba(255,255,255,0.03)" />
 
-    <div class="card">
-      <div class="icon neon-yellow">🌍</div>
-      <div class="content">
-        <h2>Dream World Builder</h2>
-        <p>Create and customize your own dream landscapes and scenarios.</p>
-      </div>
-    </div>
+          <div style="display:flex; gap:8px; align-items:center; justify-content:space-between;">
+            <div class="muted-2">Subscribe for occasional notes and drafts (local-demo only)</div>
+            <div class="subscribe">
+              <input id="email" type="email" placeholder="your@email.com" />
+              <button class="btn" id="subBtn">Subscribe</button>
+            </div>
+          </div>
+        </div>
 
-    <div class="card">
-      <div class="icon neon-teal">🎭</div>
-      <div class="content">
-        <h2>Dream Characters</h2>
-        <p>Track recurring dream characters and their personalities or symbolism.</p>
-      </div>
-    </div>
+        <aside class="hero-card">
+          <h3 style="margin-top:0">About the author</h3>
+          <p class="muted">A small, practical blog for writers. Publish one-shot fiction, essays about craft, or quick
+            prompts. Customise this template and deploy it anywhere — Netlify, Vercel, GitHub Pages.</p>
 
-    <div class="card">
-      <div class="icon neon-red">📅</div>
-      <div class="content">
-        <h2>Dream Calendar</h2>
-        <p>Visualize your dream activity over weeks and months with a calendar view.</p>
-      </div>
-    </div>
+          <hr style="margin:12px 0; border:none; border-top:1px solid rgba(255,255,255,0.03)" />
 
-    <div class="card">
-      <div class="icon neon-indigo">🔮</div>
-      <div class="content">
-        <h2>Dream Symbols</h2>
-        <p>Collect and interpret dream symbols to find deeper meaning.</p>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="icon neon-sky">💤</div>
-      <div class="content">
-        <h2>Sleep Tracker</h2>
-        <p>Track your sleep cycles and optimize your timing for lucid dreaming.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="lucid-techniques">
-    <h2>Lucid Dreaming Techniques</h2>
-    <p class="description">Select a technique below to explore detailed tips and tricks.</p>
-
-    <nav class="technique-tabs" role="tablist">
-      <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-reality-checks"
-        id="tab-reality-checks">
-        🔍 Reality Checks
-      </button>
-      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-wbtb" id="tab-wbtb">
-        🌙 WBTB
-      </button>
-      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-mild" id="tab-mild">
-        🧠 MILD
-      </button>
-      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-wild" id="tab-wild">
-        💤 WILD
-      </button>
-      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-vild" id="tab-vild">
-        ✨ VILD
-      </button>
-    </nav>
-
-    <!-- Content Panels -->
-    <div class="tab-panels">
-      <section id="panel-reality-checks" role="tabpanel" aria-labelledby="tab-reality-checks" class="tab-panel active">
-        <h3>Reality Checks (RC)</h3>
-        <p>
-          Reality checks are simple, habitual tests to help you determine whether you're dreaming or awake. Because
-          dreams often distort reality, these checks can reveal dream-like inconsistencies that trigger lucidity.
-        </p>
-        <p>
-          Common reality checks include:
-        <ul>
-          <li>🔸 Push your finger through your palm</li>
-          <li>🔸 Pinch your nose and try to breathe through it</li>
-          <li>🔸 Look at a clock or text, then look again</li>
-        </ul>
-        </p>
-        <p>
-          If you make this a regular habit while awake, it will eventually carry over into your dreams. When a reality
-          check fails in a dream (e.g., your finger goes through your hand), you’ll realize you're dreaming.
-        </p>
-        <p>
-          <strong>Tips:</strong> Pair the check with the question: “Am I dreaming?” and do it during transitions or
-          emotional spikes.
-        </p>
+          <div class="muted" style="font-size:13px">Quick links</div>
+          <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap">
+            <a class="btn" href="#" id="rssLink">RSS</a>
+            <a class="btn" href="#" id="aboutBtn">More</a>
+          </div>
+        </aside>
       </section>
 
-      <section id="panel-wbtb" role="tabpanel" aria-labelledby="tab-wbtb" class="tab-panel">
-        <h3>Wake Back To Bed (WBTB)</h3>
-        <p>
-          The WBTB method involves waking up during the night—usually after 4 to 6 hours of sleep—staying awake briefly,
-          then going back to sleep with the intention of becoming lucid.
-        </p>
-        <p>
-          <strong>Steps:</strong>
-        <ol>
-          <li>Set an alarm for 4.5 to 6 hours after going to sleep.</li>
-          <li>Stay awake 15–60 minutes (read about dreams, meditate).</li>
-          <li>Go back to bed with a clear intention to lucid dream.</li>
-        </ol>
-        </p>
-        <p>
-          This works because REM sleep becomes longer and more vivid later in the night, increasing your chances of
-          lucidity.
-        </p>
+      <section>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px">
+          <h2 style="margin:0">Recent posts</h2>
+          <div class="muted">Showing <span id="count">0</span> posts</div>
+        </div>
+
+        <div class="posts" id="posts"></div>
+
       </section>
 
-      <section id="panel-mild" role="tabpanel" aria-labelledby="tab-mild" class="tab-panel">
-        <h3>Mnemonic Induction of Lucid Dreams (MILD)</h3>
-        <p>
-          The MILD technique uses memory and intention. As you're falling asleep, you mentally repeat a phrase like:
-          “Next time I’m dreaming, I will realize I’m dreaming.”
-        </p>
-        <p>
-          Visualize yourself recognizing you're dreaming, either in a recent dream or a made-up scene.
-        </p>
-        <p>
-          <strong>Best paired with WBTB</strong>: After waking up mid-sleep, recall a dream and rehearse becoming lucid
-          as you drift off again.
-        </p>
-      </section>
+    </main>
 
-      <section id="panel-wild" role="tabpanel" aria-labelledby="tab-wild" class="tab-panel">
-        <h3>Wake Initiated Lucid Dream (WILD)</h3>
-        <p>
-          WILD involves consciously transitioning directly from wakefulness into a dream. This is done by keeping the
-          mind aware while the body falls asleep.
-        </p>
-        <p>
-          Techniques include:
-        <ul>
-          <li>🔸 Focusing on hypnagogic imagery (visuals during sleep onset)</li>
-          <li>🔸 Counting or repeating a mantra to stay aware</li>
-          <li>🔸 Observing body sensations without moving</li>
-        </ul>
-        </p>
-        <p>
-          It requires practice but can lead to vivid and stable lucid dreams. Often most successful during WBTB.
-        </p>
-      </section>
+    <footer>
+      Built with ✍️ · This template is a single file demo. Export to separate files or hook to a CMS when ready.
+    </footer>
+  </div>
 
-      <section id="panel-vild" role="tabpanel" aria-labelledby="tab-vild" class="tab-panel">
-        <h3>Visual Induction of Lucid Dreams (VILD)</h3>
-        <p>
-          VILD is based on visual repetition. You imagine a dream scene over and over in your mind before sleep —
-          usually one where you become lucid.
-        </p>
-        <p>
-          Example: Visualize yourself in your room, seeing a dream sign, and saying, “I’m dreaming!” — then repeat this
-          loop.
-        </p>
-        <p>
-          Over time, this visualization embeds into your unconscious and makes lucidity more likely when the scene
-          appears in an actual dream.
-        </p>
-        <p>
-          <strong>Tip:</strong> Be as detailed as possible with your imagined scenes. Add color, emotion, and movement.
-        </p>
-      </section>
+  <!-- Single post overlay -->
+  <div class="overlay" id="overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Post viewer">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px">
+        <div>
+          <div id="modalTitle" style="font-size:18px; font-weight:700"></div>
+          <div id="modalMeta" class="meta"></div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center">
+          <button class="close" id="editBtn">Edit</button>
+          <button class="close" id="closeBtn">Close</button>
+        </div>
+      </div>
+      <article id="modalBody" style="white-space:pre-wrap; color:#dfefff"></article>
     </div>
+  </div>
 
-  </section>
+  <!-- Tiny editor modal (uses the same overlay) -->
+  <template id="editorTpl">
+    <div style="display:flex; flex-direction:column; gap:10px">
+      <input id="edtTitle" placeholder="Title"
+        style="padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit" />
+      <input id="edtTags" placeholder="tags (comma separated)"
+        style="padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit" />
+      <textarea id="edtBody" rows="12" placeholder="Start writing..."
+        style="padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit"></textarea>
+      <div style="display:flex; gap:8px; justify-content:flex-end">
+        <button class="btn" id="savePostBtn">Save</button>
+        <button class="close" id="cancelEditBtn">Cancel</button>
+      </div>
+    </div>
+  </template>
 
-  <script src="scripts/lucidTechniques.js" defer></script>
+  <script>
+    // Sample posts to get started
+    const sample = [
+      { id: 'p1', title: 'A Small Wake', date: '2025-09-10', tags: ['flash', 'fiction'], body: 'The river kept its secrets. I kept mine. Between the reed and the bridge, a coin shone like a sliver of moon.' },
+      { id: 'p2', title: 'Notes on Dialogue', date: '2025-08-29', tags: ['craft', 'advice'], body: 'Dialogue should feel like motion: short, interruptible, and useful. Read your lines aloud.' },
+      { id: 'p3', title: 'Prompt: The Empty Chair', date: '2025-07-17', tags: ['prompt'], body: 'Write a scene where a chair in a cafe is always empty for one person — why? Who waits? What changes when someone sits?' }
+    ];
 
+    // storage helpers
+    const LS_KEY = 'ink-pages-posts-v1';
+    function loadPosts() {
+      try { const raw = localStorage.getItem(LS_KEY); if (!raw) return sample.slice(); const parsed = JSON.parse(raw); if (!Array.isArray(parsed)) return sample.slice(); return parsed; } catch (e) { return sample.slice(); }
+    }
+    function savePosts(list) { localStorage.setItem(LS_KEY, JSON.stringify(list)); }
+
+    // app state
+    let posts = loadPosts();
+    const postsEl = document.getElementById('posts');
+    const countEl = document.getElementById('count');
+
+    function renderPosts(filterQ = '') {
+      postsEl.innerHTML = '';
+      const q = filterQ.trim().toLowerCase();
+      const filtered = posts.filter(p => {
+        if (!q) return true;
+        return p.title.toLowerCase().includes(q) || p.body.toLowerCase().includes(q) || (p.tags || []).join(' ').toLowerCase().includes(q);
+      }).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      countEl.textContent = filtered.length;
+      filtered.forEach(p => {
+        const card = document.createElement('article'); card.className = 'post';
+        card.innerHTML = `<h3>${escapeHtml(p.title)}</h3>
+          <div class="meta">${escapeHtml(p.date || '')} · <span class="muted">${(p.tags || []).join(', ')}</span></div>
+          <p style="flex:1; margin:8px 0 0; color:var(--muted);">${escapeHtml(truncate(p.body, 120))}</p>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px">
+            <div class="tags">${(p.tags || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
+            <div style="display:flex; gap:8px">
+              <button class="btn" data-id="${p.id}" onclick="viewPost('${p.id}')">Open</button>
+              <button class="close" onclick="deletePost('${p.id}')">Delete</button>
+            </div>
+          </div>`;
+        postsEl.appendChild(card);
+      })
+    }
+
+    function truncate(str, n) { if (!str) return ''; return str.length > n ? str.slice(0, n - 1) + '…' : str }
+    function escapeHtml(s) { if (!s) return ''; return s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;') }
+
+    // modal actions
+    const overlay = document.getElementById('overlay');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const modalMeta = document.getElementById('modalMeta');
+    let activePostId = null;
+
+    function viewPost(id) {
+      const p = posts.find(x => x.id === id); if (!p) return; activePostId = id;
+      modalTitle.textContent = p.title;
+      modalMeta.textContent = `${p.date || ''} · ${(p.tags || []).join(', ')}`;
+      modalBody.textContent = p.body;
+      overlay.classList.add('show');
+    }
+
+    document.getElementById('closeBtn').addEventListener('click', () => overlay.classList.remove('show'));
+
+    // search
+    document.getElementById('searchBtn').addEventListener('click', () => {
+      const q = document.getElementById('q').value || '';
+      renderPosts(q);
+    });
+
+    // new post flow
+    document.getElementById('newPostBtn').addEventListener('click', () => openEditor());
+    document.getElementById('editBtn').addEventListener('click', () => openEditor(activePostId));
+
+    function uid(prefix = 'id') { return prefix + Math.random().toString(36).slice(2, 9) }
+
+    function openEditor(id = null) {
+      const tpl = document.getElementById('editorTpl').content.cloneNode(true);
+      const modalArea = overlay.querySelector('.modal');
+      // clobber modal content area
+      modalArea.innerHTML = '';
+      modalArea.appendChild(tpl);
+      overlay.classList.add('show');
+
+      // populate
+      const edtTitle = document.getElementById('edtTitle');
+      const edtTags = document.getElementById('edtTags');
+      const edtBody = document.getElementById('edtBody');
+      const saveBtn = document.getElementById('savePostBtn');
+      const cancelBtn = document.getElementById('cancelEditBtn');
+
+      if (id) {
+        const p = posts.find(x => x.id === id);
+        if (p) { edtTitle.value = p.title; edtTags.value = (p.tags || []).join(', '); edtBody.value = p.body; }
+      }
+
+      saveBtn.addEventListener('click', () => {
+        const title = edtTitle.value.trim() || 'Untitled';
+        const tags = edtTags.value.split(',').map(t => t.trim()).filter(Boolean);
+        const body = edtBody.value.trim() || '';
+        const date = new Date().toISOString().slice(0, 10);
+        if (id) {
+          const idx = posts.findIndex(x => x.id === id);
+          if (idx >= 0) { posts[idx] = { ...posts[idx], title, tags, body, date }; }
+        } else {
+          posts.unshift({ id: uid('p'), title, tags, body, date });
+        }
+        savePosts(posts);
+        overlay.classList.remove('show');
+        renderPosts(document.getElementById('q').value || '');
+      });
+
+      cancelBtn.addEventListener('click', () => {
+        overlay.classList.remove('show');
+      });
+    }
+
+    function deletePost(id) {
+      if (!confirm('Delete this post?')) return;
+      posts = posts.filter(p => p.id !== id);
+      savePosts(posts);
+      renderPosts(document.getElementById('q').value || '');
+    }
+
+    // subscription demo (local only)
+    document.getElementById('subBtn').addEventListener('click', () => {
+      const e = document.getElementById('email').value.trim();
+      if (!e || !e.includes('@')) { alert('Please enter a valid email for the demo.'); return }
+      // in a live site you'd send to your newsletter provider
+      alert('Thanks! (demo only — address saved to localStorage)');
+      localStorage.setItem('ink-pages-subscriber', e);
+    });
+
+    // tiny RSS link (builds a data: blob)
+    document.getElementById('rssLink').addEventListener('click', (ev) => {
+      ev.preventDefault();
+      const rss = buildRSS();
+      const blob = new Blob([rss], { type: 'application/rss+xml' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    });
+
+    function buildRSS() {
+      const base = location.href.split('#')[0];
+      const items = posts.map(p => `<item><title>${p.title}</title><pubDate>${new Date(p.date).toUTCString()}</pubDate><description>${escapeHtml(p.body)}</description></item>`).join('');
+      return `<?xml version="1.0" encoding="UTF-8" ?>\n<rss version="2.0"><channel><title>Ink & Pages</title><link>${base}</link><description>Writing blog</description>${items}</channel></rss>`;
+    }
+
+    // initial render
+    renderPosts();
+
+    // expose for inline onclick handlers
+    window.viewPost = viewPost;
+    window.deletePost = deletePost;
+
+    // accessibility: close overlay with Esc
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') overlay.classList.remove('show');
+    });
+
+  </script>
 </body>
 
 </html>
