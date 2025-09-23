@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Archive — Ink & Pages</title>
+    <meta name="description" content="Browse the complete archive of writing posts organized by date and category." />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/blog.css">
+</head>
+
+<body>
+    <div class="wrap" id="app">
+        <header>
+            <div class="brand">
+                <div class="logo">IP</div>
+                <div>
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">Ink & Pages</a></h1>
+                    <div class="muted">Short fiction, craft notes, and writing prompts</div>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="btn" href="index.html">Home</a>
+                <a class="btn" href="blog.html">All Posts</a>
+                <a class="btn" href="categories.html">Categories</a>
+                <a class="btn" href="about.html">About</a>
+                <a class="btn" href="contact.html">Contact</a>
+                <div class="search">
+                    <input id="q" type="search" placeholder="Search posts..." aria-label="Search posts" />
+                    <button class="btn" id="searchBtn">Search</button>
+                </div>
+                <a class="btn btn-primary" href="admin.html">Write</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="archive-header">
+                <h1>Archive</h1>
+                <p class="lead">Complete chronological archive of all posts, organized by year and month.</p>
+
+                <div class="archive-stats">
+                    <div class="stat">
+                        <span class="stat-number" id="totalPosts">0</span>
+                        <span class="stat-label">Total Posts</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="totalWords">0</span>
+                        <span class="stat-label">Words Written</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="avgReadTime">0</span>
+                        <span class="stat-label">Avg. Read Time</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="archive-filters">
+                <div class="filter-group">
+                    <label for="archiveCategory">Filter by category:</label>
+                    <select id="archiveCategory" class="filter-select">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="archiveYear">Filter by year:</label>
+                    <select id="archiveYear" class="filter-select">
+                        <option value="">All Years</option>
+                    </select>
+                </div>
+
+                <button class="btn" id="clearArchiveFilters">Clear Filters</button>
+            </section>
+
+            <section class="archive-content">
+                <div class="archive-timeline" id="archive-list">
+                    <!-- Archive content will be inserted here -->
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Ink & Pages</h4>
+                    <p>A personal corner for short fiction, craft reflections, and writing prompts.</p>
+                    <div class="social-links">
+                        <a href="#" class="btn">Twitter</a>
+                        <a href="#" class="btn" onclick="blogManager?.generateRSS()">RSS</a>
+                        <a href="mailto:hello@inkandpages.com" class="btn">Email</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Categories</h4>
+                    <ul>
+                        <li><a href="categories.html?cat=fiction">Fiction</a></li>
+                        <li><a href="categories.html?cat=craft">Writing Craft</a></li>
+                        <li><a href="categories.html?cat=prompts">Prompts</a></li>
+                        <li><a href="categories.html?cat=essays">Essays</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="archive.html">Archive</a></li>
+                        <li><a href="admin.html">Write</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Newsletter</h4>
+                    <p>Get occasional writing notes and drafts</p>
+                    <div class="subscribe">
+                        <input id="email" type="email" placeholder="your@email.com" />
+                        <button class="btn" id="subBtn">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Ink & Pages. Built with ✍️ by writers, for writers.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="scripts/blog.js"></script>
+    <script src="scripts/main.js"></script>
+    <script>
+        // Archive page specific styles
+        const archiveStyles = document.createElement('style');
+        archiveStyles.textContent = `
+      .archive-header {
+        text-align: center;
+        margin-bottom: var(--spacing-xl);
+        padding-bottom: var(--spacing-lg);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .archive-header h1 {
+        font-size: 36px;
+        font-weight: 700;
+        margin: 0 0 var(--spacing-sm);
+        background: linear-gradient(135deg, var(--text), var(--text-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .archive-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: var(--spacing-md);
+        max-width: 500px;
+        margin: var(--spacing-lg) auto 0;
+      }
+
+      .stat {
+        text-align: center;
+        padding: var(--spacing-sm);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--border-radius-sm);
+      }
+
+      .stat-number {
+        display: block;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--accent);
+        line-height: 1;
+      }
+
+      .stat-label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .archive-filters {
+        display: flex;
+        gap: var(--spacing-md);
+        align-items: end;
+        margin-bottom: var(--spacing-xl);
+        padding: var(--spacing-md);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--border-radius);
+        flex-wrap: wrap;
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+        min-width: 150px;
+      }
+
+      .filter-group label {
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .filter-select {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border);
+        border-radius: var(--border-radius-sm);
+        padding: 8px 12px;
+        color: var(--text);
+        font-size: 14px;
+      }
+
+      .archive-timeline {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .archive-year {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .archive-year h3 {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 var(--spacing-lg);
+        color: var(--accent);
+        position: relative;
+        padding-bottom: var(--spacing-sm);
+      }
+
+      .archive-year h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-light));
+        border-radius: 2px;
+      }
+
+      .archive-month {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .archive-month h4 {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 var(--spacing-md);
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+
+      .archive-month h4::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: var(--accent);
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .archive-posts {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+      }
+
+      .archive-post {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+        padding: var(--spacing-md);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--border-radius);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .archive-post::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--accent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .archive-post:hover {
+        transform: translateX(4px);
+        border-color: rgba(255, 255, 255, 0.12);
+        box-shadow: var(--shadow);
+      }
+
+      .archive-post:hover::before {
+        opacity: 1;
+      }
+
+      .post-date {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 500;
+        white-space: nowrap;
+        min-width: 80px;
+        padding-top: 2px;
+      }
+
+      .post-content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .post-title {
+        color: var(--text);
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.4;
+        margin-bottom: var(--spacing-xs);
+        display: block;
+        transition: color 0.2s ease;
+      }
+
+      .post-title:hover {
+        color: var(--accent);
+      }
+
+      .post-meta {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-xs);
+        flex-wrap: wrap;
+      }
+
+      .post-category {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--muted);
+        text-transform: capitalize;
+      }
+
+      .post-readtime {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .post-tags {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin-top: var(--spacing-xs);
+      }
+
+      .post-tag {
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--muted);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .archive-empty {
+        text-align: center;
+        padding: var(--spacing-xl);
+        color: var(--muted);
+      }
+
+      .archive-empty h3 {
+        margin: 0 0 var(--spacing-sm);
+        color: var(--text);
+      }
+
+      @media (max-width: 768px) {
+        .archive-stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .archive-filters {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        
+        .filter-group {
+          min-width: auto;
+        }
+        
+        .archive-post {
+          flex-direction: column;
+          gap: var(--spacing-sm);
+        }
+        
+        .post-date {
+          min-width: auto;
+          order: 2;
+          align-self: flex-start;
+        }
+        
+        .post-meta {
+          order: 1;
+        }
+        
+        .archive-header h1 {
+          font-size: 28px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .archive-stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    `;
+        document.head.appendChild(archiveStyles);
+
+        // Archive page functionality
+        class ArchiveManager {
+            constructor() {
+                this.currentCategoryFilter = '';
+                this.currentYearFilter = '';
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.populateFilters();
+                this.renderArchive();
+                this.updateStats();
+            }
+
+            setupEventListeners() {
+                document.getElementById('archiveCategory')?.addEventListener('change', (e) => {
+                    this.currentCategoryFilter = e.target.value;
+                    this.renderArchive();
+                });
+
+                document.getElementById('archiveYear')?.addEventListener('change', (e) => {
+                    this.currentYearFilter = e.target.value;
+                    this.renderArchive();
+                });
+
+                document.getElementById('clearArchiveFilters')?.addEventListener('click', () => {
+                    this.clearFilters();
+                });
+            }
+
+            populateFilters() {
+                if (!blogManager) return;
+
+                // Populate categories
+                const categorySelect = document.getElementById('archiveCategory');
+                if (categorySelect) {
+                    const categories = blogManager.getCategories();
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category;
+                        option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                        categorySelect.appendChild(option);
+                    });
+                }
+
+                // Populate years
+                const yearSelect = document.getElementById('archiveYear');
+                if (yearSelect) {
+                    const years = [...new Set(blogManager.posts.map(post => {
+                        return new Date(post.date).getFullYear();
+                    }))].sort((a, b) => b - a);
+
+                    years.forEach(year => {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        yearSelect.appendChild(option);
+                    });
+                }
+            }
+
+            clearFilters() {
+                this.currentCategoryFilter = '';
+                this.currentYearFilter = '';
+                document.getElementById('archiveCategory').value = '';
+                document.getElementById('archiveYear').value = '';
+                this.renderArchive();
+            }
+
+            getFilteredPosts() {
+                if (!blogManager) return [];
+
+                let posts = [...blogManager.posts];
+
+                // Apply category filter
+                if (this.currentCategoryFilter) {
+                    posts = posts.filter(post => post.category === this.currentCategoryFilter);
+                }
+
+                // Apply year filter
+                if (this.currentYearFilter) {
+                    posts = posts.filter(post => {
+                        const year = new Date(post.date).getFullYear();
+                        return year.toString() === this.currentYearFilter;
+                    });
+                }
+
+                return posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+            }
+
+            renderArchive() {
+                const container = document.getElementById('archive-list');
+                if (!container) return;
+
+                const posts = this.getFilteredPosts();
+                container.innerHTML = '';
+
+                if (posts.length === 0) {
+                    container.innerHTML = `
+            <div class="archive-empty">
+              <h3>No posts found</h3>
+              <p>Try adjusting your filters or browse all posts.</p>
+            </div>
+          `;
+                    return;
+                }
+
+                // Group posts by year and month
+                const grouped = this.groupPostsByDate(posts);
+
+                Object.keys(grouped)
+                    .sort((a, b) => b - a)
+                    .forEach(year => {
+                        const yearSection = document.createElement('div');
+                        yearSection.className = 'archive-year';
+
+                        let yearHTML = `<h3>${year}</h3>`;
+
+                        Object.keys(grouped[year])
+                            .sort((a, b) => b - a) // Sort months in descending order
+                            .forEach(month => {
+                                const monthName = new Date(year, month - 1).toLocaleDateString('en-US', { month: 'long' });
+                                const monthPosts = grouped[year][month];
+
+                                yearHTML += `
+                  <div class="archive-month">
+                    <h4>${monthName}</h4>
+                    <div class="archive-posts">
+                      ${monthPosts.map(post => this.createArchivePostHTML(post)).join('')}
+                    </div>
+                  </div>
+                `;
+                            });
+
+                        yearSection.innerHTML = yearHTML;
+                        container.appendChild(yearSection);
+                    });
+            }
+
+            groupPostsByDate(posts) {
+                const grouped = {};
+
+                posts.forEach(post => {
+                    const date = new Date(post.date);
+                    const year = date.getFullYear();
+                    const month = date.getMonth() + 1;
+
+                    if (!grouped[year]) grouped[year] = {};
+                    if (!grouped[year][month]) grouped[year][month] = [];
+
+                    grouped[year][month].push(post);
+                });
+
+                // Sort posts within each month
+                Object.keys(grouped).forEach(year => {
+                    Object.keys(grouped[year]).forEach(month => {
+                        grouped[year][month].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+                    });
+                });
+
+                return grouped;
+            }
+
+            createArchivePostHTML(post) {
+                const readTime = post.readTime || blogManager.calculateReadTime(post.body);
+                const tags = (post.tags || []).map(tag =>
+                    `<span class="post-tag">${blogManager.escapeHtml(tag)}</span>`
+                ).join('');
+
+                return `
+          <div class="archive-post">
+            <div class="post-date">${this.formatDate(post.date)}</div>
+            <div class="post-content">
+              <a href="#" class="post-title" onclick="blogManager.viewPost('${post.id}')">${blogManager.escapeHtml(post.title)}</a>
+              <div class="post-meta">
+                ${post.category ? `<span class="post-category">${post.category}</span>` : ''}
+                <span class="post-readtime">${readTime} min read</span>
+              </div>
+              ${tags ? `<div class="post-tags">${tags}</div>` : ''}
+            </div>
+          </div>
+        `;
+            }
+
+            formatDate(dateStr) {
+                if (!dateStr) return '';
+                try {
+                    const date = new Date(dateStr);
+                    return date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                } catch (e) {
+                    return dateStr;
+                }
+            }
+
+            updateStats() {
+                if (!blogManager) return;
+
+                const posts = blogManager.posts;
+                const totalWords = posts.reduce((sum, post) => {
+                    const wordCount = (post.body || '').split(/\s+/).length;
+                    return sum + wordCount;
+                }, 0);
+
+                const avgReadTime = posts.length > 0
+                    ? Math.round(posts.reduce((sum, post) => sum + (post.readTime || blogManager.calculateReadTime(post.body)), 0) / posts.length)
+                    : 0;
+
+                document.getElementById('totalPosts').textContent = posts.length;
+                document.getElementById('totalWords').textContent = totalWords.toLocaleString();
+                document.getElementById('avgReadTime').textContent = `${avgReadTime} min`;
+            }
+        }
+
+        // Initialize archive manager when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (window.blogManager) {
+                    window.archiveManager = new ArchiveManager();
+                }
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>

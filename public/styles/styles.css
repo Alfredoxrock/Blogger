@@ -1,43 +1,55 @@
-/* Dark Mode Styles */
+/* Dreamy Pastel Theme Styles */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
   margin: 2rem auto;
   padding: 0 1rem;
-  background-color: #0a0e2a;
-  /* deep dark blue */
-  /* background: url("../src/images/NightCity.jpg"); */
-  background-size: cover;
-  background-repeat: no-repeat;
+  background: linear-gradient(135deg, #f8f1ff 0%, #ffe6f7 25%, #e6f3ff 50%, #f0fff4 75%, #fff8e6 100%);
   background-attachment: fixed;
-  background-position: center center;
-  color: #eee;
+  background-size: 400% 400%;
+  animation: dreamyGradient 8s ease infinite;
+  color: #4a4766;
+}
+
+@keyframes dreamyGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .dreamy-header {
   position: relative;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 3em;
   background: linear-gradient(90deg,
-      #b8860b 0%,
-      #ffd700 25%,
-      #fff8dc 50%,
-      #ffd700 75%,
-      #b8860b 100%);
+      #d4b2ff 0%,
+      #ffb3e6 25%,
+      #b3d9ff 50%,
+      #ffb3e6 75%,
+      #d4b2ff 100%);
   background-size: 200% auto;
-  animation: gold-shine 6s linear infinite;
+  animation: pastel-shine 6s linear infinite;
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
   text-align: center;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2), 0 -1px 1px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(212, 178, 255, 0.3);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   user-select: none;
   overflow: visible;
 }
 
-/* Gold shimmer animation */
-@keyframes gold-shine {
+/* Pastel shimmer animation */
+@keyframes pastel-shine {
   0% {
     background-position: 0% center;
   }
@@ -50,10 +62,10 @@ body {
 /* Spark styling */
 .dreamy-header .spark {
   position: absolute;
-  background: #fffacd;
+  background: #e6ccff;
   border-radius: 50%;
   opacity: 0;
-  filter: drop-shadow(0 0 4px #fffacd);
+  filter: drop-shadow(0 0 4px #e6ccff);
   animation: spark-flicker 2.5s infinite ease-in-out;
   pointer-events: none;
 }
@@ -78,7 +90,7 @@ h3 {
   font-family: 'Inter', sans-serif;
   font-size: 1.1em;
   font-weight: normal;
-  color: #ffffff;
+  color: #6b618d;
   margin-top: 0.5em;
   text-align: center;
   opacity: 0.85;
@@ -86,21 +98,22 @@ h3 {
 
 form {
   margin-bottom: 3rem;
-  background: #1e1e1e;
+  background: rgba(255, 255, 255, 0.9);
   padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(28, 46, 126, 0.9);
-
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(212, 178, 255, 0.15);
   display: flex;
   flex-direction: column;
   align-items: left;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 178, 255, 0.2);
 }
 
 label {
   display: block;
   margin-bottom: 0.25rem;
   font-weight: bold;
-  color: #ccc;
+  color: #6b618d;
 }
 
 input[type="text"],
@@ -108,53 +121,60 @@ textarea {
   width: 100%;
   padding: 0.5rem;
   margin-bottom: 1rem;
-  border: 1px solid #444;
-  border-radius: 4px;
+  border: 1px solid rgba(212, 178, 255, 0.3);
+  border-radius: 8px;
   font-size: 1rem;
   resize: vertical;
-  background: #2c2c2c;
-  color: #eee;
+  background: rgba(255, 255, 255, 0.8);
+  color: #4a4766;
 }
 
 input[type="text"]::placeholder,
 textarea::placeholder {
-  color: #888;
+  color: #a388b5;
 }
 
 input[type="text"]:focus,
 textarea:focus {
-  border-color: #007BFF;
+  border-color: #ff9ec7;
   outline: none;
-  background: #3a3a3a;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 3px rgba(255, 158, 199, 0.1);
 }
 
 button {
-  background: #007BFF;
+  background: linear-gradient(135deg, #ff9ec7, #b3d9ff);
   color: white;
   border: none;
   padding: 0.6rem 1.2rem;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.2s ease;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(255, 158, 199, 0.3);
 }
 
 button:hover {
-  background: #0056b3;
+  background: linear-gradient(135deg, #b3d9ff, #b3ffcc);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(179, 217, 255, 0.4);
 }
 
 .post {
-  background: #1e1e1e;
+  background: rgba(255, 255, 255, 0.9);
   padding: 1rem;
   margin-bottom: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
-  color: #ddd;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(212, 178, 255, 0.15);
+  color: #4a4766;
+  border: 1px solid rgba(212, 178, 255, 0.2);
+  backdrop-filter: blur(20px);
 }
 
 .post h2 {
   margin: 0 0 0.5rem 0;
-  color: #fff;
+  color: #6b618d;
 }
 
 .post p {
@@ -165,7 +185,7 @@ button:hover {
 
 .no-posts {
   text-align: center;
-  color: #888;
+  color: #a388b5;
   margin-top: 2rem;
   font-style: italic;
 }
@@ -178,34 +198,33 @@ button:hover {
   font-size: 1rem;
   font-weight: bold;
   color: #fff;
-  background: linear-gradient(135deg, #a903eb, #4b9eff, #6a00ff);
+  background: linear-gradient(135deg, #d4b2ff, #ffb3e6, #b3d9ff);
   background-size: 300% 300%;
   border: none;
-  border-radius: 10px;
-  /* Less rounded, more squared */
+  border-radius: 16px;
   cursor: pointer;
-  animation: glowShift 6s ease infinite;
-  box-shadow: 0 0 15px rgba(158, 0, 255, 0.6), 0 0 25px rgba(75, 158, 255, 0.4);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  animation: dreamyShift 6s ease infinite;
+  box-shadow: 0 0 15px rgba(212, 178, 255, 0.4), 0 0 25px rgba(255, 179, 230, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   text-align: center;
 }
 
-/* Purple-blue animated shift */
-@keyframes glowShift {
+/* Pastel animated shift */
+@keyframes dreamyShift {
   0% {
     background-position: 0% 50%;
-    box-shadow: 0 0 10px rgba(158, 0, 255, 0.4), 0 0 20px rgba(75, 158, 255, 0.3);
+    box-shadow: 0 0 10px rgba(212, 178, 255, 0.3), 0 0 20px rgba(255, 179, 230, 0.2);
   }
 
   50% {
     background-position: 100% 50%;
-    box-shadow: 0 0 20px rgba(158, 0, 255, 0.6), 0 0 30px rgba(75, 158, 255, 0.4);
+    box-shadow: 0 0 20px rgba(212, 178, 255, 0.5), 0 0 30px rgba(255, 179, 230, 0.3);
   }
 
   100% {
     background-position: 0% 50%;
-    box-shadow: 0 0 10px rgba(158, 0, 255, 0.4), 0 0 20px rgba(75, 158, 255, 0.3);
+    box-shadow: 0 0 10px rgba(212, 178, 255, 0.3), 0 0 20px rgba(255, 179, 230, 0.2);
   }
 }
 
@@ -223,19 +242,18 @@ button:hover {
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 1.1rem;
-  color: #d4af37;
-  /* gold base color */
-  background: #1e1e1e;
-  border-radius: 10px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #d4b2ff, #ffb3e6);
+  border-radius: 16px;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
   position: relative;
   overflow: hidden;
   box-shadow:
-    0 0 10px #d4af37aa,
-    0 0 20px #d4af37bb;
-  transition: box-shadow 0.3s ease;
+    0 0 10px rgba(212, 178, 255, 0.4),
+    0 0 20px rgba(255, 179, 230, 0.3);
+  transition: all 0.3s ease;
 }
 
 .gold-spark-btn::before {
@@ -250,7 +268,7 @@ button:hover {
       rgba(255, 255, 255, 0.8) 50%,
       transparent 100%);
   transform: rotate(25deg);
-  animation: sparkle 2.5s linear infinite;
+  animation: pastel-sparkle 2.5s linear infinite;
   pointer-events: none;
 }
 
@@ -265,12 +283,12 @@ button:hover {
 
 .gold-spark-btn:hover {
   box-shadow:
-    0 0 20px #ffde59,
-    0 0 30px #ffde59;
-  color: #fff7c0;
+    0 0 20px rgba(212, 178, 255, 0.6),
+    0 0 30px rgba(255, 179, 230, 0.4);
+  transform: translateY(-2px);
 }
 
-@keyframes sparkle {
+@keyframes pastel-sparkle {
   0% {
     left: -75%;
   }
@@ -344,6 +362,7 @@ button:hover {
       /* pastel orange */
     );
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   user-select: none;
 }
@@ -362,17 +381,20 @@ button:hover {
 .card {
   display: flex;
   align-items: center;
-  background-color: #1e1e1e;
+  background: rgba(255, 255, 255, 0.9);
   padding: 1rem 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(212, 178, 255, 0.15);
   width: 280px;
-  transition: box-shadow 0.3s ease;
+  transition: all 0.3s ease;
   cursor: default;
+  border: 1px solid rgba(212, 178, 255, 0.2);
+  backdrop-filter: blur(20px);
 }
 
 .card:hover {
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 12px 40px rgba(212, 178, 255, 0.2);
+  transform: translateY(-4px);
 }
 
 .icon {
@@ -382,66 +404,66 @@ button:hover {
   filter: drop-shadow(0 0 6px);
 }
 
-/* Neon colors for icons */
+/* Neon colors for icons - updated to pastels */
 .neon-purple {
-  color: #9e00ff;
+  color: #d4b2ff;
   text-shadow:
-    0 0 6px #9e00ff,
-    0 0 10px #9e00ff,
-    0 0 20px #bb33ff;
+    0 0 6px #d4b2ff,
+    0 0 10px #d4b2ff,
+    0 0 20px #e6ccff;
 }
 
 .neon-blue {
-  color: #4b9eff;
+  color: #b3d9ff;
   text-shadow:
-    0 0 6px #4b9eff,
-    0 0 10px #4b9eff,
-    0 0 20px #33bbff;
+    0 0 6px #b3d9ff,
+    0 0 10px #b3d9ff,
+    0 0 20px #cce7ff;
 }
 
 .neon-cyan {
-  color: #00d4ff;
+  color: #b3f0ff;
   text-shadow:
-    0 0 6px #00d4ff,
-    0 0 10px #00d4ff,
-    0 0 20px #33eeff;
+    0 0 6px #b3f0ff,
+    0 0 10px #b3f0ff,
+    0 0 20px #ccf5ff;
 }
 
 .neon-pink {
-  color: #ff33cc;
+  color: #ffb3e6;
   text-shadow:
-    0 0 6px #ff33cc,
-    0 0 10px #ff33cc,
-    0 0 20px #ff66dd;
+    0 0 6px #ffb3e6,
+    0 0 10px #ffb3e6,
+    0 0 20px #ffcceb;
 }
 
 .neon-green {
-  color: #7bff8c;
+  color: #b3ffcc;
   text-shadow:
-    0 0 6px #7bff8c,
-    0 0 10px #7bff8c,
-    0 0 20px #99ffaa;
+    0 0 6px #b3ffcc,
+    0 0 10px #b3ffcc,
+    0 0 20px #ccffe0;
 }
 
 .neon-orange {
-  color: #ff9933;
+  color: #ffccb3;
   text-shadow:
-    0 0 6px #ff9933,
-    0 0 10px #ff9933,
-    0 0 20px #ffaa44;
+    0 0 6px #ffccb3,
+    0 0 10px #ffccb3,
+    0 0 20px #ffe0cc;
 }
 
 .neon-yellow {
-  color: #fff966;
+  color: #ffffb3;
   text-shadow:
-    0 0 6px #fff966,
-    0 0 10px #fff966,
-    0 0 20px #ffff88;
+    0 0 6px #ffffb3,
+    0 0 10px #ffffb3,
+    0 0 20px #ffffcc;
 }
 
 .content h3 {
   margin: 0 0 0.3rem 0;
-  color: #fff;
+  color: #6b618d;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 1.2rem;
@@ -450,7 +472,7 @@ button:hover {
 .content p {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  color: #ccc;
+  color: #a388b5;
   font-size: 0.95rem;
   line-height: 1.3;
 }

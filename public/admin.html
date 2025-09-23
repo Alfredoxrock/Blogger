@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Write — Ink & Pages Admin</title>
+    <meta name="description" content="Create and manage blog posts for Ink & Pages." />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/blog.css">
+    <link rel="stylesheet" href="styles/admin.css">
+</head>
+
+<body>
+    <div class="wrap admin-wrap" id="app">
+        <header>
+            <div class="brand">
+                <div class="logo">IP</div>
+                <div>
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">Ink & Pages</a></h1>
+                    <div class="muted">Admin Panel</div>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="btn" href="index.html">Home</a>
+                <a class="btn" href="blog.html">All Posts</a>
+                <a class="btn btn-primary" href="admin.html">Write</a>
+                <button class="btn" id="exportBtn">Export</button>
+                <button class="btn" id="importBtn">Import</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+            </nav>
+        </header>
+
+        <main class="admin-main">
+            <!-- Editor Section -->
+            <section class="editor-section" id="editorSection">
+                <div class="editor-header">
+                    <h2 id="editorTitle">Write New Post</h2>
+                    <div class="editor-actions">
+                        <button class="btn" id="previewBtn">Preview</button>
+                        <button class="btn" id="saveDraftBtn">Save Draft</button>
+                        <button class="btn btn-primary" id="publishBtn">Publish</button>
+                        <button class="btn" id="cancelBtn" style="display: none;">Cancel</button>
+                    </div>
+                </div>
+
+                <form class="editor-form" id="postForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postTitle">Title</label>
+                            <input type="text" id="postTitle" name="title" placeholder="Enter post title..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postSlug">Slug (URL)</label>
+                            <input type="text" id="postSlug" name="slug" placeholder="auto-generated">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postCategory">Category</label>
+                            <select id="postCategory" name="category">
+                                <option value="">Select category...</option>
+                                <option value="fiction">Fiction</option>
+                                <option value="craft">Writing Craft</option>
+                                <option value="prompts">Prompts</option>
+                                <option value="essays">Essays</option>
+                                <option value="reviews">Reviews</option>
+                                <option value="personal">Personal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="postTags">Tags</label>
+                            <input type="text" id="postTags" name="tags" placeholder="tag1, tag2, tag3...">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postDate">Publish Date</label>
+                            <input type="date" id="postDate" name="date">
+                        </div>
+                        <div class="form-group">
+                            <label for="postStatus">Status</label>
+                            <select id="postStatus" name="status">
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
+                                <option value="scheduled">Scheduled</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postExcerpt">Excerpt</label>
+                        <textarea id="postExcerpt" name="excerpt" rows="3"
+                            placeholder="Brief description of the post..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postBody">Content</label>
+                        <div class="editor-toolbar">
+                            <button type="button" class="editor-btn" data-action="bold" title="Bold">B</button>
+                            <button type="button" class="editor-btn" data-action="italic" title="Italic">I</button>
+                            <button type="button" class="editor-btn" data-action="heading" title="Heading">#</button>
+                            <button type="button" class="editor-btn" data-action="link" title="Link">🔗</button>
+                            <button type="button" class="editor-btn" data-action="quote" title="Quote">❝</button>
+                            <button type="button" class="editor-btn" data-action="list" title="List">•</button>
+                            <button type="button" class="editor-btn" data-action="code" title="Code">&lt;/&gt;</button>
+                            <span class="separator">|</span>
+                            <button type="button" class="editor-btn" data-action="undo" title="Undo">↶</button>
+                            <button type="button" class="editor-btn" data-action="redo" title="Redo">↷</button>
+                        </div>
+                        <textarea id="postBody" name="body" rows="20"
+                            placeholder="Start writing your post..."></textarea>
+                        <div class="editor-meta">
+                            <span id="wordCount">0 words</span>
+                            <span id="readTime">0 min read</span>
+                            <span id="charCount">0 characters</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="postFeatured" name="featured">
+                                Featured Post
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="postComments" name="allowComments" checked>
+                                Allow Comments
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Posts Management Section -->
+            <section class="posts-management" id="postsManagement">
+                <div class="management-header">
+                    <h2>Manage Posts</h2>
+                    <div class="management-controls">
+                        <input type="search" id="managementSearch" placeholder="Search posts...">
+                        <select id="managementFilter">
+                            <option value="">All Posts</option>
+                            <option value="published">Published</option>
+                            <option value="draft">Drafts</option>
+                            <option value="scheduled">Scheduled</option>
+                        </select>
+                        <button class="btn btn-primary" id="newPostBtn">New Post</button>
+                    </div>
+                </div>
+
+                <div class="posts-table-container">
+                    <table class="posts-table" id="postsTable">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="postsTableBody">
+                            <!-- Posts will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Preview Modal -->
+        <div class="overlay" id="previewOverlay">
+            <div class="modal preview-modal">
+                <div class="modal-header">
+                    <h3>Preview</h3>
+                    <button class="close" id="closePreview">Close</button>
+                </div>
+                <div class="preview-content" id="previewContent">
+                    <!-- Preview will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="overlay" id="deleteModal">
+            <div class="modal small-modal">
+                <div class="modal-header">
+                    <h3>Confirm Delete</h3>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this post? This action cannot be undone.</p>
+                    <div class="modal-actions">
+                        <button class="btn" id="cancelDelete">Cancel</button>
+                        <button class="btn btn-danger" id="confirmDelete">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/blog.js"></script>
+    <script src="scripts/admin.js"></script>
+</body>
+
+</html>

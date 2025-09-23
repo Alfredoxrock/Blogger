@@ -1,149 +1,249 @@
-const form = document.getElementById('postForm');
-const postsContainer = document.getElementById('postsContainer');
+// Main application initialization and page-specific functionality
 
-const API_BASE_URL = 'https://blogger-txm3.onrender.com/api';
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize smooth scrolling for anchor links
+    initSmoothScrolling();
 
-let posts = [];
+    // Initialize responsive navigation
+    initMobileNav();
 
-async function fetchPosts() {
-    const res = await fetch(`${API_BASE_URL}/posts`);
-    await res.json().then((result) => {
-        posts = result;
-        displayPosts();
-    });
-}
+    // Initialize search functionality
+    initSearch();
 
-const postsPerPage = 10;
-let currentPage = 1;
+    // Initialize theme handling
+    initTheme();
 
-function escapeHTML(str) {
-    return str.replace(/[&<>"']/g, function (m) {
-        return ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;'
-        })[m];
-    });
-}
-
-function displayPosts(page = 1) {
-    postsContainer.innerHTML = '';
-
-    const totalPages = Math.ceil(posts.length / postsPerPage);
-    if (posts.length === 0) {
-        postsContainer.innerHTML = '<p class="no-posts">No posts yet. Be the first to write one!</p>';
-        return;
-    }
-
-    // Clamp page number
-    page = Math.min(Math.max(page, 1), totalPages);
-    currentPage = page;
-
-    // Calculate slice indices for pagination (newest posts first)
-    const start = (page - 1) * postsPerPage;
-    const end = start + postsPerPage;
-
-    const postsToShow = posts.slice(start, end);
-
-    postsToShow.forEach(({ title, content }) => {
-        const postElem = document.createElement('article');
-        postElem.className = 'post';
-
-        postElem.innerHTML = `
-      <h2>${escapeHTML(title)}</h2>
-      <p>${escapeHTML(content)}</p>
-    `;
-
-        postsContainer.appendChild(postElem);
-    });
-
-    displayPagination(totalPages, page);
-}
-
-function displayPagination(totalPages, currentPage) {
-    // Remove old pagination if exists
-    const oldPagination = document.getElementById('pagination');
-    if (oldPagination) oldPagination.remove();
-
-    if (totalPages <= 1) return; // No pagination needed
-
-    const pagination = document.createElement('nav');
-    pagination.id = 'pagination';
-    pagination.style.textAlign = 'center';
-    pagination.style.marginTop = '1rem';
-    pagination.style.userSelect = 'none';
-
-    // Create Previous arrow
-    const prev = document.createElement('button');
-    prev.textContent = '←';
-    prev.disabled = currentPage === 1;
-    prev.style.margin = '0 5px';
-    prev.onclick = () => displayPosts(currentPage - 1);
-    pagination.appendChild(prev);
-
-    // Show page numbers, but if many pages, show only some for readability
-    // For simplicity, show up to 5 pages max, centered around current page
-
-    let startPage = 1;
-    let endPage = totalPages;
-    if (totalPages > 5) {
-        if (currentPage <= 3) {
-            startPage = 1;
-            endPage = 5;
-        } else if (currentPage + 2 >= totalPages) {
-            startPage = totalPages - 4;
-            endPage = totalPages;
-        } else {
-            startPage = currentPage - 2;
-            endPage = currentPage + 2;
-        }
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-        const pageBtn = document.createElement('button');
-        pageBtn.textContent = i;
-        pageBtn.style.margin = '0 3px';
-        pageBtn.disabled = i === currentPage;
-        if (!pageBtn.disabled) {
-            pageBtn.style.cursor = 'pointer';
-            pageBtn.onclick = () => displayPosts(i);
-        }
-        pagination.appendChild(pageBtn);
-    }
-
-    // Create Next arrow
-    const next = document.createElement('button');
-    next.textContent = '→';
-    next.disabled = currentPage === totalPages;
-    next.style.margin = '0 5px';
-    next.onclick = () => displayPosts(currentPage + 1);
-    pagination.appendChild(next);
-
-    postsContainer.after(pagination);
-}
-
-form.addEventListener('submit', async e => {
-    e.preventDefault();
-
-    const title = form.title.value.trim();
-    const content = form.content.value.trim();
-
-    if (title && content) {
-        await fetch(`${API_BASE_URL}/posts`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, content }),
-        });
-
-        form.reset();
-        fetchPosts();
-    }
+    // Page-specific initialization
+    const currentPage = getCurrentPage();
+    initPageSpecific(currentPage);
 });
 
-fetchPosts();
+function getCurrentPage() {
+    const path = window.location.pathname;
+    if (path.includes('blog.html')) return 'blog';
+    if (path.includes('admin.html')) return 'admin';
+    if (path.includes('categories.html')) return 'categories';
+    if (path.includes('about.html')) return 'about';
+    if (path.includes('contact.html')) return 'contact';
+    if (path.includes('archive.html')) return 'archive';
+    return 'home';
+}
 
+function initPageSpecific(page) {
+    switch (page) {
+        case 'home':
+            initHomePage();
+            break;
+        case 'blog':
+            initBlogPage();
+            break;
+        case 'categories':
+            initCategoriesPage();
+            break;
+        case 'archive':
+            initArchivePage();
+            break;
+        default:
+            break;
+    }
+}
 
-// Initial render
-displayPosts(currentPage);
+function initHomePage() {
+    // Show featured posts and recent posts
+    if (window.blogManager) {
+        const featuredPosts = blogManager.getFeaturedPosts().slice(0, 3);
+        const recentPosts = blogManager.getRecentPosts(6);
+
+        // Update the posts display to show recent posts
+        blogManager.renderPosts();
+    }
+}
+
+function initBlogPage() {
+    // Initialize blog listing with pagination and filtering
+    if (window.blogManager) {
+        // Check for URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category');
+        const tag = urlParams.get('tag');
+        const search = urlParams.get('search');
+
+        if (category) {
+            blogManager.setCategoryFilter(category);
+        }
+        if (search) {
+            const searchInput = document.getElementById('q');
+            if (searchInput) {
+                searchInput.value = search;
+                blogManager.currentFilter = search;
+            }
+        }
+
+        blogManager.renderPosts();
+    }
+}
+
+function initCategoriesPage() {
+    // Initialize categories view
+    if (window.blogManager) {
+        const categories = blogManager.getCategories();
+        renderCategoryList(categories);
+    }
+}
+
+function initArchivePage() {
+    // Initialize archive view with posts grouped by date
+    if (window.blogManager) {
+        renderArchive();
+    }
+}
+
+function renderCategoryList(categories) {
+    const container = document.getElementById('categories-list');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    categories.forEach(category => {
+        const posts = blogManager.getPostsByCategory(category);
+        const categoryCard = document.createElement('div');
+        categoryCard.className = 'category-card';
+        categoryCard.innerHTML = `
+      <h3><a href="blog.html?category=${encodeURIComponent(category)}">${blogManager.escapeHtml(category)}</a></h3>
+      <p>${posts.length} post${posts.length !== 1 ? 's' : ''}</p>
+      <div class="category-posts">
+        ${posts.slice(0, 3).map(post => `
+          <div class="category-post">
+            <a href="blog.html" onclick="blogManager.viewPost('${post.id}')">${blogManager.escapeHtml(post.title)}</a>
+            <span class="post-date">${blogManager.formatDate(post.date)}</span>
+          </div>
+        `).join('')}
+        ${posts.length > 3 ? `<div class="more-posts"><a href="blog.html?category=${encodeURIComponent(category)}">View all ${posts.length} posts</a></div>` : ''}
+      </div>
+    `;
+        container.appendChild(categoryCard);
+    });
+}
+
+function renderArchive() {
+    const container = document.getElementById('archive-list');
+    if (!container) return;
+
+    const postsByYear = {};
+    blogManager.posts.forEach(post => {
+        const year = new Date(post.date).getFullYear();
+        if (!postsByYear[year]) postsByYear[year] = [];
+        postsByYear[year].push(post);
+    });
+
+    container.innerHTML = '';
+
+    Object.keys(postsByYear)
+        .sort((a, b) => b - a)
+        .forEach(year => {
+            const yearSection = document.createElement('div');
+            yearSection.className = 'archive-year';
+            yearSection.innerHTML = `
+        <h3>${year}</h3>
+        <div class="archive-posts">
+          ${postsByYear[year].map(post => `
+            <div class="archive-post">
+              <span class="post-date">${blogManager.formatDate(post.date)}</span>
+              <a href="blog.html" onclick="blogManager.viewPost('${post.id}')">${blogManager.escapeHtml(post.title)}</a>
+              <div class="post-tags">
+                ${(post.tags || []).map(tag => `<span class="tag">${blogManager.escapeHtml(tag)}</span>`).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+            container.appendChild(yearSection);
+        });
+}
+
+function initSmoothScrolling() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+}
+
+function initMobileNav() {
+    // Add mobile menu toggle if needed
+    const nav = document.querySelector('.nav');
+    if (!nav) return;
+
+    // Add responsive behavior for smaller screens
+    window.addEventListener('resize', () => {
+        // Handle nav responsiveness
+    });
+}
+
+function initSearch() {
+    const searchForm = document.querySelector('.search');
+    const searchInput = document.getElementById('q');
+
+    if (searchInput) {
+        // Add search suggestions (could be expanded)
+        searchInput.addEventListener('input', debounce(() => {
+            const query = searchInput.value.trim();
+            if (query.length > 2 && window.blogManager) {
+                // Could add search suggestions here
+            }
+        }, 300));
+    }
+}
+
+function initTheme() {
+    // Handle theme switching if implemented
+    // For now, we're using a fixed dark theme
+}
+
+// Utility functions
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+function throttle(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        if (!timeout) {
+            timeout = setTimeout(() => {
+                timeout = null;
+                func(...args);
+            }, wait);
+        }
+    };
+}
+
+// Global utilities
+window.utils = {
+    debounce,
+    throttle,
+    getCurrentPage,
+    scrollToTop: () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    copyToClipboard: async (text) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            return true;
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            return false;
+        }
+    }
+};
