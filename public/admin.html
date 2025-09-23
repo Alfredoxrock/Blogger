@@ -11,6 +11,27 @@
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="styles/blog.css">
     <link rel="stylesheet" href="styles/admin.css">
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxLfRhjINJFiSjGJ7Vg2kCHYH3t9eTDgA",
+            authDomain: "dreamworld-f7a4b.firebaseapp.com",
+            projectId: "dreamworld-f7a4b",
+            storageBucket: "dreamworld-f7a4b.firebasestorage.app",
+            messagingSenderId: "330382191425",
+            appId: "1:330382191425:web:501903d678634f5eab4fc0"
+        };
+
+        // Initialize Firebase
+        window.firebaseApp = initializeApp(firebaseConfig);
+        window.db = getFirestore(window.firebaseApp);
+        window.auth = getAuth(window.firebaseApp);
+    </script>
 </head>
 
 <body>
@@ -203,8 +224,7 @@
         </div>
     </div>
 
-    <script src="scripts/blog.js"></script>
-    <script src="scripts/admin.js"></script>
+    <script src="scripts/firestore-admin.js" type="module"></script>
 </body>
 
 </html>

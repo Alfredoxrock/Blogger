@@ -10,6 +10,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="styles/blog.css">
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxLfRhjINJFiSjGJ7Vg2kCHYH3t9eTDgA",
+            authDomain: "dreamworld-f7a4b.firebaseapp.com",
+            projectId: "dreamworld-f7a4b",
+            storageBucket: "dreamworld-f7a4b.firebasestorage.app",
+            messagingSenderId: "330382191425",
+            appId: "1:330382191425:web:501903d678634f5eab4fc0"
+        };
+
+        // Initialize Firebase
+        window.firebaseApp = initializeApp(firebaseConfig);
+        window.db = getFirestore(window.firebaseApp);
+        window.auth = getAuth(window.firebaseApp);
+    </script>
 </head>
 
 <body>
@@ -150,282 +171,284 @@
         </div>
     </div>
 
-    <script src="scripts/blog.js"></script>
-    <script src="scripts/main.js"></script>
-    <script>
-        // Blog page specific functionality
-        class BlogPageManager {
-            constructor() {
-                this.postsPerPage = 12;
+    <!-- Scripts -->
+    <script type="module" src="scripts/firestore-blog.js"></script>
+</body>
+<script src="scripts/main.js"></script>
+<script>
+    // Blog page specific functionality
+    class BlogPageManager {
+        constructor() {
+            this.postsPerPage = 12;
+            this.currentPage = 1;
+            this.currentSort = 'date-desc';
+            this.viewMode = 'grid'; // 'grid' or 'list'
+            this.init();
+        }
+
+        init() {
+            this.setupEventListeners();
+            this.populateFilters();
+            this.initializeFromURL();
+        }
+
+        setupEventListeners() {
+            // Filter controls
+            document.getElementById('categoryFilter')?.addEventListener('change', (e) => {
+                blogManager.setCategoryFilter(e.target.value);
                 this.currentPage = 1;
-                this.currentSort = 'date-desc';
-                this.viewMode = 'grid'; // 'grid' or 'list'
-                this.init();
-            }
+            });
 
-            init() {
-                this.setupEventListeners();
-                this.populateFilters();
-                this.initializeFromURL();
-            }
-
-            setupEventListeners() {
-                // Filter controls
-                document.getElementById('categoryFilter')?.addEventListener('change', (e) => {
-                    blogManager.setCategoryFilter(e.target.value);
-                    this.currentPage = 1;
-                });
-
-                document.getElementById('sortBy')?.addEventListener('change', (e) => {
-                    this.currentSort = e.target.value;
-                    this.applySorting();
-                    this.currentPage = 1;
-                });
-
-                document.getElementById('clearFilters')?.addEventListener('click', () => {
-                    this.clearAllFilters();
-                });
-
-                // View toggle
-                document.getElementById('gridView')?.addEventListener('click', () => {
-                    this.setViewMode('grid');
-                });
-
-                document.getElementById('listView')?.addEventListener('click', () => {
-                    this.setViewMode('list');
-                });
-
-                // Pagination
-                document.getElementById('prevPage')?.addEventListener('click', () => {
-                    if (this.currentPage > 1) {
-                        this.currentPage--;
-                        this.renderCurrentPage();
-                    }
-                });
-
-                document.getElementById('nextPage')?.addEventListener('click', () => {
-                    const totalPages = this.getTotalPages();
-                    if (this.currentPage < totalPages) {
-                        this.currentPage++;
-                        this.renderCurrentPage();
-                    }
-                });
-
-                // Load more
-                document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
-                    this.loadMorePosts();
-                });
-            }
-
-            populateFilters() {
-                const categoryFilter = document.getElementById('categoryFilter');
-                if (categoryFilter && blogManager) {
-                    const categories = blogManager.getCategories();
-                    categories.forEach(category => {
-                        const option = document.createElement('option');
-                        option.value = category;
-                        option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
-                        categoryFilter.appendChild(option);
-                    });
-                }
-            }
-
-            initializeFromURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const category = urlParams.get('category');
-                const search = urlParams.get('search');
-                const page = urlParams.get('page');
-
-                if (category) {
-                    const categoryFilter = document.getElementById('categoryFilter');
-                    if (categoryFilter) categoryFilter.value = category;
-                    blogManager.setCategoryFilter(category);
-                }
-
-                if (search) {
-                    const searchInput = document.getElementById('q');
-                    if (searchInput) searchInput.value = search;
-                    blogManager.currentFilter = search;
-                }
-
-                if (page) {
-                    this.currentPage = parseInt(page) || 1;
-                }
-
-                this.renderCurrentPage();
-            }
-
-            applySorting() {
-                if (!blogManager) return;
-
-                const [field, direction] = this.currentSort.split('-');
-
-                blogManager.posts.sort((a, b) => {
-                    let comparison = 0;
-
-                    if (field === 'date') {
-                        comparison = (a.date || '').localeCompare(b.date || '');
-                    } else if (field === 'title') {
-                        comparison = (a.title || '').localeCompare(b.title || '');
-                    }
-
-                    return direction === 'desc' ? -comparison : comparison;
-                });
-            }
-
-            setViewMode(mode) {
-                this.viewMode = mode;
-                const postsContainer = document.getElementById('posts');
-                if (postsContainer) {
-                    postsContainer.className = mode === 'list' ? 'posts posts-list' : 'posts';
-                }
-
-                // Update button states
-                const gridBtn = document.getElementById('gridView');
-                const listBtn = document.getElementById('listView');
-
-                if (gridBtn && listBtn) {
-                    gridBtn.classList.toggle('btn-primary', mode === 'grid');
-                    listBtn.classList.toggle('btn-primary', mode === 'list');
-                }
-            }
-
-            clearAllFilters() {
-                blogManager.clearFilters();
-                document.getElementById('categoryFilter').value = '';
-                document.getElementById('sortBy').value = 'date-desc';
-                this.currentSort = 'date-desc';
-                this.currentPage = 1;
-                this.updateURL();
-            }
-
-            getTotalPages() {
-                if (!blogManager) return 1;
-                const filteredPosts = blogManager.getFilteredPosts();
-                return Math.ceil(filteredPosts.length / this.postsPerPage);
-            }
-
-            renderCurrentPage() {
-                if (!blogManager) return;
-
+            document.getElementById('sortBy')?.addEventListener('change', (e) => {
+                this.currentSort = e.target.value;
                 this.applySorting();
-                const filteredPosts = blogManager.getFilteredPosts();
-                const totalPages = Math.ceil(filteredPosts.length / this.postsPerPage);
+                this.currentPage = 1;
+            });
 
-                // Calculate pagination
-                const startIndex = (this.currentPage - 1) * this.postsPerPage;
-                const endIndex = startIndex + this.postsPerPage;
-                const postsToShow = filteredPosts.slice(startIndex, endIndex);
+            document.getElementById('clearFilters')?.addEventListener('click', () => {
+                this.clearAllFilters();
+            });
 
-                // Render posts
-                const postsContainer = document.getElementById('posts');
-                if (postsContainer) {
-                    postsContainer.innerHTML = '';
+            // View toggle
+            document.getElementById('gridView')?.addEventListener('click', () => {
+                this.setViewMode('grid');
+            });
 
-                    if (postsToShow.length === 0) {
-                        postsContainer.innerHTML = `
+            document.getElementById('listView')?.addEventListener('click', () => {
+                this.setViewMode('list');
+            });
+
+            // Pagination
+            document.getElementById('prevPage')?.addEventListener('click', () => {
+                if (this.currentPage > 1) {
+                    this.currentPage--;
+                    this.renderCurrentPage();
+                }
+            });
+
+            document.getElementById('nextPage')?.addEventListener('click', () => {
+                const totalPages = this.getTotalPages();
+                if (this.currentPage < totalPages) {
+                    this.currentPage++;
+                    this.renderCurrentPage();
+                }
+            });
+
+            // Load more
+            document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
+                this.loadMorePosts();
+            });
+        }
+
+        populateFilters() {
+            const categoryFilter = document.getElementById('categoryFilter');
+            if (categoryFilter && blogManager) {
+                const categories = blogManager.getCategories();
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                    categoryFilter.appendChild(option);
+                });
+            }
+        }
+
+        initializeFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('category');
+            const search = urlParams.get('search');
+            const page = urlParams.get('page');
+
+            if (category) {
+                const categoryFilter = document.getElementById('categoryFilter');
+                if (categoryFilter) categoryFilter.value = category;
+                blogManager.setCategoryFilter(category);
+            }
+
+            if (search) {
+                const searchInput = document.getElementById('q');
+                if (searchInput) searchInput.value = search;
+                blogManager.currentFilter = search;
+            }
+
+            if (page) {
+                this.currentPage = parseInt(page) || 1;
+            }
+
+            this.renderCurrentPage();
+        }
+
+        applySorting() {
+            if (!blogManager) return;
+
+            const [field, direction] = this.currentSort.split('-');
+
+            blogManager.posts.sort((a, b) => {
+                let comparison = 0;
+
+                if (field === 'date') {
+                    comparison = (a.date || '').localeCompare(b.date || '');
+                } else if (field === 'title') {
+                    comparison = (a.title || '').localeCompare(b.title || '');
+                }
+
+                return direction === 'desc' ? -comparison : comparison;
+            });
+        }
+
+        setViewMode(mode) {
+            this.viewMode = mode;
+            const postsContainer = document.getElementById('posts');
+            if (postsContainer) {
+                postsContainer.className = mode === 'list' ? 'posts posts-list' : 'posts';
+            }
+
+            // Update button states
+            const gridBtn = document.getElementById('gridView');
+            const listBtn = document.getElementById('listView');
+
+            if (gridBtn && listBtn) {
+                gridBtn.classList.toggle('btn-primary', mode === 'grid');
+                listBtn.classList.toggle('btn-primary', mode === 'list');
+            }
+        }
+
+        clearAllFilters() {
+            blogManager.clearFilters();
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('sortBy').value = 'date-desc';
+            this.currentSort = 'date-desc';
+            this.currentPage = 1;
+            this.updateURL();
+        }
+
+        getTotalPages() {
+            if (!blogManager) return 1;
+            const filteredPosts = blogManager.getFilteredPosts();
+            return Math.ceil(filteredPosts.length / this.postsPerPage);
+        }
+
+        renderCurrentPage() {
+            if (!blogManager) return;
+
+            this.applySorting();
+            const filteredPosts = blogManager.getFilteredPosts();
+            const totalPages = Math.ceil(filteredPosts.length / this.postsPerPage);
+
+            // Calculate pagination
+            const startIndex = (this.currentPage - 1) * this.postsPerPage;
+            const endIndex = startIndex + this.postsPerPage;
+            const postsToShow = filteredPosts.slice(startIndex, endIndex);
+
+            // Render posts
+            const postsContainer = document.getElementById('posts');
+            if (postsContainer) {
+                postsContainer.innerHTML = '';
+
+                if (postsToShow.length === 0) {
+                    postsContainer.innerHTML = `
               <div class="post" style="text-align: center; color: var(--muted); grid-column: 1 / -1;">
                 <h3>No posts found</h3>
                 <p>Try adjusting your search terms or browse all posts.</p>
               </div>
             `;
-                    } else {
-                        postsToShow.forEach(post => {
-                            const postCard = blogManager.createPostCard(post);
-                            postsContainer.appendChild(postCard);
-                        });
-                    }
-                }
-
-                // Update pagination
-                this.updatePagination(totalPages);
-
-                // Update count
-                blogManager.updatePostCount(filteredPosts.length);
-
-                // Update URL
-                this.updateURL();
-            }
-
-            updatePagination(totalPages) {
-                const pagination = document.getElementById('pagination');
-                const prevBtn = document.getElementById('prevPage');
-                const nextBtn = document.getElementById('nextPage');
-                const pageNumbers = document.getElementById('pageNumbers');
-
-                if (!pagination || !prevBtn || !nextBtn || !pageNumbers) return;
-
-                if (totalPages <= 1) {
-                    pagination.style.display = 'none';
-                    return;
-                }
-
-                pagination.style.display = 'flex';
-
-                // Update prev/next buttons
-                prevBtn.disabled = this.currentPage === 1;
-                nextBtn.disabled = this.currentPage === totalPages;
-
-                // Update page numbers
-                pageNumbers.innerHTML = '';
-
-                // Show up to 5 page numbers
-                let startPage = Math.max(1, this.currentPage - 2);
-                let endPage = Math.min(totalPages, startPage + 4);
-
-                if (endPage - startPage < 4) {
-                    startPage = Math.max(1, endPage - 4);
-                }
-
-                for (let i = startPage; i <= endPage; i++) {
-                    const pageBtn = document.createElement('button');
-                    pageBtn.className = `btn ${i === this.currentPage ? 'btn-primary' : ''}`;
-                    pageBtn.textContent = i;
-                    pageBtn.disabled = i === this.currentPage;
-                    pageBtn.addEventListener('click', () => {
-                        this.currentPage = i;
-                        this.renderCurrentPage();
+                } else {
+                    postsToShow.forEach(post => {
+                        const postCard = blogManager.createPostCard(post);
+                        postsContainer.appendChild(postCard);
                     });
-                    pageNumbers.appendChild(pageBtn);
                 }
             }
 
-            loadMorePosts() {
-                // Alternative to pagination - loads more posts
-                this.postsPerPage += 6;
-                this.renderCurrentPage();
+            // Update pagination
+            this.updatePagination(totalPages);
+
+            // Update count
+            blogManager.updatePostCount(filteredPosts.length);
+
+            // Update URL
+            this.updateURL();
+        }
+
+        updatePagination(totalPages) {
+            const pagination = document.getElementById('pagination');
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            const pageNumbers = document.getElementById('pageNumbers');
+
+            if (!pagination || !prevBtn || !nextBtn || !pageNumbers) return;
+
+            if (totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
             }
 
-            updateURL() {
-                const params = new URLSearchParams();
+            pagination.style.display = 'flex';
 
-                if (blogManager.currentCategory) {
-                    params.set('category', blogManager.currentCategory);
-                }
+            // Update prev/next buttons
+            prevBtn.disabled = this.currentPage === 1;
+            nextBtn.disabled = this.currentPage === totalPages;
 
-                if (blogManager.currentFilter) {
-                    params.set('search', blogManager.currentFilter);
-                }
+            // Update page numbers
+            pageNumbers.innerHTML = '';
 
-                if (this.currentPage > 1) {
-                    params.set('page', this.currentPage.toString());
-                }
+            // Show up to 5 page numbers
+            let startPage = Math.max(1, this.currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
 
-                const newURL = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
-                window.history.replaceState({}, '', newURL);
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `btn ${i === this.currentPage ? 'btn-primary' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.disabled = i === this.currentPage;
+                pageBtn.addEventListener('click', () => {
+                    this.currentPage = i;
+                    this.renderCurrentPage();
+                });
+                pageNumbers.appendChild(pageBtn);
             }
         }
 
-        // Initialize blog page manager when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            // Wait for blogManager to be ready
-            setTimeout(() => {
-                if (window.blogManager) {
-                    window.blogPageManager = new BlogPageManager();
-                }
-            }, 100);
-        });
-    </script>
+        loadMorePosts() {
+            // Alternative to pagination - loads more posts
+            this.postsPerPage += 6;
+            this.renderCurrentPage();
+        }
+
+        updateURL() {
+            const params = new URLSearchParams();
+
+            if (blogManager.currentCategory) {
+                params.set('category', blogManager.currentCategory);
+            }
+
+            if (blogManager.currentFilter) {
+                params.set('search', blogManager.currentFilter);
+            }
+
+            if (this.currentPage > 1) {
+                params.set('page', this.currentPage.toString());
+            }
+
+            const newURL = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+            window.history.replaceState({}, '', newURL);
+        }
+    }
+
+    // Initialize blog page manager when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        // Wait for blogManager to be ready
+        setTimeout(() => {
+            if (window.blogManager) {
+                window.blogPageManager = new BlogPageManager();
+            }
+        }, 100);
+    });
+</script>
 </body>
 
 </html>
