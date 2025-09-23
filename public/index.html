@@ -53,7 +53,23 @@
           <input id="q" type="search" placeholder="Search posts..." aria-label="Search posts" />
           <button class="btn" id="searchBtn">Search</button>
         </div>
-        <a class="btn btn-primary" href="admin.html">Write</a>
+
+        <!-- Authentication-based navigation -->
+        <div id="authNavigation">
+          <!-- When not logged in -->
+          <div id="guestNav">
+            <a class="btn" href="login.html">Sign In</a>
+            <a class="btn btn-primary" href="register.html">Join</a>
+          </div>
+
+          <!-- When logged in -->
+          <div id="userNav" style="display: none;">
+            <a class="btn" href="user-dashboard.html" id="dashboardLink">Dashboard</a>
+            <a class="btn" href="admin.html" id="writePostLink" style="display: none;">Write</a>
+            <a class="btn" href="admin.html" id="adminLink" style="display: none;">Admin</a>
+            <button class="btn" id="signOutBtn">Sign Out</button>
+          </div>
+        </div>
       </nav>
     </header>
 
@@ -172,6 +188,78 @@
 
   <script src="scripts/firestore-blog.js" type="module"></script>
   <script src="scripts/main.js"></script>
+
+  <!-- Authentication integration -->
+  <script type="module">
+    import authService from './scripts/auth.js';
+
+    // DOM elements for authentication navigation
+    const guestNav = document.getElementById('guestNav');
+    const userNav = document.getElementById('userNav');
+    const dashboardLink = document.getElementById('dashboardLink');
+    const writePostLink = document.getElementById('writePostLink');
+    const adminLink = document.getElementById('adminLink');
+    const signOutBtn = document.getElementById('signOutBtn');
+
+    // Handle authentication state changes
+    authService.onAuthStateChange = (user, role) => {
+      if (user) {
+        // User is logged in
+        guestNav.style.display = 'none';
+        userNav.style.display = 'flex';
+
+        // Show role-based navigation
+        if (authService.hasPermission('canCreatePosts')) {
+          writePostLink.style.display = 'inline-block';
+        }
+
+        if (authService.isAdmin()) {
+          adminLink.style.display = 'inline-block';
+        }
+
+        // Update dashboard link with user name
+        if (user.displayName) {
+          dashboardLink.textContent = user.displayName.split(' ')[0];
+        }
+
+      } else {
+        // User is not logged in
+        guestNav.style.display = 'flex';
+        userNav.style.display = 'none';
+      }
+    };
+
+    // Handle sign out
+    signOutBtn.addEventListener('click', async () => {
+      try {
+        await authService.signOut();
+        // Navigation will update automatically via onAuthStateChange
+      } catch (error) {
+        console.error('Sign out error:', error);
+        alert('Failed to sign out. Please try again.');
+      }
+    });
+
+    // Update footer links based on auth state
+    function updateFooterLinks() {
+      const footerWriteLink = document.querySelector('footer a[href="admin.html"]');
+      if (footerWriteLink) {
+        if (authService.isAuthenticated() && authService.hasPermission('canCreatePosts')) {
+          footerWriteLink.style.display = 'block';
+        } else {
+          footerWriteLink.style.display = 'none';
+        }
+      }
+    }
+
+    // Update footer when auth state changes
+    authService.onAuthStateChange = ((originalCallback) => {
+      return function (user, role) {
+        if (originalCallback) originalCallback(user, role);
+        updateFooterLinks();
+      };
+    })(authService.onAuthStateChange);
+  </script>
 </body>
 
 </html>

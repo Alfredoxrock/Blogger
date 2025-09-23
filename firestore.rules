@@ -2,33 +2,175 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Blog posts - publicly readable, but only authenticated users can write
+    
+    // Helper functions for role checking
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function getUserRole() {
+      return getUserData().role;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && getUserRole() == 'admin';
+    }
+    
+    function isEditor() {
+      return isAuthenticated() && getUserRole() == 'editor';
+    }
+    
+    function isContributor() {
+      return isAuthenticated() && getUserRole() == 'contributor';
+    }
+    
+    function isEditorOrAbove() {
+      return isAdmin() || isEditor();
+    }
+    
+    function isContributorOrAbove() {
+      return isAdmin() || isEditor() || isContributor();
+    }
+    
+    function isOwner(authorId) {
+      return isAuthenticated() && request.auth.uid == authorId;
+    }
+    
+    function isActiveUser() {
+      return isAuthenticated() && getUserData().isActive == true;
+    }
+
+    // Users collection - manage user data and roles
+    match /users/{userId} {
+      // Users can read their own data, admins can read all
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      
+      // Users can update their own profile (except role), admins can update anything
+      allow update: if isAuthenticated() && (
+        (request.auth.uid == userId && 
+         !('role' in request.resource.data.diff(resource.data).affectedKeys()) &&
+         !('isActive' in request.resource.data.diff(resource.data).affectedKeys())) 
+        || isAdmin()
+      );
+      
+      // Only allow creation during registration (handled by Firebase Auth)
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Only admins can delete users
+      allow delete: if isAdmin();
+    }
+
+    // Blog posts - role-based access control
     match /posts/{postId} {
-      allow read: if true; // Anyone can read blog posts
-      allow write: if true; // Allow writes for testing (normally would require auth)
+      // Reading rules:
+      // - Published posts: everyone can read
+      // - Draft posts: only authors, editors, and admins
+      // - Pending posts: only authors, editors, and admins
+      allow read: if resource.data.status == 'published' 
+        || (isAuthenticated() && (
+          isOwner(resource.data.authorId) || 
+          isEditorOrAbove()
+        ));
+      
+      // Creation rules: contributors and above can create posts
+      allow create: if isContributorOrAbove() && isActiveUser() && 
+        request.resource.data.authorId == request.auth.uid;
+      
+      // Update rules:
+      // - Authors can edit their own posts (but not change status to published if contributor)
+      // - Editors and admins can edit any post
+      // - Contributors can only edit their own drafts
+      allow update: if isActiveUser() && (
+        (isOwner(resource.data.authorId) && (
+          isEditorOrAbove() || 
+          (isContributor() && resource.data.status == 'draft')
+        )) || isEditorOrAbove()
+      );
+      
+      // Delete rules: 
+      // - Admins can delete any post
+      // - Editors can delete any post
+      // - Authors cannot delete published posts
+      allow delete: if isActiveUser() && (
+        isEditorOrAbove() || 
+        (isOwner(resource.data.authorId) && resource.data.status != 'published')
+      );
     }
     
-    // Categories - publicly readable, authenticated write
+    // Categories - admin and editor management
     match /categories/{categoryId} {
-      allow read: if true;
-      allow write: if request.auth != null;
+      allow read: if true; // Everyone can read categories
+      allow write: if isEditorOrAbove() && isActiveUser();
     }
     
-    // Blog settings - publicly readable, authenticated write  
+    // Blog settings - admin only
     match /settings/{settingId} {
-      allow read: if true;
-      allow write: if request.auth != null;
+      allow read: if true; // Public settings can be read by anyone
+      allow write: if isAdmin() && isActiveUser();
     }
     
-    // Comments - publicly readable, authenticated write
+    // Comments - authenticated users can comment, with moderation
     match /comments/{commentId} {
-      allow read: if true;
-      allow write: if request.auth != null;
+      allow read: if true; // Comments are public
+      
+      // Users can create comments on published posts
+      allow create: if isAuthenticated() && isActiveUser() &&
+        request.resource.data.authorId == request.auth.uid;
+      
+      // Users can edit their own comments, moderators can edit any
+      allow update: if isActiveUser() && (
+        isOwner(resource.data.authorId) || 
+        isEditorOrAbove()
+      );
+      
+      // Users can delete their own comments, moderators can delete any
+      allow delete: if isActiveUser() && (
+        isOwner(resource.data.authorId) || 
+        isEditorOrAbove()
+      );
     }
     
-    // Subscribers - only authenticated users can read/write
+    // Subscribers - user management
     match /subscribers/{subscriberId} {
-      allow read, write: if request.auth != null;
+      // Users can manage their own subscription
+      allow read, write: if isAuthenticated() && 
+        request.auth.uid == subscriberId;
+      
+      // Admins can manage all subscriptions
+      allow read, write: if isAdmin();
+    }
+    
+    // User notifications (optional feature)
+    match /notifications/{notificationId} {
+      // Users can read their own notifications
+      allow read: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+      
+      // System can create notifications (server-side)
+      allow create: if true;
+      
+      // Users can mark their notifications as read
+      allow update: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+      
+      // Users can delete their own notifications
+      allow delete: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+    }
+    
+    // Analytics and stats (admin only)
+    match /analytics/{document=**} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Audit logs (admin only)
+    match /audit/{document=**} {
+      allow read: if isAdmin();
+      allow write: if false; // Only server-side writes
     }
   }
 }

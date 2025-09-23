@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - DreamLogTogether</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/styles.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .dashboard-header {
+            background: rgba(45, 25, 85, 0.95);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info h1 {
+            color: #FFD700;
+            font-size: 2rem;
+            margin: 0 0 10px 0;
+        }
+
+        .user-info .user-details {
+            color: #E6E6E6;
+            font-size: 1rem;
+        }
+
+        .user-role {
+            background: linear-gradient(135deg, #FFD700, #B8860B);
+            color: #1a0933;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FFD700, #B8860B);
+            color: #1a0933;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-danger {
+            background: rgba(220, 38, 38, 0.2);
+            color: #FCA5A5;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: rgba(45, 25, 85, 0.95);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 25px;
+        }
+
+        .dashboard-card h3 {
+            color: #FFD700;
+            font-size: 1.3rem;
+            margin: 0 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FFD700;
+            display: block;
+        }
+
+        .stat-label {
+            color: #E6E6E6;
+            font-size: 0.9rem;
+        }
+
+        .recent-posts {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .recent-post {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-info h4 {
+            color: #E6E6E6;
+            margin: 0 0 5px 0;
+            font-size: 1rem;
+        }
+
+        .post-meta {
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        .post-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-published {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86EFAC;
+        }
+
+        .status-draft {
+            background: rgba(251, 191, 36, 0.2);
+            color: #FCD34D;
+        }
+
+        .status-pending {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93C5FD;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .quick-action {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #E6E6E6;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .quick-action-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .profile-section {
+            margin-top: 30px;
+        }
+
+        .profile-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #E6E6E6;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #E6E6E6;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .admin-panel-link {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .dashboard-actions {
+                justify-content: center;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html">DreamLogTogether</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="blog.html">Blog</a>
+                <a href="categories.html">Categories</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="user-dashboard.html" class="active">Dashboard</a>
+                <button id="signOutBtn" class="btn-secondary">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- User Header -->
+        <div class="dashboard-header">
+            <div class="user-info">
+                <h1 id="userDisplayName">Welcome Back!</h1>
+                <div class="user-details">
+                    <span id="userEmail"></span> •
+                    <span class="user-role" id="userRole">User</span>
+                </div>
+            </div>
+            <div class="dashboard-actions">
+                <a href="index.html" class="btn btn-secondary">View Blog</a>
+                <a href="#" id="newPostBtn" class="btn btn-primary hidden">New Post</a>
+                <a href="admin.html" id="adminPanelBtn" class="btn admin-panel-link hidden">Admin Panel</a>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Stats Card -->
+            <div class="dashboard-card">
+                <h3>📊 Your Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalPosts">0</span>
+                        <span class="stat-label">Total Posts</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="publishedPosts">0</span>
+                        <span class="stat-label">Published</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="draftPosts">0</span>
+                        <span class="stat-label">Drafts</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalViews">0</span>
+                        <span class="stat-label">Total Views</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Posts -->
+            <div class="dashboard-card">
+                <h3>📝 Recent Posts</h3>
+                <ul class="recent-posts" id="recentPostsList">
+                    <li style="text-align: center; color: #999; padding: 20px;">
+                        No posts yet. Create your first post!
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dashboard-card">
+            <h3>⚡ Quick Actions</h3>
+            <div class="quick-actions" id="quickActions">
+                <a href="blog.html" class="quick-action">
+                    <span class="quick-action-icon">📖</span>
+                    <span>Browse Blog</span>
+                </a>
+                <a href="categories.html" class="quick-action">
+                    <span class="quick-action-icon">🏷️</span>
+                    <span>View Categories</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="dashboard-card profile-section">
+            <h3>👤 Profile Settings</h3>
+            <form class="profile-form" id="profileForm">
+                <div class="form-group">
+                    <label for="profileDisplayName">Display Name</label>
+                    <input type="text" id="profileDisplayName" name="displayName">
+                </div>
+                <div class="form-group">
+                    <label for="profileEmail">Email</label>
+                    <input type="email" id="profileEmail" name="email" disabled>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import authService from './scripts/auth.js';
+
+        // DOM elements
+        const userDisplayName = document.getElementById('userDisplayName');
+        const userEmail = document.getElementById('userEmail');
+        const userRole = document.getElementById('userRole');
+        const signOutBtn = document.getElementById('signOutBtn');
+        const newPostBtn = document.getElementById('newPostBtn');
+        const adminPanelBtn = document.getElementById('adminPanelBtn');
+        const totalPosts = document.getElementById('totalPosts');
+        const publishedPosts = document.getElementById('publishedPosts');
+        const draftPosts = document.getElementById('draftPosts');
+        const totalViews = document.getElementById('totalViews');
+        const recentPostsList = document.getElementById('recentPostsList');
+        const quickActions = document.getElementById('quickActions');
+        const profileForm = document.getElementById('profileForm');
+        const profileDisplayName = document.getElementById('profileDisplayName');
+        const profileEmail = document.getElementById('profileEmail');
+
+        // Auth state change handler
+        authService.onAuthStateChange = async (user, role) => {
+            if (!user) {
+                // Redirect to login if not authenticated
+                window.location.href = 'login.html?returnUrl=' + encodeURIComponent(window.location.href);
+                return;
+            }
+
+            // Update user info
+            updateUserInfo(user, role);
+
+            // Load user data
+            await loadUserData(user, role);
+
+            // Setup role-specific features
+            setupRoleFeatures(role);
+        };
+
+        // Update user info display
+        function updateUserInfo(user, role) {
+            userDisplayName.textContent = `Welcome back, ${user.displayName || 'User'}!`;
+            userEmail.textContent = user.email;
+            userRole.textContent = authService.formatRole(role);
+
+            // Update profile form
+            profileDisplayName.value = user.displayName || '';
+            profileEmail.value = user.email;
+        }
+
+        // Load user data and stats
+        async function loadUserData(user, role) {
+            try {
+                // This would integrate with the blog system to get user's posts
+                // For now, we'll use placeholder data
+
+                // Mock data - in real implementation, this would query Firestore
+                const userStats = {
+                    total: 0,
+                    published: 0,
+                    drafts: 0,
+                    views: 0
+                };
+
+                totalPosts.textContent = userStats.total;
+                publishedPosts.textContent = userStats.published;
+                draftPosts.textContent = userStats.drafts;
+                totalViews.textContent = userStats.views;
+
+                // Load recent posts (placeholder)
+                loadRecentPosts(user.uid);
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        // Load recent posts
+        function loadRecentPosts(userId) {
+            // Placeholder for recent posts
+            // In real implementation, this would query user's posts from Firestore
+            const posts = []; // Mock empty array
+
+            if (posts.length === 0) {
+                recentPostsList.innerHTML = `
+                    <li style="text-align: center; color: #999; padding: 20px;">
+                        No posts yet. Create your first post!
+                    </li>
+                `;
+                return;
+            }
+
+            recentPostsList.innerHTML = posts.map(post => `
+                <li class="recent-post">
+                    <div class="post-info">
+                        <h4>${post.title}</h4>
+                        <div class="post-meta">${new Date(post.createdAt).toLocaleDateString()}</div>
+                    </div>
+                    <span class="post-status status-${post.status}">${post.status}</span>
+                </li>
+            `).join('');
+        }
+
+        // Setup role-specific features
+        function setupRoleFeatures(role) {
+            // Show/hide features based on role
+            if (authService.hasPermission('canCreatePosts')) {
+                newPostBtn.classList.remove('hidden');
+
+                // Add quick action for creating posts
+                const createPostAction = document.createElement('a');
+                createPostAction.href = 'admin.html';
+                createPostAction.className = 'quick-action';
+                createPostAction.innerHTML = `
+                    <span class="quick-action-icon">✍️</span>
+                    <span>Write Post</span>
+                `;
+                quickActions.appendChild(createPostAction);
+            }
+
+            if (authService.isAdmin()) {
+                adminPanelBtn.classList.remove('hidden');
+
+                // Add admin quick actions
+                const manageUsersAction = document.createElement('a');
+                manageUsersAction.href = '#';
+                manageUsersAction.className = 'quick-action';
+                manageUsersAction.innerHTML = `
+                    <span class="quick-action-icon">👥</span>
+                    <span>Manage Users</span>
+                `;
+                manageUsersAction.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showUserManagement();
+                });
+                quickActions.appendChild(manageUsersAction);
+            }
+
+            if (authService.hasPermission('canViewDrafts')) {
+                const manageDraftsAction = document.createElement('a');
+                manageDraftsAction.href = 'admin.html';
+                manageDraftsAction.className = 'quick-action';
+                manageDraftsAction.innerHTML = `
+                    <span class="quick-action-icon">📋</span>
+                    <span>Manage Posts</span>
+                `;
+                quickActions.appendChild(manageDraftsAction);
+            }
+        }
+
+        // Show user management (admin only)
+        async function showUserManagement() {
+            if (!authService.isAdmin()) {
+                alert('Access denied. Admin privileges required.');
+                return;
+            }
+
+            try {
+                const users = await authService.getAllUsers();
+                // This would open a modal or navigate to user management page
+                // For now, just log the users
+                console.log('All users:', users);
+                alert(`Found ${users.length} users. Check console for details.`);
+            } catch (error) {
+                console.error('Error loading users:', error);
+                alert('Failed to load users.');
+            }
+        }
+
+        // Handle sign out
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await authService.signOut();
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                alert('Failed to sign out. Please try again.');
+            }
+        });
+
+        // Handle new post button
+        newPostBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'admin.html';
+        });
+
+        // Handle profile form submission
+        profileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(profileForm);
+            const displayName = formData.get('displayName');
+
+            try {
+                profileForm.classList.add('loading');
+
+                // Update display name in Firebase Auth
+                await authService.auth.currentUser.updateProfile({ displayName });
+
+                // Update user document in Firestore
+                await authService.updateUserDocument(authService.currentUser.uid, {
+                    displayName: displayName
+                });
+
+                alert('Profile updated successfully!');
+                userDisplayName.textContent = `Welcome back, ${displayName}!`;
+
+            } catch (error) {
+                console.error('Profile update error:', error);
+                alert('Failed to update profile. Please try again.');
+            } finally {
+                profileForm.classList.remove('loading');
+            }
+        });
+
+        // Initialize dashboard
+        console.log('Dashboard initialized');
+    </script>
+</body>
+
+</html>

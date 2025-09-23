@@ -49,6 +49,19 @@
                 <a class="btn" href="blog.html">All Posts</a>
                 <a class="btn btn-primary" href="admin.html">Write</a>
                 <button class="btn" id="exportBtn">Export</button>
+
+                <!-- Authentication navigation -->
+                <div id="authNavigation">
+                    <div id="guestNav">
+                        <a class="btn" href="login.html">Sign In</a>
+                    </div>
+
+                    <div id="userNav" style="display: none;">
+                        <a class="btn" href="user-dashboard.html" id="dashboardLink">Dashboard</a>
+                        <span id="userDisplayName" style="color: var(--accent); font-size: 14px; margin: 0 8px;"></span>
+                        <button class="btn" id="signOutBtn">Sign Out</button>
+                    </div>
+                </div>
                 <button class="btn" id="importBtn">Import</button>
                 <input type="file" id="importFile" accept=".json" style="display: none;">
             </nav>
@@ -225,6 +238,146 @@
     </div>
 
     <script src="scripts/firestore-admin.js" type="module"></script>
+
+    <!-- Authentication integration for admin panel -->
+    <script type="module">
+        import authService from './scripts/auth.js';
+
+        // DOM elements
+        const guestNav = document.getElementById('guestNav');
+        const userNav = document.getElementById('userNav');
+        const userDisplayName = document.getElementById('userDisplayName');
+        const signOutBtn = document.getElementById('signOutBtn');
+        const adminApp = document.getElementById('app');
+
+        // Create access denied screen
+        function showAccessDenied() {
+            adminApp.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; text-align: center;">
+                    <h1 style="color: var(--accent); font-size: 3rem; margin-bottom: 1rem;">🔒</h1>
+                    <h2 style="color: var(--text); margin-bottom: 1rem;">Access Denied</h2>
+                    <p style="color: var(--muted); margin-bottom: 2rem; max-width: 400px;">
+                        You need to be signed in with writing permissions to access the admin panel.
+                    </p>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="login.html?returnUrl=${encodeURIComponent(window.location.href)}" class="btn btn-primary">
+                            Sign In
+                        </a>
+                        <a href="index.html" class="btn">
+                            Back to Home
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Handle authentication state changes
+        authService.onAuthStateChange = (user, role) => {
+            if (!user) {
+                // Not logged in - show access denied
+                guestNav.style.display = 'flex';
+                userNav.style.display = 'none';
+                showAccessDenied();
+                return;
+            }
+
+            // Check if user has permission to create posts
+            if (!authService.hasPermission('canCreatePosts')) {
+                // Logged in but no write permissions
+                userNav.style.display = 'flex';
+                guestNav.style.display = 'none';
+                userDisplayName.textContent = user.displayName || user.email;
+
+                adminApp.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; text-align: center;">
+                        <h1 style="color: var(--accent); font-size: 3rem; margin-bottom: 1rem;">✋</h1>
+                        <h2 style="color: var(--text); margin-bottom: 1rem;">Insufficient Permissions</h2>
+                        <p style="color: var(--muted); margin-bottom: 2rem; max-width: 400px;">
+                            Your account (${authService.formatRole(role)}) doesn't have writing permissions. 
+                            Contact an administrator to request contributor access.
+                        </p>
+                        <div style="display: flex; gap: 1rem;">
+                            <a href="user-dashboard.html" class="btn btn-primary">
+                                Go to Dashboard
+                            </a>
+                            <a href="index.html" class="btn">
+                                Back to Home
+                            </a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // User has permission - show normal interface
+            guestNav.style.display = 'none';
+            userNav.style.display = 'flex';
+            userDisplayName.textContent = user.displayName || user.email;
+
+            // Update UI based on role
+            updateAdminUI(role);
+        };
+
+        // Update admin UI based on user role
+        function updateAdminUI(role) {
+            // Hide/show features based on permissions
+            const managePostsSection = document.querySelector('.admin-section:nth-child(2)');
+            const exportBtn = document.getElementById('exportBtn');
+
+            // Contributors can only see their own posts, editors+ can see all
+            if (authService.hasPermission('canViewDrafts')) {
+                if (managePostsSection) managePostsSection.style.display = 'block';
+                if (exportBtn) exportBtn.style.display = 'inline-flex';
+            }
+
+            // Update any role-specific messaging
+            const roleIndicator = document.createElement('div');
+            roleIndicator.style.cssText = `
+                background: rgba(212, 175, 55, 0.1);
+                border: 1px solid rgba(212, 175, 55, 0.3);
+                border-radius: 8px;
+                padding: 12px;
+                margin-bottom: 20px;
+                color: var(--accent);
+                font-size: 14px;
+                text-align: center;
+            `;
+
+            let roleMessage = '';
+            switch (role) {
+                case 'contributor':
+                    roleMessage = '📝 You can write and edit your own posts. Published posts require editorial approval.';
+                    break;
+                case 'editor':
+                    roleMessage = '✨ You can write, edit, and publish all posts. You can also manage categories.';
+                    break;
+                case 'admin':
+                    roleMessage = '👑 You have full administrative access to all blog features.';
+                    break;
+            }
+
+            if (roleMessage) {
+                roleIndicator.textContent = roleMessage;
+                const adminContent = document.querySelector('.admin-content');
+                if (adminContent) {
+                    adminContent.insertBefore(roleIndicator, adminContent.firstChild);
+                }
+            }
+        }
+
+        // Handle sign out
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await authService.signOut();
+                // Will redirect via onAuthStateChange
+            } catch (error) {
+                console.error('Sign out error:', error);
+                alert('Failed to sign out. Please try again.');
+            }
+        });
+
+        console.log('Admin authentication initialized');
+    </script>
 </body>
 
 </html>

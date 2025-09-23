@@ -185,6 +185,23 @@ Write dialogue, then cut it by half. Then cut it again.`,
     async addPost(postData) {
         try {
             const postsRef = collection(window.db, 'posts');
+
+            // Get current user info from auth service if available
+            let authorInfo = {
+                authorId: 'anonymous',
+                authorName: 'Anonymous',
+                authorEmail: null
+            };
+
+            if (window.authService && window.authService.isAuthenticated()) {
+                const user = window.authService.currentUser;
+                authorInfo = {
+                    authorId: user.uid,
+                    authorName: user.displayName || user.email.split('@')[0],
+                    authorEmail: user.email
+                };
+            }
+
             const post = {
                 title: postData.title || 'Untitled',
                 body: postData.body || '',
@@ -195,6 +212,7 @@ Write dialogue, then cut it by half. Then cut it again.`,
                 status: postData.status || 'draft',
                 readTime: this.calculateReadTime(postData.body || ''),
                 featured: postData.featured || false,
+                ...authorInfo, // Include author information
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp()
             };

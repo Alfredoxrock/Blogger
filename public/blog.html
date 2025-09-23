@@ -53,7 +53,20 @@
                     <input id="q" type="search" placeholder="Search posts..." aria-label="Search posts" />
                     <button class="btn" id="searchBtn">Search</button>
                 </div>
-                <a class="btn btn-primary" href="admin.html">Write</a>
+
+                <!-- Authentication navigation -->
+                <div id="authNavigation">
+                    <div id="guestNav">
+                        <a class="btn" href="login.html">Sign In</a>
+                        <a class="btn btn-primary" href="register.html">Join</a>
+                    </div>
+
+                    <div id="userNav" style="display: none;">
+                        <a class="btn" href="user-dashboard.html" id="dashboardLink">Dashboard</a>
+                        <a class="btn" href="admin.html" id="writePostLink" style="display: none;">Write</a>
+                        <button class="btn" id="signOutBtn">Sign Out</button>
+                    </div>
+                </div>
             </nav>
         </header>
 
