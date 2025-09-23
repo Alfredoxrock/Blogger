@@ -8,43 +8,77 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/styles.css">
     <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
         .dashboard-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px;
         }
 
         .dashboard-header {
-            background: rgba(45, 25, 85, 0.95);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            padding: 30px;
-            margin-bottom: 30px;
+            background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
+            border: 2px solid #475569;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 25px;
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #dc2626, #ea580c, #d97706, #0ea5e9, #0284c7, #374151);
         }
 
         .user-info h1 {
-            color: #FFD700;
-            font-size: 2rem;
-            margin: 0 0 10px 0;
+            color: #f8fafc;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: -0.025em;
         }
 
         .user-info .user-details {
-            color: #E6E6E6;
-            font-size: 1rem;
+            color: #cbd5e1;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .user-role {
-            background: linear-gradient(135deg, #FFD700, #B8860B);
-            color: #1a0933;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
+            background: linear-gradient(145deg, #0ea5e9, #0284c7);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow:
+                0 4px 14px rgba(14, 165, 233, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         .dashboard-actions {
@@ -54,85 +88,128 @@
         }
 
         .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 500;
+            padding: 12px 24px;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #FFD700, #B8860B);
-            color: #1a0933;
+            background: linear-gradient(145deg, #0ea5e9, #0284c7);
+            color: #fff;
+            border-color: #0ea5e9;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(145deg, #0284c7, #0369a1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
         }
 
         .btn-secondary {
-            background: rgba(255, 215, 0, 0.2);
-            color: #FFD700;
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            background: linear-gradient(145deg, #64748b, #475569);
+            color: #fff;
+            border-color: #64748b;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(145deg, #475569, #334155);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(100, 116, 139, 0.4);
         }
 
         .btn-danger {
-            background: rgba(220, 38, 38, 0.2);
-            color: #FCA5A5;
-            border: 1px solid rgba(220, 38, 38, 0.3);
+            background: linear-gradient(145deg, #dc2626, #b91c1c);
+            color: #fff;
+            border-color: #dc2626;
         }
 
-        .btn:hover {
+        .btn-danger:hover {
+            background: linear-gradient(145deg, #b91c1c, #991b1b);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
         }
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 30px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
         .dashboard-card {
-            background: rgba(45, 25, 85, 0.95);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            padding: 25px;
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border: 2px solid #475569;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                0 35px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-color: #64748b;
         }
 
         .dashboard-card h3 {
-            color: #FFD700;
-            font-size: 1.3rem;
-            margin: 0 0 20px 0;
+            color: #f1f5f9;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0 0 25px 0;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            gap: 20px;
         }
 
         .stat-item {
             text-align: center;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
+            padding: 25px 20px;
+            background: linear-gradient(145deg, #374151, #4b5563);
+            border: 2px solid #6b7280;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            border-color: #9ca3af;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
         .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #FFD700;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #f1f5f9;
             display: block;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .stat-label {
-            color: #E6E6E6;
-            font-size: 0.9rem;
+            color: #e2e8f0;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .recent-posts {
@@ -142,111 +219,164 @@
         }
 
         .recent-post {
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            margin-bottom: 10px;
+            padding: 20px;
+            background: linear-gradient(145deg, #374151, #4b5563);
+            border: 2px solid #6b7280;
+            border-radius: 12px;
+            margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .recent-post:hover {
+            transform: translateX(5px);
+            border-color: #9ca3af;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .post-info h4 {
-            color: #E6E6E6;
-            margin: 0 0 5px 0;
-            font-size: 1rem;
+            color: #f1f5f9;
+            margin: 0 0 8px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
         }
 
         .post-meta {
-            color: #999;
-            font-size: 0.8rem;
-        }
-
-        .post-status {
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
+            color: #cbd5e1;
+            font-size: 0.9rem;
             font-weight: 500;
         }
 
+        .post-status {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
         .status-published {
-            background: rgba(34, 197, 94, 0.2);
-            color: #86EFAC;
+            background: linear-gradient(145deg, #16a34a, #15803d);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4);
         }
 
         .status-draft {
-            background: rgba(251, 191, 36, 0.2);
-            color: #FCD34D;
+            background: linear-gradient(145deg, #d97706, #b45309);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4);
         }
 
         .status-pending {
-            background: rgba(59, 130, 246, 0.2);
-            color: #93C5FD;
+            background: linear-gradient(145deg, #0ea5e9, #0284c7);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(14, 165, 233, 0.4);
         }
 
         .quick-actions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
         }
 
         .quick-action {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            padding: 20px;
+            background: linear-gradient(145deg, #374151, #4b5563);
+            border: 2px solid #6b7280;
+            border-radius: 12px;
+            padding: 25px 20px;
             text-align: center;
             text-decoration: none;
-            color: #E6E6E6;
+            color: #f1f5f9;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quick-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
         }
 
         .quick-action:hover {
-            background: rgba(255, 215, 0, 0.1);
-            transform: translateY(-2px);
+            background: linear-gradient(145deg, #4b5563, #6b7280);
+            transform: translateY(-5px);
+            border-color: #9ca3af;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .quick-action:hover::before {
+            left: 100%;
         }
 
         .quick-action-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
             display: block;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .quick-action span:last-child {
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
 
         .profile-section {
-            margin-top: 30px;
+            margin-top: 40px;
         }
 
         .profile-form {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .form-group label {
             display: block;
-            color: #E6E6E6;
-            font-weight: 500;
-            margin-bottom: 8px;
+            color: #e2e8f0;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.3);
-            color: #E6E6E6;
+            padding: 14px 16px;
+            border: 2px solid #475569;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #374151, #4b5563);
+            color: #f8fafc;
             font-size: 1rem;
+            font-weight: 500;
             box-sizing: border-box;
+            transition: all 0.3s ease;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: #FFD700;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+        }
+
+        .form-group input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .hidden {
@@ -259,15 +389,31 @@
         }
 
         .admin-panel-link {
-            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
-            color: white;
+            background: linear-gradient(145deg, #dc2626, #b91c1c);
+            color: #fff;
+            border-color: #dc2626;
+        }
+
+        .admin-panel-link:hover {
+            background: linear-gradient(145deg, #b91c1c, #991b1b);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
         }
 
         @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px;
+            }
+
             .dashboard-header {
                 flex-direction: column;
                 align-items: stretch;
                 text-align: center;
+                padding: 30px 25px;
+            }
+
+            .user-info .user-details {
+                justify-content: center;
+                margin-bottom: 20px;
             }
 
             .dashboard-actions {
@@ -280,6 +426,17 @@
 
             .stats-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .recent-post {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+                text-align: center;
             }
         }
     </style>
@@ -521,6 +678,15 @@
                     <span>Manage Users</span>
                 `;
                 quickActions.appendChild(manageUsersAction);
+
+                const managePostsAction = document.createElement('a');
+                managePostsAction.href = 'posts-management.html';
+                managePostsAction.className = 'quick-action';
+                managePostsAction.innerHTML = `
+                    <span class="quick-action-icon">📝</span>
+                    <span>Manage Posts</span>
+                `;
+                quickActions.appendChild(managePostsAction);
 
                 const settingsAction = document.createElement('a');
                 settingsAction.href = '#';

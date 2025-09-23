@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts Management - DreamLogTogether</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/styles.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .management-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .management-header {
+            background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
+            border: 2px solid #475569;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .management-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #dc2626, #ea580c, #d97706, #16a34a, #0ea5e9, #3b82f6);
+        }
+
+        .management-header h1 {
+            color: #f8fafc;
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: -0.025em;
+        }
+
+        .management-header p {
+            color: #cbd5e1;
+            font-size: 1.2rem;
+            margin: 0 0 20px 0;
+            font-weight: 500;
+        }
+
+        .super-admin-badge {
+            background: linear-gradient(145deg, #dc2626, #b91c1c);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+            box-shadow:
+                0 4px 14px rgba(220, 38, 38, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .analytics-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .analytics-card {
+            background: linear-gradient(145deg, #374151, #4b5563);
+            border: 2px solid #6b7280;
+            border-radius: 16px;
+            padding: 30px 25px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .analytics-card:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-color: #9ca3af;
+        }
+
+        .analytics-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #f1f5f9;
+            display: block;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .analytics-label {
+            color: #e2e8f0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .posts-table-container {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border: 2px solid #475569;
+            border-radius: 16px;
+            padding: 35px;
+            overflow-x: auto;
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .table-header h2 {
+            color: #f1f5f9;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 12px 16px;
+            border: 2px solid #475569;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #374151, #4b5563);
+            color: #f8fafc;
+            width: 280px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+        }
+
+        .status-filter {
+            padding: 12px 16px;
+            border: 2px solid #475569;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #374151, #4b5563);
+            color: #f8fafc;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            min-width: 150px;
+            transition: all 0.3s ease;
+        }
+
+        .status-filter:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+        }
+
+        .posts-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .posts-table th,
+        .posts-table td {
+            padding: 18px 16px;
+            text-align: left;
+            border-bottom: 2px solid #374151;
+        }
+
+        .posts-table th {
+            background: linear-gradient(145deg, #111827, #1f2937);
+            color: #f1f5f9;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 3px solid #dc2626;
+        }
+
+        .posts-table td {
+            color: #e2e8f0;
+            font-size: 1rem;
+            font-weight: 500;
+            background: linear-gradient(145deg, #1e293b, #334155);
+        }
+
+        .posts-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .posts-table tbody tr:hover {
+            background: linear-gradient(145deg, #374151, #4b5563);
+            transform: translateX(2px);
+        }
+
+        .posts-table tbody tr:nth-child(even) td {
+            background: linear-gradient(145deg, #0f172a, #1e293b);
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+            border: 2px solid transparent;
+        }
+
+        .status-published {
+            background: linear-gradient(145deg, #16a34a, #15803d);
+            color: #fff;
+            border-color: #22c55e;
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4);
+        }
+
+        .status-draft {
+            background: linear-gradient(145deg, #d97706, #b45309);
+            color: #fff;
+            border-color: #f59e0b;
+            box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4);
+        }
+
+        .status-pending {
+            background: linear-gradient(145deg, #0ea5e9, #0284c7);
+            color: #fff;
+            border-color: #38bdf8;
+            box-shadow: 0 4px 14px rgba(14, 165, 233, 0.4);
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .btn-edit {
+            background: linear-gradient(145deg, #0ea5e9, #0284c7);
+            color: #fff;
+            border-color: #0ea5e9;
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(145deg, #0284c7, #0369a1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-delete {
+            background: linear-gradient(145deg, #dc2626, #b91c1c);
+            color: #fff;
+            border-color: #ef4444;
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(145deg, #b91c1c, #991b1b);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-status {
+            background: linear-gradient(145deg, #16a34a, #15803d);
+            color: #fff;
+            border-color: #22c55e;
+        }
+
+        .btn-status:hover {
+            background: linear-gradient(145deg, #15803d, #166534);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, #0ea5e9, #0284c7);
+            color: #fff;
+            border: 2px solid #0ea5e9;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(145deg, #0284c7, #0369a1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            color: #f1f5f9;
+            padding: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .error-message {
+            background: linear-gradient(145deg, #dc2626, #b91c1c);
+            border: 2px solid #ef4444;
+            color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 25px 0;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.3);
+        }
+
+        .success-message {
+            background: linear-gradient(145deg, #16a34a, #15803d);
+            border: 2px solid #22c55e;
+            color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 25px 0;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(22, 163, 74, 0.3);
+        }
+
+        .post-title {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .post-excerpt {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .management-container {
+                padding: 20px;
+            }
+
+            .search-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .posts-table-container {
+                padding: 20px;
+            }
+
+            .posts-table {
+                font-size: 0.9rem;
+            }
+
+            .posts-table th,
+            .posts-table td {
+                padding: 12px 8px;
+            }
+
+            .post-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html">DreamLogTogether</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="blog.html">Blog</a>
+                <a href="user-dashboard.html">Dashboard</a>
+                <a href="user-management.html">Users</a>
+                <a href="posts-management.html" class="active">Posts</a>
+                <button id="signOutBtn" class="btn btn-danger">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="management-container">
+        <!-- Header -->
+        <div class="management-header">
+            <h1>📝 Posts Management</h1>
+            <p>Manage all blog posts across the platform</p>
+            <div class="super-admin-badge">Super Administrator Panel</div>
+        </div>
+
+        <!-- Analytics Overview -->
+        <div class="analytics-overview">
+            <div class="analytics-card">
+                <span class="analytics-number" id="totalPosts">0</span>
+                <span class="analytics-label">Total Posts</span>
+            </div>
+            <div class="analytics-card">
+                <span class="analytics-number" id="publishedPosts">0</span>
+                <span class="analytics-label">Published</span>
+            </div>
+            <div class="analytics-card">
+                <span class="analytics-number" id="draftPosts">0</span>
+                <span class="analytics-label">Drafts</span>
+            </div>
+            <div class="analytics-card">
+                <span class="analytics-number" id="pendingPosts">0</span>
+                <span class="analytics-label">Pending</span>
+            </div>
+            <div class="analytics-card">
+                <span class="analytics-number" id="totalViews">0</span>
+                <span class="analytics-label">Total Views</span>
+            </div>
+            <div class="analytics-card">
+                <span class="analytics-number" id="totalComments">0</span>
+                <span class="analytics-label">Comments</span>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        <div id="successMessage" class="success-message" style="display: none;"></div>
+
+        <!-- Posts Table -->
+        <div class="posts-table-container">
+            <div class="table-header">
+                <h2>All Posts</h2>
+                <div class="search-filter">
+                    <input type="text" id="searchPosts" class="search-input" placeholder="Search posts...">
+                    <select id="statusFilter" class="status-filter">
+                        <option value="">All Status</option>
+                        <option value="published">Published</option>
+                        <option value="draft">Draft</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                    <button class="btn btn-primary" id="refreshPosts">Refresh</button>
+                </div>
+            </div>
+
+            <div id="postsTableContent">
+                <div class="loading">Loading posts...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import authService from './scripts/auth.js';
+
+        // DOM elements
+        const totalPostsEl = document.getElementById('totalPosts');
+        const publishedPostsEl = document.getElementById('publishedPosts');
+        const draftPostsEl = document.getElementById('draftPosts');
+        const pendingPostsEl = document.getElementById('pendingPosts');
+        const totalViewsEl = document.getElementById('totalViews');
+        const totalCommentsEl = document.getElementById('totalComments');
+        const postsTableContentEl = document.getElementById('postsTableContent');
+        const searchPostsEl = document.getElementById('searchPosts');
+        const statusFilterEl = document.getElementById('statusFilter');
+        const refreshPostsBtn = document.getElementById('refreshPosts');
+        const errorMessageEl = document.getElementById('errorMessage');
+        const successMessageEl = document.getElementById('successMessage');
+        const signOutBtn = document.getElementById('signOutBtn');
+
+        let allPosts = [];
+        let filteredPosts = [];
+
+        // Auth state management
+        authService.onAuthStateChange = (user, role) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            if (!authService.isSuperAdmin()) {
+                showError('Access denied. Super admin privileges required.');
+                setTimeout(() => {
+                    window.location.href = 'user-dashboard.html';
+                }, 2000);
+                return;
+            }
+
+            loadPosts();
+            loadAnalytics();
+        };
+
+        // Load all posts
+        async function loadPosts() {
+            try {
+                showLoading();
+                allPosts = await authService.getAllPosts();
+                filteredPosts = [...allPosts];
+                renderPostsTable();
+                hideMessages();
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                showError('Failed to load posts: ' + error.message);
+            }
+        }
+
+        // Load analytics
+        async function loadAnalytics() {
+            try {
+                const analytics = await authService.getPostAnalytics();
+
+                totalPostsEl.textContent = analytics.totalPosts;
+                publishedPostsEl.textContent = analytics.publishedPosts;
+                draftPostsEl.textContent = analytics.draftPosts;
+                pendingPostsEl.textContent = analytics.pendingPosts;
+                totalViewsEl.textContent = analytics.totalViews;
+                totalCommentsEl.textContent = analytics.totalComments;
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+            }
+        }
+
+        // Render posts table
+        function renderPostsTable() {
+            if (filteredPosts.length === 0) {
+                postsTableContentEl.innerHTML = '<div class="loading">No posts found</div>';
+                return;
+            }
+
+            const tableHTML = `
+                <table class="posts-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Views</th>
+                            <th>Comments</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredPosts.map(post => renderPostRow(post)).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            postsTableContentEl.innerHTML = tableHTML;
+            attachPostActionListeners();
+        }
+
+        // Render individual post row
+        function renderPostRow(post) {
+            const createdDate = post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleDateString() : 'Unknown';
+            const views = post.views || 0;
+            const comments = post.commentCount || 0;
+
+            return `
+                <tr data-post-id="${post.id}">
+                    <td>
+                        <div class="post-title" title="${post.title || 'Untitled'}">${post.title || 'Untitled'}</div>
+                        <div class="post-excerpt" title="${post.excerpt || ''}">${post.excerpt || ''}</div>
+                    </td>
+                    <td>${post.authorName || 'Unknown'}</td>
+                    <td>
+                        <span class="status-badge status-${post.status || 'draft'}">
+                            ${post.status || 'draft'}
+                        </span>
+                    </td>
+                    <td>${createdDate}</td>
+                    <td>${views}</td>
+                    <td>${comments}</td>
+                    <td>
+                        <div class="post-actions">
+                            <button class="action-btn btn-edit" data-action="edit" data-post-id="${post.id}">
+                                Edit
+                            </button>
+                            <button class="action-btn btn-status" data-action="status" data-post-id="${post.id}">
+                                Status
+                            </button>
+                            <button class="action-btn btn-delete" data-action="delete" data-post-id="${post.id}">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Attach event listeners to post action buttons
+        function attachPostActionListeners() {
+            document.querySelectorAll('[data-action]').forEach(btn => {
+                btn.addEventListener('click', handlePostAction);
+            });
+        }
+
+        // Handle post actions
+        async function handlePostAction(e) {
+            const action = e.target.dataset.action;
+            const postId = e.target.dataset.postId;
+            const post = allPosts.find(p => p.id === postId);
+
+            if (!post) return;
+
+            try {
+                let result;
+
+                switch (action) {
+                    case 'edit':
+                        // Navigate to edit page (would need to be implemented)
+                        window.open(`/edit-post.html?id=${postId}`, '_blank');
+                        return;
+
+                    case 'status':
+                        const newStatus = prompt(`Change status for "${post.title}". Current: ${post.status}\nEnter new status (published/draft/pending):`);
+                        if (newStatus && ['published', 'draft', 'pending'].includes(newStatus.toLowerCase())) {
+                            result = await authService.updatePostStatus(postId, newStatus.toLowerCase());
+                        }
+                        break;
+
+                    case 'delete':
+                        if (confirm(`Are you sure you want to delete "${post.title}"? This action cannot be undone.`)) {
+                            result = await authService.deletePost(postId);
+                        }
+                        break;
+                }
+
+                if (result && result.success) {
+                    showSuccess(result.message);
+                    loadPosts(); // Refresh the table
+                    loadAnalytics(); // Refresh analytics
+                } else if (result) {
+                    showError(result.error);
+                }
+
+            } catch (error) {
+                console.error(`Error ${action} post:`, error);
+                showError(`Failed to ${action} post: ${error.message}`);
+            }
+        }
+
+        // Filter posts
+        function filterPosts() {
+            const searchTerm = searchPostsEl.value.toLowerCase();
+            const statusFilter = statusFilterEl.value;
+
+            filteredPosts = allPosts.filter(post => {
+                const matchesSearch = !searchTerm ||
+                    post.title?.toLowerCase().includes(searchTerm) ||
+                    post.authorName?.toLowerCase().includes(searchTerm) ||
+                    post.excerpt?.toLowerCase().includes(searchTerm);
+
+                const matchesStatus = !statusFilter || post.status === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            renderPostsTable();
+        }
+
+        // Show/hide messages
+        function showError(message) {
+            errorMessageEl.textContent = message;
+            errorMessageEl.style.display = 'block';
+            successMessageEl.style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            successMessageEl.textContent = message;
+            successMessageEl.style.display = 'block';
+            errorMessageEl.style.display = 'none';
+        }
+
+        function hideMessages() {
+            errorMessageEl.style.display = 'none';
+            successMessageEl.style.display = 'none';
+        }
+
+        function showLoading() {
+            postsTableContentEl.innerHTML = '<div class="loading">Loading posts...</div>';
+        }
+
+        // Event listeners
+        searchPostsEl.addEventListener('input', filterPosts);
+        statusFilterEl.addEventListener('change', filterPosts);
+        refreshPostsBtn.addEventListener('click', () => {
+            loadPosts();
+            loadAnalytics();
+        });
+
+        // Sign out
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await authService.signOut();
+                window.location.href = 'index.html';
+            } catch (error) {
+                showError('Failed to sign out');
+            }
+        });
+
+        console.log('Posts management interface loaded');
+    </script>
+</body>
+
+</html>

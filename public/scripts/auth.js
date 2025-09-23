@@ -17,6 +17,7 @@ import {
     setDoc,
     getDoc,
     updateDoc,
+    deleteDoc,
     collection,
     query,
     where,
@@ -586,6 +587,99 @@ class AuthService {
         } catch (error) {
             console.error('Error demoting user:', error);
             return { success: false, error: error.message };
+        }
+    }
+
+    // Posts Management Functions (Super Admin)
+    async getAllPosts() {
+        if (!this.isSuperAdmin()) {
+            throw new Error('Only super admin can access all posts');
+        }
+
+        try {
+            const postsRef = collection(this.db, 'posts');
+            const querySnapshot = await getDocs(postsRef);
+
+            const posts = [];
+            querySnapshot.forEach((doc) => {
+                posts.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            return posts.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
+        } catch (error) {
+            console.error('Error fetching all posts:', error);
+            throw error;
+        }
+    }
+
+    // Delete any post (Super Admin only)
+    async deletePost(postId) {
+        if (!this.isSuperAdmin()) {
+            throw new Error('Only super admin can delete any post');
+        }
+
+        try {
+            await deleteDoc(doc(this.db, 'posts', postId));
+            return { success: true, message: 'Post deleted successfully' };
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Update post status (Super Admin)
+    async updatePostStatus(postId, status) {
+        if (!this.isSuperAdmin()) {
+            throw new Error('Only super admin can update post status');
+        }
+
+        try {
+            await updateDoc(doc(this.db, 'posts', postId), {
+                status: status,
+                updatedAt: new Date()
+            });
+            return { success: true, message: 'Post status updated successfully' };
+        } catch (error) {
+            console.error('Error updating post status:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Get post analytics (Super Admin)
+    async getPostAnalytics() {
+        if (!this.isSuperAdmin()) {
+            throw new Error('Only super admin can access post analytics');
+        }
+
+        try {
+            const posts = await this.getAllPosts();
+
+            const analytics = {
+                totalPosts: posts.length,
+                publishedPosts: posts.filter(p => p.status === 'published').length,
+                draftPosts: posts.filter(p => p.status === 'draft').length,
+                pendingPosts: posts.filter(p => p.status === 'pending').length,
+                totalViews: posts.reduce((sum, post) => sum + (post.views || 0), 0),
+                totalComments: posts.reduce((sum, post) => sum + (post.commentCount || 0), 0),
+                postsByAuthor: {}
+            };
+
+            // Group posts by author
+            posts.forEach(post => {
+                const author = post.authorName || 'Unknown';
+                if (!analytics.postsByAuthor[author]) {
+                    analytics.postsByAuthor[author] = 0;
+                }
+                analytics.postsByAuthor[author]++;
+            });
+
+            return analytics;
+        } catch (error) {
+            console.error('Error getting post analytics:', error);
+            throw error;
         }
     }
 }
