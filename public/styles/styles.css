@@ -1,16 +1,16 @@
-/* Dreamy Pastel Theme Styles */
+/* Masculine Magical Theme Styles */
 body {
   font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
   margin: 2rem auto;
   padding: 0 1rem;
-  background: linear-gradient(135deg, #f8f1ff 0%, #ffe6f7 25%, #e6f3ff 50%, #f0fff4 75%, #fff8e6 100%);
+  background: linear-gradient(135deg, #0a0b1e 0%, #16213e 25%, #1a1b2e 50%, #264653 75%, #2a9d8f 100%);
   background-attachment: fixed;
   background-size: 400% 400%;
-  animation: dreamyGradient 8s ease infinite;
-  color: #4a4766;
+  animation: mysticalGradient 12s ease infinite;
+  color: #ffffff;
 }
 
-@keyframes dreamyGradient {
+@keyframes mysticalGradient {
   0% {
     background-position: 0% 50%;
   }
@@ -24,32 +24,42 @@ body {
   }
 }
 
+h3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1em;
+  font-weight: normal;
+  color: #ffffff;
+  margin-top: 0.5em;
+  text-align: center;
+  opacity: 0.95;
+}
+
 .dreamy-header {
   position: relative;
   font-family: 'Inter', sans-serif;
   font-size: 3em;
   background: linear-gradient(90deg,
-      #d4b2ff 0%,
-      #ffb3e6 25%,
-      #b3d9ff 50%,
-      #ffb3e6 75%,
-      #d4b2ff 100%);
+      #d4af37 0%,
+      #f4d03f 25%,
+      #ffffff 50%,
+      #f4d03f 75%,
+      #d4af37 100%);
   background-size: 200% auto;
-  animation: pastel-shine 6s linear infinite;
+  animation: magical-shine 6s linear infinite;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
   text-align: center;
-  text-shadow: 0 2px 4px rgba(212, 178, 255, 0.3);
+  text-shadow: 0 2px 4px rgba(212, 175, 55, 0.5);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   user-select: none;
   overflow: visible;
 }
 
-/* Pastel shimmer animation */
-@keyframes pastel-shine {
+/* Magical gold/white shimmer animation */
+@keyframes magical-shine {
   0% {
     background-position: 0% center;
   }
@@ -98,22 +108,22 @@ h3 {
 
 form {
   margin-bottom: 3rem;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(26, 27, 46, 0.9);
   padding: 2rem;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(212, 178, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(212, 175, 55, 0.2);
   display: flex;
   flex-direction: column;
   align-items: left;
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(212, 178, 255, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 label {
   display: block;
   margin-bottom: 0.25rem;
   font-weight: bold;
-  color: #6b618d;
+  color: #ffffff;
 }
 
 input[type="text"],
@@ -121,60 +131,60 @@ textarea {
   width: 100%;
   padding: 0.5rem;
   margin-bottom: 1rem;
-  border: 1px solid rgba(212, 178, 255, 0.3);
+  border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 8px;
   font-size: 1rem;
   resize: vertical;
-  background: rgba(255, 255, 255, 0.8);
-  color: #4a4766;
+  background: rgba(26, 27, 46, 0.8);
+  color: #ffffff;
 }
 
 input[type="text"]::placeholder,
 textarea::placeholder {
-  color: #a388b5;
+  color: #a0a3bd;
 }
 
 input[type="text"]:focus,
 textarea:focus {
-  border-color: #ff9ec7;
+  border-color: #d4af37;
   outline: none;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 0 0 3px rgba(255, 158, 199, 0.1);
+  background: rgba(26, 27, 46, 0.95);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
 }
 
 button {
-  background: linear-gradient(135deg, #ff9ec7, #b3d9ff);
-  color: white;
+  background: linear-gradient(135deg, #d4af37, #e9c46a);
+  color: #0a0b1e;
   border: none;
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(255, 158, 199, 0.3);
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
 }
 
 button:hover {
-  background: linear-gradient(135deg, #b3d9ff, #b3ffcc);
+  background: linear-gradient(135deg, #e9c46a, #f4d03f);
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(179, 217, 255, 0.4);
+  box-shadow: 0 6px 24px rgba(233, 196, 106, 0.5);
 }
 
 .post {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(26, 27, 46, 0.9);
   padding: 1rem;
   margin-bottom: 1.5rem;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(212, 178, 255, 0.15);
-  color: #4a4766;
-  border: 1px solid rgba(212, 178, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(106, 76, 147, 0.2);
+  color: #ffffff;
+  border: 1px solid rgba(212, 175, 55, 0.3);
   backdrop-filter: blur(20px);
 }
 
 .post h2 {
   margin: 0 0 0.5rem 0;
-  color: #6b618d;
+  color: #ffffff;
 }
 
 .post p {
@@ -185,7 +195,7 @@ button:hover {
 
 .no-posts {
   text-align: center;
-  color: #a388b5;
+  color: #a0a3bd;
   margin-top: 2rem;
   font-style: italic;
 }
@@ -197,34 +207,34 @@ button:hover {
   padding: 0.8rem 1.5rem;
   font-size: 1rem;
   font-weight: bold;
-  color: #fff;
-  background: linear-gradient(135deg, #d4b2ff, #ffb3e6, #b3d9ff);
+  color: #0a0b1e;
+  background: linear-gradient(135deg, #d4af37, #e9c46a, #f4d03f);
   background-size: 300% 300%;
   border: none;
   border-radius: 16px;
   cursor: pointer;
-  animation: dreamyShift 6s ease infinite;
-  box-shadow: 0 0 15px rgba(212, 178, 255, 0.4), 0 0 25px rgba(255, 179, 230, 0.3);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  animation: magicalShift 6s ease infinite;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.5), 0 0 25px rgba(233, 196, 106, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
   text-align: center;
 }
 
-/* Pastel animated shift */
-@keyframes dreamyShift {
+/* Magical gold animated shift */
+@keyframes magicalShift {
   0% {
     background-position: 0% 50%;
-    box-shadow: 0 0 10px rgba(212, 178, 255, 0.3), 0 0 20px rgba(255, 179, 230, 0.2);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4), 0 0 20px rgba(233, 196, 106, 0.2);
   }
 
   50% {
     background-position: 100% 50%;
-    box-shadow: 0 0 20px rgba(212, 178, 255, 0.5), 0 0 30px rgba(255, 179, 230, 0.3);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), 0 0 30px rgba(233, 196, 106, 0.4);
   }
 
   100% {
     background-position: 0% 50%;
-    box-shadow: 0 0 10px rgba(212, 178, 255, 0.3), 0 0 20px rgba(255, 179, 230, 0.2);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4), 0 0 20px rgba(233, 196, 106, 0.2);
   }
 }
 
@@ -242,8 +252,8 @@ button:hover {
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 1.1rem;
-  color: #ffffff;
-  background: linear-gradient(135deg, #d4b2ff, #ffb3e6);
+  color: #0a0b1e;
+  background: linear-gradient(135deg, #d4af37, #e9c46a);
   border-radius: 16px;
   text-align: center;
   text-decoration: none;
@@ -251,8 +261,8 @@ button:hover {
   position: relative;
   overflow: hidden;
   box-shadow:
-    0 0 10px rgba(212, 178, 255, 0.4),
-    0 0 20px rgba(255, 179, 230, 0.3);
+    0 0 10px rgba(212, 175, 55, 0.5),
+    0 0 20px rgba(233, 196, 106, 0.3);
   transition: all 0.3s ease;
 }
 
@@ -265,10 +275,10 @@ button:hover {
   height: 200%;
   background: linear-gradient(120deg,
       transparent 0%,
-      rgba(255, 255, 255, 0.8) 50%,
+      rgba(255, 255, 255, 0.9) 50%,
       transparent 100%);
   transform: rotate(25deg);
-  animation: pastel-sparkle 2.5s linear infinite;
+  animation: magical-sparkle 2.5s linear infinite;
   pointer-events: none;
 }
 
@@ -283,12 +293,12 @@ button:hover {
 
 .gold-spark-btn:hover {
   box-shadow:
-    0 0 20px rgba(212, 178, 255, 0.6),
-    0 0 30px rgba(255, 179, 230, 0.4);
+    0 0 20px rgba(212, 175, 55, 0.7),
+    0 0 30px rgba(233, 196, 106, 0.5);
   transform: translateY(-2px);
 }
 
-@keyframes pastel-sparkle {
+@keyframes magical-sparkle {
   0% {
     left: -75%;
   }
@@ -381,19 +391,19 @@ button:hover {
 .card {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(26, 27, 46, 0.9);
   padding: 1rem 1.5rem;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(212, 178, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(106, 76, 147, 0.2);
   width: 280px;
   transition: all 0.3s ease;
   cursor: default;
-  border: 1px solid rgba(212, 178, 255, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.3);
   backdrop-filter: blur(20px);
 }
 
 .card:hover {
-  box-shadow: 0 12px 40px rgba(212, 178, 255, 0.2);
+  box-shadow: 0 12px 40px rgba(212, 175, 55, 0.3);
   transform: translateY(-4px);
 }
 
@@ -404,66 +414,66 @@ button:hover {
   filter: drop-shadow(0 0 6px);
 }
 
-/* Neon colors for icons - updated to pastels */
+/* Mystical colors for icons - masculine magical theme */
 .neon-purple {
-  color: #d4b2ff;
+  color: #6a4c93;
   text-shadow:
-    0 0 6px #d4b2ff,
-    0 0 10px #d4b2ff,
-    0 0 20px #e6ccff;
+    0 0 6px #6a4c93,
+    0 0 10px #6a4c93,
+    0 0 20px #8b6bb1;
 }
 
 .neon-blue {
-  color: #b3d9ff;
+  color: #264653;
   text-shadow:
-    0 0 6px #b3d9ff,
-    0 0 10px #b3d9ff,
-    0 0 20px #cce7ff;
+    0 0 6px #264653,
+    0 0 10px #264653,
+    0 0 20px #3a6b75;
 }
 
 .neon-cyan {
-  color: #b3f0ff;
+  color: #2a9d8f;
   text-shadow:
-    0 0 6px #b3f0ff,
-    0 0 10px #b3f0ff,
-    0 0 20px #ccf5ff;
+    0 0 6px #2a9d8f,
+    0 0 10px #2a9d8f,
+    0 0 20px #4fb3a7;
 }
 
 .neon-pink {
-  color: #ffb3e6;
+  color: #e76f51;
   text-shadow:
-    0 0 6px #ffb3e6,
-    0 0 10px #ffb3e6,
-    0 0 20px #ffcceb;
+    0 0 6px #e76f51,
+    0 0 10px #e76f51,
+    0 0 20px #ec8a73;
 }
 
 .neon-green {
-  color: #b3ffcc;
+  color: #2a9d8f;
   text-shadow:
-    0 0 6px #b3ffcc,
-    0 0 10px #b3ffcc,
-    0 0 20px #ccffe0;
+    0 0 6px #2a9d8f,
+    0 0 10px #2a9d8f,
+    0 0 20px #4fb3a7;
 }
 
 .neon-orange {
-  color: #ffccb3;
+  color: #e9c46a;
   text-shadow:
-    0 0 6px #ffccb3,
-    0 0 10px #ffccb3,
-    0 0 20px #ffe0cc;
+    0 0 6px #e9c46a,
+    0 0 10px #e9c46a,
+    0 0 20px #edce85;
 }
 
 .neon-yellow {
-  color: #ffffb3;
+  color: #f4d03f;
   text-shadow:
-    0 0 6px #ffffb3,
-    0 0 10px #ffffb3,
-    0 0 20px #ffffcc;
+    0 0 6px #f4d03f,
+    0 0 10px #f4d03f,
+    0 0 20px #f6d966;
 }
 
 .content h3 {
   margin: 0 0 0.3rem 0;
-  color: #6b618d;
+  color: #ffffff;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 1.2rem;
@@ -472,7 +482,7 @@ button:hover {
 .content p {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  color: #a388b5;
+  color: #a0a3bd;
   font-size: 0.95rem;
   line-height: 1.3;
 }
