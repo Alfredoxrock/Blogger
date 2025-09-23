@@ -8,6 +8,7 @@ class FirestoreAdminManager extends FirestoreBlogManager {
         this.autoSaveInterval = null;
         this.setupAdminEventListeners();
         this.setupAutoSave();
+        this.initializeForm(); // Initialize form with proper defaults
         this.checkEditMode();
     }
 
@@ -113,6 +114,17 @@ class FirestoreAdminManager extends FirestoreBlogManager {
         }, 30000);
     }
 
+    initializeForm() {
+        // Set up default form values when admin panel loads
+        if (!this.currentEditId) {
+            // Only set defaults if we're not editing an existing post
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('postDate').value = today;
+            document.getElementById('postStatus').value = 'draft';
+            document.getElementById('postCategory').value = 'personal';
+        }
+    }
+
     checkEditMode() {
         const urlParams = new URLSearchParams(window.location.search);
         const editId = urlParams.get('edit');
@@ -126,8 +138,10 @@ class FirestoreAdminManager extends FirestoreBlogManager {
         this.clearForm();
         this.updatePageTitle('New Post');
 
-        // Set default values
+        // Set default values with proper display
         document.getElementById('postDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('postStatus').value = 'draft';
+        document.getElementById('postCategory').value = 'personal'; // Set a default category
         document.getElementById('postTitle').focus();
     }
 
@@ -170,10 +184,10 @@ class FirestoreAdminManager extends FirestoreBlogManager {
         document.getElementById('postTitle').value = '';
         document.getElementById('postBody').value = '';
         document.getElementById('postExcerpt').value = '';
-        document.getElementById('postCategory').value = '';
+        document.getElementById('postCategory').value = 'personal'; // Default to personal category
         document.getElementById('postTags').value = '';
-        document.getElementById('postDate').value = '';
-        document.getElementById('postStatus').value = 'draft';
+        document.getElementById('postDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('postStatus').value = 'draft'; // Default to draft
         document.getElementById('postFeatured').checked = false;
     }
 
@@ -220,6 +234,7 @@ class FirestoreAdminManager extends FirestoreBlogManager {
     }
 
     async publishPost() {
+        console.log('publishPost method called');
         const formData = this.getFormData();
 
         if (!formData.title.trim()) {
@@ -234,6 +249,7 @@ class FirestoreAdminManager extends FirestoreBlogManager {
         }
 
         try {
+            console.log('Starting to publish post...', formData);
             this.showSaveStatus('Publishing...');
 
             if (this.currentEditId) {
@@ -254,6 +270,24 @@ class FirestoreAdminManager extends FirestoreBlogManager {
 
             // Update the status dropdown to reflect published status
             document.getElementById('postStatus').value = 'published';
+
+            // Show success message briefly then redirect
+            this.showSaveStatus('Post published! Redirecting...', 'success');
+
+            // Multiple redirect attempts to ensure it works
+            console.log('Post published successfully, redirecting to home page...');
+
+            // Immediate redirect after short delay
+            setTimeout(() => {
+                console.log('Attempting redirect...');
+                try {
+                    // Try multiple redirect methods
+                    window.location.assign('/');
+                } catch (e) {
+                    console.error('Redirect failed, trying alternative:', e);
+                    window.location.href = '/';
+                }
+            }, 1000);
 
         } catch (error) {
             console.error('Error publishing post:', error);
@@ -345,7 +379,7 @@ class FirestoreAdminManager extends FirestoreBlogManager {
     previewPost() {
         const formData = this.getFormData();
         const previewContent = document.getElementById('previewContent');
-        const previewModal = document.getElementById('previewModal');
+        const previewModal = document.getElementById('previewOverlay'); // Fixed: use correct ID
 
         if (previewContent && previewModal) {
             previewContent.innerHTML = `
@@ -356,6 +390,7 @@ class FirestoreAdminManager extends FirestoreBlogManager {
                         ${formData.category ? `<span class="category">${this.escapeHtml(formData.category)}</span>` : ''}
                         <span>${this.calculateReadTime(formData.body)} min read</span>
                         ${formData.featured ? '<span class="featured">Featured</span>' : ''}
+                        <span class="status">Status: ${formData.status}</span>
                     </div>
                     ${formData.excerpt ? `<p class="excerpt"><em>${this.escapeHtml(formData.excerpt)}</em></p>` : ''}
                     <div class="body">${this.formatBody(formData.body)}</div>
@@ -383,7 +418,7 @@ class FirestoreAdminManager extends FirestoreBlogManager {
     }
 
     closePreview() {
-        const previewModal = document.getElementById('previewModal');
+        const previewModal = document.getElementById('previewOverlay'); // Fixed: use correct ID
         if (previewModal) {
             previewModal.style.display = 'none';
         }
@@ -487,32 +522,32 @@ class FirestoreAdminManager extends FirestoreBlogManager {
     }
 
     renderPostsList() {
-        const container = document.getElementById('postsList');
+        const container = document.getElementById('postsTableBody'); // Fixed: use correct ID
         if (!container) return;
 
         if (this.posts.length === 0) {
-            container.innerHTML = '<div class="no-posts">No posts yet. Create your first post!</div>';
+            container.innerHTML = '<tr><td colspan="5" class="no-posts">No posts yet. Create your first post!</td></tr>';
             return;
         }
 
         const sortedPosts = [...this.posts].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
         container.innerHTML = sortedPosts.map(post => `
-            <div class="post-item">
-                <div class="post-info">
-                    <h4>${this.escapeHtml(post.title)}</h4>
-                    <div class="post-meta">
-                        <span>${this.formatDate(post.date)}</span>
-                        <span>${post.category || 'uncategorized'}</span>
-                        <span>${post.readTime || 1} min read</span>
-                        ${post.featured ? '<span class="featured-badge">Featured</span>' : ''}
-                    </div>
-                </div>
-                <div class="post-actions">
+            <tr class="post-row">
+                <td class="post-title">
+                    <strong>${this.escapeHtml(post.title)}</strong>
+                    ${post.featured ? '<span class="featured-badge">Featured</span>' : ''}
+                </td>
+                <td class="post-category">${post.category || 'uncategorized'}</td>
+                <td class="post-status">
+                    <span class="status-badge status-${post.status || 'draft'}">${post.status || 'draft'}</span>
+                </td>
+                <td class="post-date">${this.formatDate(post.date)}</td>
+                <td class="post-actions">
                     <button class="btn btn-small" onclick="adminManager.editPost('${post.id}')">Edit</button>
                     <button class="btn btn-small btn-danger" onclick="adminManager.deletePost('${post.id}')">Delete</button>
-                </div>
-            </div>
+                </td>
+            </tr>
         `).join('');
     }
 

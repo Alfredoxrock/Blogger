@@ -77,6 +77,36 @@
     transition: all 0.2s ease;
 }
 
+/* Enhanced select styling */
+.form-group select {
+    background: rgba(255, 255, 255, 0.05);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23ff7a59' viewBox='0 0 16 16'%3e%3cpath d='m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    padding-right: 2.5rem;
+    appearance: none;
+    cursor: pointer;
+    color: var(--text-light) !important;
+}
+
+.form-group select:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.form-group select option {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    padding: 8px 12px;
+    border: none;
+}
+
+.form-group select option:hover,
+.form-group select option:checked {
+    background: var(--accent) !important;
+    color: #ffffff !important;
+}
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -221,6 +251,46 @@
 
 .posts-table tr:hover {
     background: rgba(255, 255, 255, 0.02);
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.status-published {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-badge.status-draft {
+    background: rgba(156, 163, 175, 0.2);
+    color: #9ca3af;
+    border: 1px solid rgba(156, 163, 175, 0.3);
+}
+
+.status-badge.status-scheduled {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.featured-badge {
+    background: rgba(255, 122, 89, 0.2);
+    color: var(--accent);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-left: 8px;
 }
 
 .post-title {
