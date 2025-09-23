@@ -16,16 +16,20 @@ service cloud.firestore {
       return getUserData().role;
     }
     
+    function isSuperAdmin() {
+      return isAuthenticated() && getUserRole() == 'super_admin';
+    }
+    
     function isAdmin() {
-      return isAuthenticated() && getUserRole() == 'admin';
+      return isAuthenticated() && (getUserRole() == 'admin' || isSuperAdmin());
     }
     
     function isEditor() {
-      return isAuthenticated() && getUserRole() == 'editor';
+      return isAuthenticated() && (getUserRole() == 'editor' || isAdmin());
     }
     
     function isContributor() {
-      return isAuthenticated() && getUserRole() == 'contributor';
+      return isAuthenticated() && (getUserRole() == 'contributor' || isEditor());
     }
     
     function isEditorOrAbove() {
@@ -44,24 +48,35 @@ service cloud.firestore {
       return isAuthenticated() && getUserData().isActive == true;
     }
 
+    function canManageUsers() {
+      return isSuperAdmin() || (isAdmin() && getUserData().permissions.canManageUsers == true);
+    }
+
     // Users collection - manage user data and roles
     match /users/{userId} {
-      // Users can read their own data, admins can read all
-      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      // Users can read their own data, super admin and admins can read all
+      allow read: if isAuthenticated() && (request.auth.uid == userId || canManageUsers());
       
-      // Users can update their own profile (except role), admins can update anything
+      // Users can update their own profile (except role), super admin can update anything
       allow update: if isAuthenticated() && (
         (request.auth.uid == userId && 
          !('role' in request.resource.data.diff(resource.data).affectedKeys()) &&
          !('isActive' in request.resource.data.diff(resource.data).affectedKeys())) 
-        || isAdmin()
+        || isSuperAdmin() ||
+        // Admins can update roles but not super admin accounts
+        (isAdmin() && resource.data.role != 'super_admin')
       );
       
       // Only allow creation during registration (handled by Firebase Auth)
       allow create: if isAuthenticated() && request.auth.uid == userId;
       
-      // Only admins can delete users
-      allow delete: if isAdmin();
+      // Only super admin can delete users
+      allow delete: if isSuperAdmin();
+    }
+
+    // Special super admin user document
+    match /users/super_admin {
+      allow read, write: if isSuperAdmin();
     }
 
     // Blog posts - role-based access control
@@ -107,10 +122,26 @@ service cloud.firestore {
       allow write: if isEditorOrAbove() && isActiveUser();
     }
     
-    // Blog settings - admin only
+    // Blog settings - super admin and admin only
     match /settings/{settingId} {
       allow read: if true; // Public settings can be read by anyone
-      allow write: if isAdmin() && isActiveUser();
+      allow write: if (isSuperAdmin() || isAdmin()) && isActiveUser();
+    }
+
+    // Site configuration - super admin only
+    match /site-config/{configId} {
+      allow read: if isAdmin();
+      allow write: if isSuperAdmin();
+    }
+
+    // User management logs - super admin only
+    match /user-logs/{logId} {
+      allow read, write: if isSuperAdmin();
+    }
+
+    // System backups - super admin only
+    match /backups/{backupId} {
+      allow read, write: if isSuperAdmin();
     }
     
     // Comments - authenticated users can comment, with moderation

@@ -201,8 +201,10 @@
 
         <form id="loginForm">
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+                <label for="emailOrUsername">Email or Username</label>
+                <input type="text" id="emailOrUsername" name="emailOrUsername" required
+                    placeholder="Enter email or username">
+                <small style="color: #999; font-size: 0.8rem;">Super admin can use username: Alfredoxrock</small>
             </div>
 
             <div class="form-group">
@@ -288,18 +290,31 @@
             setLoading(true);
 
             const formData = new FormData(loginForm);
-            const email = formData.get('email');
+            const emailOrUsername = formData.get('emailOrUsername');
             const password = formData.get('password');
 
             try {
-                const result = await authService.signIn(email, password);
+                let result;
+
+                // Check if input looks like username (super admin feature)
+                if (!emailOrUsername.includes('@')) {
+                    result = await authService.signInWithUsername(emailOrUsername, password);
+                } else {
+                    result = await authService.signIn(emailOrUsername, password);
+                }
 
                 if (result.success) {
                     showSuccess('Sign in successful! Redirecting...');
                     setTimeout(() => {
                         // Redirect to intended page or dashboard
                         const returnUrl = new URLSearchParams(window.location.search).get('returnUrl');
-                        window.location.href = returnUrl || 'user-dashboard.html';
+
+                        // Special handling for super admin
+                        if (authService.isSuperAdmin()) {
+                            window.location.href = returnUrl || 'user-management.html';
+                        } else {
+                            window.location.href = returnUrl || 'user-dashboard.html';
+                        }
                     }, 1500);
                 } else {
                     showError(result.error);
@@ -341,10 +356,21 @@
         forgotPasswordLink.addEventListener('click', async (e) => {
             e.preventDefault();
 
-            const email = document.getElementById('email').value;
-            if (!email) {
+            const emailOrUsername = document.getElementById('emailOrUsername').value;
+            if (!emailOrUsername) {
                 showError('Please enter your email address first.');
                 return;
+            }
+
+            // Convert username to email if needed
+            let email = emailOrUsername;
+            if (!email.includes('@')) {
+                if (emailOrUsername === 'Alfredoxrock') {
+                    email = 'alfredoxrock@dreamlog.com';
+                } else {
+                    showError('Password reset requires email address. Username reset not supported.');
+                    return;
+                }
             }
 
             try {

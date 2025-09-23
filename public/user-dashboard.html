@@ -509,7 +509,33 @@
                 quickActions.appendChild(createPostAction);
             }
 
-            if (authService.isAdmin()) {
+            if (authService.isSuperAdmin()) {
+                adminPanelBtn.classList.remove('hidden');
+
+                // Add super admin quick actions
+                const manageUsersAction = document.createElement('a');
+                manageUsersAction.href = 'user-management.html';
+                manageUsersAction.className = 'quick-action';
+                manageUsersAction.innerHTML = `
+                    <span class="quick-action-icon">👥</span>
+                    <span>Manage Users</span>
+                `;
+                quickActions.appendChild(manageUsersAction);
+
+                const settingsAction = document.createElement('a');
+                settingsAction.href = '#';
+                settingsAction.className = 'quick-action';
+                settingsAction.innerHTML = `
+                    <span class="quick-action-icon">⚙️</span>
+                    <span>Site Settings</span>
+                `;
+                settingsAction.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    alert('Site settings panel coming soon!');
+                });
+                quickActions.appendChild(settingsAction);
+
+            } else if (authService.isAdmin()) {
                 adminPanelBtn.classList.remove('hidden');
 
                 // Add admin quick actions
@@ -518,7 +544,7 @@
                 manageUsersAction.className = 'quick-action';
                 manageUsersAction.innerHTML = `
                     <span class="quick-action-icon">👥</span>
-                    <span>Manage Users</span>
+                    <span>View Users</span>
                 `;
                 manageUsersAction.addEventListener('click', (e) => {
                     e.preventDefault();
