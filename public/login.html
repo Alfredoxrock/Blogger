@@ -239,8 +239,13 @@
         </div>
     </div>
 
-    <script type="module">
-        import authService from './scripts/auth.js';
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="scripts/firebase.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script>
+        const authService = window.authService;
 
         // DOM elements
         const loginForm = document.getElementById('loginForm');
@@ -387,13 +392,21 @@
         });
 
         // Check if user is already logged in
-        authService.onAuthStateChange = (user, role) => {
-            if (user) {
-                // User is already logged in, redirect
-                const returnUrl = new URLSearchParams(window.location.search).get('returnUrl');
-                window.location.href = returnUrl || 'user-dashboard.html';
-            }
-        };
+        if (authService) {
+            authService.onAuthStateChange = (user, role) => {
+                if (user) {
+                    // User is already logged in, redirect
+                    const returnUrl = new URLSearchParams(window.location.search).get('returnUrl');
+                    if (authService.isSuperAdmin()) {
+                        window.location.href = returnUrl || 'user-management.html';
+                    } else {
+                        window.location.href = returnUrl || 'user-dashboard.html';
+                    }
+                }
+            };
+        } else {
+            console.error('Auth service not loaded');
+        }
     </script>
 </body>
 

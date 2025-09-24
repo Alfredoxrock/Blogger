@@ -49,57 +49,100 @@
             font-size: 2.8rem;
             font-weight: 800;
             margin: 0 0 15px 0;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-            letter-spacing: -0.025em;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
         }
 
         .management-header p {
             color: #cbd5e1;
             font-size: 1.2rem;
-            margin: 0 0 20px 0;
-            font-weight: 500;
+            margin: 0 0 25px 0;
+            font-weight: 400;
         }
 
         .super-admin-badge {
             background: linear-gradient(145deg, #dc2626, #b91c1c);
             color: #fff;
             padding: 12px 24px;
-            border-radius: 12px;
+            border-radius: 10px;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             display: inline-block;
-            box-shadow:
-                0 4px 14px rgba(220, 38, 38, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+        }
+
+        .nav {
+            background: linear-gradient(145deg, #0f172a, #1e293b);
+            border-bottom: 3px solid #dc2626;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .nav-brand a {
+            color: #f1f5f9;
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-decoration: none;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #f1f5f9;
+            background: linear-gradient(145deg, #374151, #4b5563);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .analytics-overview {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 25px;
             margin-bottom: 40px;
         }
 
         .analytics-card {
-            background: linear-gradient(145deg, #374151, #4b5563);
-            border: 2px solid #6b7280;
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border: 2px solid #475569;
             border-radius: 16px;
-            padding: 30px 25px;
+            padding: 35px 25px;
             text-align: center;
-            position: relative;
-            transition: all 0.3s ease;
             box-shadow:
-                0 10px 25px rgba(0, 0, 0, 0.3),
+                0 20px 40px rgba(0, 0, 0, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
         }
 
         .analytics-card:hover {
             transform: translateY(-5px);
             box-shadow:
-                0 20px 40px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
             border-color: #9ca3af;
         }
 
@@ -161,9 +204,9 @@
             border-radius: 10px;
             background: linear-gradient(145deg, #374151, #4b5563);
             color: #f8fafc;
-            width: 280px;
             font-size: 1rem;
             font-weight: 500;
+            min-width: 250px;
             transition: all 0.3s ease;
         }
 
@@ -179,7 +222,6 @@
             border-radius: 10px;
             background: linear-gradient(145deg, #374151, #4b5563);
             color: #f8fafc;
-            cursor: pointer;
             font-size: 1rem;
             font-weight: 500;
             min-width: 150px;
@@ -312,41 +354,38 @@
             box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
         }
 
-        .btn-status {
-            background: linear-gradient(145deg, #16a34a, #15803d);
-            color: #fff;
-            border-color: #22c55e;
-        }
-
-        .btn-status:hover {
-            background: linear-gradient(145deg, #15803d, #166534);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
-        }
-
         .btn-primary {
-            background: linear-gradient(145deg, #0ea5e9, #0284c7);
+            background: linear-gradient(145deg, #3b82f6, #2563eb);
             color: #fff;
-            border: 2px solid #0ea5e9;
+            border-color: #3b82f6;
             padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
+            font-weight: 700;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(145deg, #0284c7, #0369a1);
+            background: linear-gradient(145deg, #2563eb, #1d4ed8);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(145deg, #dc2626, #b91c1c);
+            color: #fff;
+            border-color: #dc2626;
+            padding: 10px 20px;
+            font-weight: 600;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(145deg, #b91c1c, #991b1b);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
         }
 
         .loading {
             text-align: center;
-            color: #f1f5f9;
-            padding: 50px;
+            padding: 60px;
+            color: #94a3b8;
             font-size: 1.2rem;
             font-weight: 600;
         }
@@ -438,6 +477,7 @@
                 <a href="blog.html">Blog</a>
                 <a href="user-dashboard.html">Dashboard</a>
                 <a href="user-management.html">Users</a>
+                <a href="petition-management.html">Writer Petitions</a>
                 <a href="posts-management.html" class="active">Posts</a>
                 <button id="signOutBtn" class="btn btn-danger">Sign Out</button>
             </div>
@@ -506,8 +546,46 @@
         </div>
     </div>
 
-    <script type="module">
-        import authService from './scripts/auth.js';
+    <!-- Include SuperAdminGuard -->
+    <script src="scripts/superadmin-guard.js"></script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA5dtKGbWZfjhwEJQQJHDwm3k3aeROEI5o",
+            authDomain: "dreamblog-f4e73.firebaseapp.com",
+            projectId: "dreamblog-f4e73",
+            storageBucket: "dreamblog-f4e73.appspot.com",
+            messagingSenderId: "135195474107",
+            appId: "1:135195474107:web:c89cfbc29de1ce67c25b41"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Initialize Super Admin Guard
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                window.superAdminGuard.init({
+                    redirectUrl: 'user-dashboard.html',
+                    loginUrl: 'login.html',
+                    errorMessage: 'Access denied. Super Administrator privileges required for posts management.',
+                    showError: true
+                });
+            }, 1000);
+        });
+
+        // Listen for access granted event
+        window.addEventListener('superAdminAccessGranted', async (event) => {
+            console.log('✅ Super admin access granted, loading posts...');
+            loadPosts();
+        });
 
         // DOM elements
         const totalPostsEl = document.getElementById('totalPosts');
@@ -527,33 +605,24 @@
         let allPosts = [];
         let filteredPosts = [];
 
-        // Auth state management
-        authService.onAuthStateChange = (user, role) => {
-            if (!user) {
-                window.location.href = 'login.html';
-                return;
-            }
-
-            if (!authService.isSuperAdmin()) {
-                showError('Access denied. Super admin privileges required.');
-                setTimeout(() => {
-                    window.location.href = 'user-dashboard.html';
-                }, 2000);
-                return;
-            }
-
-            loadPosts();
-            loadAnalytics();
-        };
-
-        // Load all posts
+        // Load posts
         async function loadPosts() {
+            showLoading();
             try {
-                showLoading();
-                allPosts = await authService.getAllPosts();
-                filteredPosts = [...allPosts];
-                renderPostsTable();
-                hideMessages();
+                const postsRef = db.collection('posts');
+                const snapshot = await postsRef.get();
+
+                allPosts = [];
+                snapshot.forEach(doc => {
+                    allPosts.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                console.log(`Loaded ${allPosts.length} posts`);
+                filterPosts();
+                loadAnalytics();
             } catch (error) {
                 console.error('Error loading posts:', error);
                 showError('Failed to load posts: ' + error.message);
@@ -561,25 +630,53 @@
         }
 
         // Load analytics
-        async function loadAnalytics() {
+        function loadAnalytics() {
             try {
-                const analytics = await authService.getPostAnalytics();
+                const totalPosts = allPosts.length;
+                const publishedPosts = allPosts.filter(p => p.status === 'published').length;
+                const draftPosts = allPosts.filter(p => p.status === 'draft').length;
+                const pendingPosts = allPosts.filter(p => p.status === 'pending').length;
+                const totalViews = allPosts.reduce((sum, p) => sum + (p.views || 0), 0);
+                const totalComments = allPosts.reduce((sum, p) => sum + (p.commentCount || 0), 0);
 
-                totalPostsEl.textContent = analytics.totalPosts;
-                publishedPostsEl.textContent = analytics.publishedPosts;
-                draftPostsEl.textContent = analytics.draftPosts;
-                pendingPostsEl.textContent = analytics.pendingPosts;
-                totalViewsEl.textContent = analytics.totalViews;
-                totalCommentsEl.textContent = analytics.totalComments;
+                totalPostsEl.textContent = totalPosts;
+                publishedPostsEl.textContent = publishedPosts;
+                draftPostsEl.textContent = draftPosts;
+                pendingPostsEl.textContent = pendingPosts;
+                totalViewsEl.textContent = totalViews;
+                totalCommentsEl.textContent = totalComments;
             } catch (error) {
                 console.error('Error loading analytics:', error);
             }
         }
 
+        // Filter posts
+        function filterPosts() {
+            const searchTerm = searchPostsEl.value.toLowerCase();
+            const statusFilter = statusFilterEl.value;
+
+            filteredPosts = allPosts.filter(post => {
+                const matchesSearch = !searchTerm ||
+                    (post.title && post.title.toLowerCase().includes(searchTerm)) ||
+                    (post.authorName && post.authorName.toLowerCase().includes(searchTerm)) ||
+                    (post.excerpt && post.excerpt.toLowerCase().includes(searchTerm));
+
+                const matchesStatus = !statusFilter || post.status === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            renderPostsTable();
+        }
+
         // Render posts table
         function renderPostsTable() {
             if (filteredPosts.length === 0) {
-                postsTableContentEl.innerHTML = '<div class="loading">No posts found</div>';
+                postsTableContentEl.innerHTML = `
+                    <div class="loading">
+                        ${allPosts.length === 0 ? 'No posts found' : 'No posts match your filters'}
+                    </div>
+                `;
                 return;
             }
 
@@ -587,7 +684,7 @@
                 <table class="posts-table">
                     <thead>
                         <tr>
-                            <th>Title</th>
+                            <th>Post Details</th>
                             <th>Author</th>
                             <th>Status</th>
                             <th>Created</th>
@@ -597,7 +694,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        ${filteredPosts.map(post => renderPostRow(post)).join('')}
+                        ${filteredPosts.map(renderPostRow).join('')}
                     </tbody>
                 </table>
             `;
@@ -632,9 +729,6 @@
                             <button class="action-btn btn-edit" data-action="edit" data-post-id="${post.id}">
                                 Edit
                             </button>
-                            <button class="action-btn btn-status" data-action="status" data-post-id="${post.id}">
-                                Status
-                            </button>
                             <button class="action-btn btn-delete" data-action="delete" data-post-id="${post.id}">
                                 Delete
                             </button>
@@ -644,7 +738,7 @@
             `;
         }
 
-        // Attach event listeners to post action buttons
+        // Attach post action listeners
         function attachPostActionListeners() {
             document.querySelectorAll('[data-action]').forEach(btn => {
                 btn.addEventListener('click', handlePostAction);
@@ -655,84 +749,50 @@
         async function handlePostAction(e) {
             const action = e.target.dataset.action;
             const postId = e.target.dataset.postId;
-            const post = allPosts.find(p => p.id === postId);
 
-            if (!post) return;
-
-            try {
-                let result;
-
-                switch (action) {
-                    case 'edit':
-                        // Navigate to edit page (would need to be implemented)
-                        window.open(`/edit-post.html?id=${postId}`, '_blank');
-                        return;
-
-                    case 'status':
-                        const newStatus = prompt(`Change status for "${post.title}". Current: ${post.status}\nEnter new status (published/draft/pending):`);
-                        if (newStatus && ['published', 'draft', 'pending'].includes(newStatus.toLowerCase())) {
-                            result = await authService.updatePostStatus(postId, newStatus.toLowerCase());
-                        }
-                        break;
-
-                    case 'delete':
-                        if (confirm(`Are you sure you want to delete "${post.title}"? This action cannot be undone.`)) {
-                            result = await authService.deletePost(postId);
-                        }
-                        break;
+            if (action === 'delete') {
+                if (confirm('Are you sure you want to delete this post?')) {
+                    await deletePost(postId);
                 }
-
-                if (result && result.success) {
-                    showSuccess(result.message);
-                    loadPosts(); // Refresh the table
-                    loadAnalytics(); // Refresh analytics
-                } else if (result) {
-                    showError(result.error);
-                }
-
-            } catch (error) {
-                console.error(`Error ${action} post:`, error);
-                showError(`Failed to ${action} post: ${error.message}`);
+            } else if (action === 'edit') {
+                // Redirect to edit page or open modal
+                window.open(`admin.html?edit=${postId}`, '_blank');
             }
         }
 
-        // Filter posts
-        function filterPosts() {
-            const searchTerm = searchPostsEl.value.toLowerCase();
-            const statusFilter = statusFilterEl.value;
-
-            filteredPosts = allPosts.filter(post => {
-                const matchesSearch = !searchTerm ||
-                    post.title?.toLowerCase().includes(searchTerm) ||
-                    post.authorName?.toLowerCase().includes(searchTerm) ||
-                    post.excerpt?.toLowerCase().includes(searchTerm);
-
-                const matchesStatus = !statusFilter || post.status === statusFilter;
-
-                return matchesSearch && matchesStatus;
-            });
-
-            renderPostsTable();
+        // Delete post
+        async function deletePost(postId) {
+            try {
+                await db.collection('posts').doc(postId).delete();
+                showSuccess('Post deleted successfully');
+                loadPosts();
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                showError('Failed to delete post: ' + error.message);
+            }
         }
 
-        // Show/hide messages
+        // Show error message
         function showError(message) {
             errorMessageEl.textContent = message;
             errorMessageEl.style.display = 'block';
             successMessageEl.style.display = 'none';
+            setTimeout(() => {
+                errorMessageEl.style.display = 'none';
+            }, 5000);
         }
 
+        // Show success message
         function showSuccess(message) {
             successMessageEl.textContent = message;
             successMessageEl.style.display = 'block';
             errorMessageEl.style.display = 'none';
+            setTimeout(() => {
+                successMessageEl.style.display = 'none';
+            }, 3000);
         }
 
-        function hideMessages() {
-            errorMessageEl.style.display = 'none';
-            successMessageEl.style.display = 'none';
-        }
-
+        // Show loading
         function showLoading() {
             postsTableContentEl.innerHTML = '<div class="loading">Loading posts...</div>';
         }
@@ -748,7 +808,7 @@
         // Sign out
         signOutBtn.addEventListener('click', async () => {
             try {
-                await authService.signOut();
+                await auth.signOut();
                 window.location.href = 'index.html';
             } catch (error) {
                 showError('Failed to sign out');

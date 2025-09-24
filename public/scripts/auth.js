@@ -1,51 +1,16 @@
-// Authentication Service Module
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
-import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged,
-    updateProfile,
-    sendPasswordResetEmail,
-    GoogleAuthProvider,
-    signInWithPopup
-} from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
-import {
-    getFirestore,
-    doc,
-    setDoc,
-    getDoc,
-    updateDoc,
-    deleteDoc,
-    collection,
-    query,
-    where,
-    getDocs
-} from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
-
-// Firebase configuration (same as in firebase.js)
-const firebaseConfig = {
-    apiKey: "AIzaSyDhvGnJ1QJgZsIrCy6E5tgiF7BbC66Xv9g",
-    authDomain: "dreamworld-f7a4b.firebaseapp.com",
-    projectId: "dreamworld-f7a4b",
-    storageBucket: "dreamworld-f7a4b.firebasestorage.app",
-    messagingSenderId: "330382191425",
-    appId: "1:330382191425:web:501903d678634f5eab4fc0",
-    measurementId: "G-0ZCDVMLP7B"
-};
+// Authentication Service Module using Firebase compat libraries
 
 class AuthService {
     constructor() {
-        this.app = initializeApp(firebaseConfig);
-        this.auth = getAuth(this.app);
-        this.db = getFirestore(this.app);
-        this.googleProvider = new GoogleAuthProvider();
+        // Use global Firebase instances from firebase.js
+        this.auth = firebase.auth();
+        this.db = firebase.firestore();
+        this.googleProvider = new firebase.auth.GoogleAuthProvider();
         this.currentUser = null;
         this.userRole = null;
 
         // Listen for auth state changes
-        onAuthStateChanged(this.auth, async (user) => {
+        this.auth.onAuthStateChanged(async (user) => {
             if (user) {
                 this.currentUser = user;
                 await this.loadUserRole();
@@ -136,11 +101,11 @@ class AuthService {
     // Register new user
     async register(email, password, displayName, role = this.USER_ROLES.USER) {
         try {
-            const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+            const userCredential = await this.auth.createUserWithEmailAndPassword(email, password);
             const user = userCredential.user;
 
             // Update display name
-            await updateProfile(user, { displayName });
+            await user.updateProfile({ displayName });
 
             // Create user document in Firestore
             console.log('Creating user document for:', user.uid, {
@@ -178,7 +143,7 @@ class AuthService {
     // Sign in user
     async signIn(email, password) {
         try {
-            const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+            const userCredential = await this.auth.signInWithEmailAndPassword(email, password);
 
             // Update last login
             await this.updateUserDocument(userCredential.user.uid, {
@@ -195,7 +160,7 @@ class AuthService {
     // Sign in with Google
     async signInWithGoogle() {
         try {
-            const result = await signInWithPopup(this.auth, this.googleProvider);
+            const result = await this.auth.signInWithPopup(this.googleProvider);
             const user = result.user;
 
             // Check if user document exists, create if not
@@ -227,7 +192,7 @@ class AuthService {
     // Sign out user
     async signOut() {
         try {
-            await signOut(this.auth);
+            await this.auth.signOut();
             return { success: true };
         } catch (error) {
             console.error('Sign out error:', error);
@@ -238,7 +203,7 @@ class AuthService {
     // Reset password
     async resetPassword(email) {
         try {
-            await sendPasswordResetEmail(this.auth, email);
+            await this.auth.sendPasswordResetEmail(email);
             return { success: true };
         } catch (error) {
             console.error('Password reset error:', error);
@@ -250,7 +215,7 @@ class AuthService {
     async createUserDocument(uid, userData) {
         try {
             console.log('Attempting to create user document:', uid, userData);
-            await setDoc(doc(this.db, 'users', uid), userData);
+            await this.db.collection('users').doc(uid).set(userData);
             console.log('User document created successfully in Firestore for:', uid);
             return { success: true };
         } catch (error) {
@@ -268,7 +233,7 @@ class AuthService {
     // Update user document
     async updateUserDocument(uid, updates) {
         try {
-            await updateDoc(doc(this.db, 'users', uid), updates);
+            await this.db.collection('users').doc(uid).update(updates);
             return { success: true };
         } catch (error) {
             console.error('Error updating user document:', error);
@@ -279,9 +244,9 @@ class AuthService {
     // Get user document
     async getUserDocument(uid) {
         try {
-            const docRef = doc(this.db, 'users', uid);
-            const docSnap = await getDoc(docRef);
-            return docSnap.exists() ? docSnap.data() : null;
+            const docRef = this.db.collection('users').doc(uid);
+            const docSnap = await docRef.get();
+            return docSnap.exists ? docSnap.data() : null;
         } catch (error) {
             console.error('Error getting user document:', error);
             return null;
@@ -329,8 +294,8 @@ class AuthService {
         }
 
         try {
-            const usersRef = collection(this.db, 'users');
-            const querySnapshot = await getDocs(usersRef);
+            const usersRef = this.db.collection('users');
+            const querySnapshot = await usersRef.get();
             return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         } catch (error) {
             console.error('Error getting users:', error);
@@ -345,7 +310,7 @@ class AuthService {
         }
 
         try {
-            await updateDoc(doc(this.db, 'users', userId), { role: newRole });
+            await this.db.collection('users').doc(userId).update({ role: newRole });
             return { success: true };
         } catch (error) {
             console.error('Error updating user role:', error);
@@ -360,7 +325,7 @@ class AuthService {
         }
 
         try {
-            await updateDoc(doc(this.db, 'users', userId), { isActive: false });
+            await this.db.collection('users').doc(userId).update({ isActive: false });
             return { success: true };
         } catch (error) {
             console.error('Error deactivating user:', error);
@@ -432,9 +397,9 @@ class AuthService {
             }
 
             // For other users, try to find by username
-            const usersRef = collection(this.db, 'users');
-            const q = query(usersRef, where('username', '==', username));
-            const querySnapshot = await getDocs(q);
+            const usersRef = this.db.collection('users');
+            const q = usersRef.where('username', '==', username);
+            const querySnapshot = await q.get();
 
             if (querySnapshot.empty) {
                 return { success: false, error: 'Username not found' };
@@ -459,8 +424,8 @@ class AuthService {
         }
 
         try {
-            const usersRef = collection(this.db, 'users');
-            const querySnapshot = await getDocs(usersRef);
+            const usersRef = this.db.collection('users');
+            const querySnapshot = await usersRef.get();
             return querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data(),
@@ -493,7 +458,7 @@ class AuthService {
                 updateData.permissions = this.PERMISSIONS[newRole] || this.PERMISSIONS[this.USER_ROLES.USER];
             }
 
-            await updateDoc(doc(this.db, 'users', userId), updateData);
+            await this.db.collection('users').doc(userId).update(updateData);
             return { success: true };
         } catch (error) {
             console.error('Error granting role:', error);
@@ -508,8 +473,8 @@ class AuthService {
         }
 
         try {
-            const userDoc = await getDoc(doc(this.db, 'users', userId));
-            if (!userDoc.exists()) {
+            const userDoc = await this.db.collection('users').doc(userId).get();
+            if (!userDoc.exists) {
                 throw new Error('User not found');
             }
 
@@ -520,7 +485,7 @@ class AuthService {
                 delete currentPermissions[permission];
             });
 
-            await updateDoc(doc(this.db, 'users', userId), {
+            await this.db.collection('users').doc(userId).update({
                 permissions: currentPermissions,
                 updatedAt: new Date(),
                 updatedBy: this.currentUser.uid
@@ -540,8 +505,8 @@ class AuthService {
         }
 
         try {
-            const userDoc = await getDoc(doc(this.db, 'users', userId));
-            if (!userDoc.exists()) {
+            const userDoc = await this.db.collection('users').doc(userId).get();
+            if (!userDoc.exists) {
                 throw new Error('User not found');
             }
 
@@ -580,8 +545,8 @@ class AuthService {
         }
 
         try {
-            const userDoc = await getDoc(doc(this.db, 'users', userId));
-            if (!userDoc.exists()) {
+            const userDoc = await this.db.collection('users').doc(userId).get();
+            if (!userDoc.exists) {
                 throw new Error('User not found');
             }
 
@@ -621,8 +586,8 @@ class AuthService {
         }
 
         try {
-            const postsRef = collection(this.db, 'posts');
-            const querySnapshot = await getDocs(postsRef);
+            const postsRef = this.db.collection('posts');
+            const querySnapshot = await postsRef.get();
 
             const posts = [];
             querySnapshot.forEach((doc) => {
@@ -646,7 +611,7 @@ class AuthService {
         }
 
         try {
-            await deleteDoc(doc(this.db, 'posts', postId));
+            await this.db.collection('posts').doc(postId).delete();
             return { success: true, message: 'Post deleted successfully' };
         } catch (error) {
             console.error('Error deleting post:', error);
@@ -661,7 +626,7 @@ class AuthService {
         }
 
         try {
-            await updateDoc(doc(this.db, 'posts', postId), {
+            await this.db.collection('posts').doc(postId).update({
                 status: status,
                 updatedAt: new Date()
             });
@@ -715,20 +680,16 @@ class AuthService {
             }
 
             // Check if user already has a pending petition
-            const existingPetition = await getDocs(
-                query(
-                    collection(this.db, 'writer-petitions'),
-                    where('userId', '==', this.currentUser.uid),
-                    where('status', '==', 'pending')
-                )
-            );
+            const existingPetition = await this.db.collection('writer-petitions')
+                .where('userId', '==', this.currentUser.uid)
+                .where('status', '==', 'pending')
+                .get();
 
             if (!existingPetition.empty) {
                 throw new Error('You already have a pending petition');
             }
 
             // Submit new petition
-            const petitionRef = doc(collection(this.db, 'writer-petitions'));
             const petition = {
                 ...petitionData,
                 userId: this.currentUser.uid,
@@ -740,8 +701,8 @@ class AuthService {
                 reviewNotes: null
             };
 
-            await setDoc(petitionRef, petition);
-            return petitionRef.id;
+            const docRef = await this.db.collection('writer-petitions').add(petition);
+            return docRef.id;
         } catch (error) {
             console.error('Error submitting petition:', error);
             throw error;
@@ -754,7 +715,7 @@ class AuthService {
                 throw new Error('Insufficient permissions');
             }
 
-            const petitionsSnapshot = await getDocs(collection(this.db, 'writer-petitions'));
+            const petitionsSnapshot = await this.db.collection('writer-petitions').get();
             return petitionsSnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
@@ -771,12 +732,9 @@ class AuthService {
                 throw new Error('Insufficient permissions');
             }
 
-            const petitionsSnapshot = await getDocs(
-                query(
-                    collection(this.db, 'writer-petitions'),
-                    where('status', '==', status)
-                )
-            );
+            const petitionsSnapshot = await this.db.collection('writer-petitions')
+                .where('status', '==', status)
+                .get();
 
             return petitionsSnapshot.docs.map(doc => ({
                 id: doc.id,
@@ -790,12 +748,9 @@ class AuthService {
 
     async getUserPetitions(userId) {
         try {
-            const petitionsSnapshot = await getDocs(
-                query(
-                    collection(this.db, 'writer-petitions'),
-                    where('userId', '==', userId || this.currentUser.uid)
-                )
-            );
+            const petitionsSnapshot = await this.db.collection('writer-petitions')
+                .where('userId', '==', userId || this.currentUser.uid)
+                .get();
 
             return petitionsSnapshot.docs.map(doc => ({
                 id: doc.id,
@@ -814,17 +769,17 @@ class AuthService {
             }
 
             // Get petition data
-            const petitionRef = doc(this.db, 'writer-petitions', petitionId);
-            const petitionDoc = await getDoc(petitionRef);
+            const petitionRef = this.db.collection('writer-petitions').doc(petitionId);
+            const petitionDoc = await petitionRef.get();
 
-            if (!petitionDoc.exists()) {
+            if (!petitionDoc.exists) {
                 throw new Error('Petition not found');
             }
 
             const petitionData = petitionDoc.data();
 
             // Update petition status
-            await updateDoc(petitionRef, {
+            await petitionRef.update({
                 status: 'approved',
                 reviewedAt: new Date(),
                 reviewedBy: this.currentUser.uid,
@@ -832,8 +787,8 @@ class AuthService {
             });
 
             // Promote user to contributor role
-            const userRef = doc(this.db, 'users', petitionData.userId);
-            await updateDoc(userRef, {
+            const userRef = this.db.collection('users').doc(petitionData.userId);
+            await userRef.update({
                 role: 'contributor',
                 roleUpdatedAt: new Date(),
                 roleUpdatedBy: this.currentUser.uid
@@ -852,8 +807,8 @@ class AuthService {
                 throw new Error('Insufficient permissions');
             }
 
-            const petitionRef = doc(this.db, 'writer-petitions', petitionId);
-            await updateDoc(petitionRef, {
+            const petitionRef = this.db.collection('writer-petitions').doc(petitionId);
+            await petitionRef.update({
                 status: 'rejected',
                 reviewedAt: new Date(),
                 reviewedBy: this.currentUser.uid,
@@ -905,8 +860,8 @@ class AuthService {
                 throw new Error('Insufficient permissions');
             }
 
-            const petitionRef = doc(this.db, 'writer-petitions', petitionId);
-            await deleteDoc(petitionRef);
+            const petitionRef = this.db.collection('writer-petitions').doc(petitionId);
+            await petitionRef.delete();
             return true;
         } catch (error) {
             console.error('Error deleting petition:', error);
@@ -1008,4 +963,4 @@ class AuthService {
 // Create global auth service instance
 window.authService = new AuthService();
 
-export default window.authService;
+console.log('Authentication service initialized successfully');

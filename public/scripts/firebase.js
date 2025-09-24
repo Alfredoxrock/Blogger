@@ -1,7 +1,4 @@
-// firebase.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-
+// Firebase Configuration using compat libraries
 const firebaseConfig = {
     apiKey: "AIzaSyDhvGnJ1QJgZsIrCy6E5tgiF7BbC66Xv9g",
     authDomain: "dreamworld-f7a4b.firebaseapp.com",
@@ -12,8 +9,11 @@ const firebaseConfig = {
     measurementId: "G-0ZCDVMLP7B"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// Initialize Firebase using compat
+firebase.initializeApp(firebaseConfig);
 
-export { app, analytics };
+// Make Firebase services available globally
+window.auth = firebase.auth();
+window.db = firebase.firestore();
+
+console.log('Firebase initialized successfully');

@@ -583,6 +583,7 @@
                 <a href="admin.html">Admin</a>
                 <a href="user-management.html" class="active">Users</a>
                 <a href="posts-management.html">Posts</a>
+                <a href="petition-management.html">Writer Petitions</a>
                 <button id="signOutBtn" class="btn btn-danger">Sign Out</button>
             </div>
         </div>
@@ -617,6 +618,13 @@
             <div class="stat-card">
                 <span class="stat-number" id="regularUsers">0</span>
                 <span class="stat-label">Regular Users</span>
+            </div>
+            <div class="stat-card" onclick="window.location.href='petition-management.html'"
+                style="cursor: pointer; border: 2px solid #4ecdc4;">
+                <span class="stat-number" id="pendingPetitions">0</span>
+                <span class="stat-label">📝 Writer Petitions</span>
+                <small style="color: #4ecdc4; font-size: 0.8rem; display: block; margin-top: 5px;">Click to
+                    manage</small>
             </div>
         </div>
 
@@ -681,8 +689,14 @@
         </div>
     </div>
 
-    <script type="module">
-        import authService from './scripts/auth.js';
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="scripts/firebase.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/superadmin-guard.js"></script>
+    <script>
+        const authService = window.authService;
 
         // DOM elements
         const totalUsersEl = document.getElementById('totalUsers');
@@ -690,6 +704,7 @@
         const editorUsersEl = document.getElementById('editorUsers');
         const contributorUsersEl = document.getElementById('contributorUsers');
         const regularUsersEl = document.getElementById('regularUsers');
+        const pendingPetitionsEl = document.getElementById('pendingPetitions');
         const usersTableContentEl = document.getElementById('usersTableContent');
         const searchUsersEl = document.getElementById('searchUsers');
         const roleFilterEl = document.getElementById('roleFilter');
@@ -703,23 +718,31 @@
         let allUsers = [];
         let filteredUsers = [];
 
-        // Auth state management
-        authService.onAuthStateChange = (user, role) => {
-            if (!user) {
-                window.location.href = 'login.html';
-                return;
-            }
+        // Initialize Super Admin Guard
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                window.superAdminGuard.init({
+                    redirectUrl: 'user-dashboard.html',
+                    loginUrl: 'login.html',
+                    errorMessage: 'Access denied. Super Administrator privileges required for user management.',
+                    showError: true
+                });
+            }, 1000);
+        });
 
-            if (!authService.isSuperAdmin()) {
-                showError('Access denied. Super admin privileges required.');
-                setTimeout(() => {
-                    window.location.href = 'user-dashboard.html';
-                }, 2000);
-                return;
-            }
-
+        // Listen for access granted event
+        window.addEventListener('superAdminAccessGranted', async (event) => {
+            console.log('✅ Super admin access granted, loading users...');
             loadUsers();
-        };
+        });
+
+        // Auth state management for other functionality
+        if (authService) {
+            authService.onAuthStateChange = (user, role) => {
+                // The guard handles access control, this is just for other functionality
+                console.log('Auth state changed:', user?.email, role);
+            };
+        }
 
         // Load all users
         async function loadUsers() {
@@ -753,6 +776,25 @@
             editorUsersEl.textContent = stats.editor;
             contributorUsersEl.textContent = stats.contributor;
             regularUsersEl.textContent = stats.user;
+
+            // Load petition stats
+            loadPetitionStats();
+        }
+
+        // Load petition statistics
+        async function loadPetitionStats() {
+            try {
+                if (authService && authService.isSuperAdmin()) {
+                    const petitions = await authService.getAllPetitions();
+                    const pendingCount = petitions.filter(p => p.status === 'pending').length;
+                    pendingPetitionsEl.textContent = pendingCount;
+                } else {
+                    pendingPetitionsEl.textContent = '—';
+                }
+            } catch (error) {
+                console.error('Error loading petition stats:', error);
+                pendingPetitionsEl.textContent = '!';
+            }
         }
 
         // Render users table

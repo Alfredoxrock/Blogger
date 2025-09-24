@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .success {
+            background: #4caf50;
+        }
+
+        .error {
+            background: #f44336;
+        }
+
+        .info {
+            background: #2196f3;
+        }
+
+        button {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #45b7d1;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔥 Firebase Connection Test</h1>
+    <div id="test-results"></div>
+
+    <h2>Actions</h2>
+    <button onclick="testFirebaseConnection()">Test Firebase Connection</button>
+    <button onclick="testAuthService()">Test Auth Service</button>
+    <button onclick="testFirestore()">Test Firestore</button>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="scripts/firebase.js"></script>
+    <script src="scripts/auth.js"></script>
+
+    <script>
+        const results = document.getElementById('test-results');
+
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            results.appendChild(div);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function testFirebaseConnection() {
+            addResult('Testing Firebase connection...', 'info');
+
+            try {
+                if (typeof firebase === 'undefined') {
+                    addResult('❌ Firebase SDK not loaded', 'error');
+                    return;
+                }
+                addResult('✅ Firebase SDK loaded successfully', 'success');
+
+                if (window.auth && window.db) {
+                    addResult('✅ Firebase services initialized', 'success');
+                } else {
+                    addResult('❌ Firebase services not initialized', 'error');
+                }
+
+            } catch (error) {
+                addResult(`❌ Firebase connection error: ${error.message}`, 'error');
+            }
+        }
+
+        function testAuthService() {
+            addResult('Testing Auth Service...', 'info');
+
+            try {
+                if (window.authService) {
+                    addResult('✅ Auth Service loaded successfully', 'success');
+                    addResult(`Current user: ${window.authService.currentUser ? window.authService.currentUser.email : 'Not signed in'}`, 'info');
+                    addResult(`User role: ${window.authService.userRole || 'None'}`, 'info');
+                } else {
+                    addResult('❌ Auth Service not found', 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Auth Service error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFirestore() {
+            addResult('Testing Firestore connection...', 'info');
+
+            try {
+                if (!window.db) {
+                    addResult('❌ Firestore not initialized', 'error');
+                    return;
+                }
+
+                // Try to read from a collection
+                const testRef = window.db.collection('test');
+                const snapshot = await testRef.limit(1).get();
+                addResult(`✅ Firestore connection successful (${snapshot.size} test docs found)`, 'success');
+
+                // Test writer-petitions collection
+                const petitionsRef = window.db.collection('writer-petitions');
+                const petitionsSnapshot = await petitionsRef.limit(1).get();
+                addResult(`✅ Writer-petitions collection accessible (${petitionsSnapshot.size} docs found)`, 'success');
+
+            } catch (error) {
+                addResult(`❌ Firestore test error: ${error.message}`, 'error');
+            }
+        }
+
+        // Run basic tests on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testFirebaseConnection();
+                testAuthService();
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>

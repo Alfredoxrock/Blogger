@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Setup - DreamLogTogether</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .container {
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #4ecdc4;
+        }
+
+        h1 {
+            color: #4ecdc4;
+            text-align: center;
+        }
+
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            background: #3d3d3d;
+            border-radius: 8px;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        button {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #45b7d1;
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .success {
+            background: #4caf50;
+        }
+
+        .error {
+            background: #f44336;
+        }
+
+        .info {
+            background: #2196f3;
+        }
+
+        pre {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔥 Super Admin Setup</h1>
+
+        <div class="step">
+            <h3>Step 1: Create Super Admin Account</h3>
+            <p>This will create the Super Administrator account with username <strong>Alfredoxrock</strong></p>
+            <button onclick="createSuperAdmin()">Create Super Admin Account</button>
+            <div id="step1-result"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Test Login</h3>
+            <p>Try logging in with the super admin credentials:</p>
+            <ul>
+                <li><strong>Username:</strong> Alfredoxrock</li>
+                <li><strong>Email:</strong> alfredoxrock@dreamlog.com</li>
+                <li><strong>Password:</strong> 1936413gjhfa78d6</li>
+            </ul>
+            <button onclick="testLogin()">Test Super Admin Login</button>
+            <div id="step2-result"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Verify Permissions</h3>
+            <p>Check if the super admin has the correct permissions:</p>
+            <button onclick="verifyPermissions()">Verify Super Admin Permissions</button>
+            <div id="step3-result"></div>
+        </div>
+
+        <div class="step">
+            <h3>Navigation</h3>
+            <button onclick="window.location.href='login.html'">Go to Login Page</button>
+            <button onclick="window.location.href='petition-management.html'">Go to Petition Management</button>
+            <button onclick="window.location.href='index.html'">Go to Homepage</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="scripts/firebase.js"></script>
+    <script src="scripts/auth.js"></script>
+
+    <script>
+        function addResult(stepId, message, type = 'info') {
+            const resultDiv = document.getElementById(stepId);
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = message;
+            resultDiv.appendChild(div);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        async function createSuperAdmin() {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Creating...';
+
+            const resultDiv = document.getElementById('step1-result');
+            resultDiv.innerHTML = '';
+
+            try {
+                addResult('step1-result', '🔄 Creating super admin account...', 'info');
+
+                // Create the super admin account
+                const result = await window.authService.register(
+                    'alfredoxrock@dreamlog.com',
+                    '1936413gjhfa78d6',
+                    'Super Administrator',
+                    'super_admin'
+                );
+
+                if (result.success) {
+                    addResult('step1-result', '✅ Super admin account created successfully!', 'success');
+                    addResult('step1-result', `User UID: ${result.user.uid}`, 'info');
+                    addResult('step1-result', `Email: ${result.user.email}`, 'info');
+                } else {
+                    if (result.error.includes('email-already-in-use')) {
+                        addResult('step1-result', '⚠️ Account already exists. This is okay!', 'info');
+
+                        // Try to sign in to verify
+                        const signInResult = await window.authService.signIn('alfredoxrock@dreamlog.com', '1936413gjhfa78d6');
+                        if (signInResult.success) {
+                            addResult('step1-result', '✅ Existing account verified successfully!', 'success');
+                        } else {
+                            addResult('step1-result', `❌ Could not verify existing account: ${signInResult.error}`, 'error');
+                        }
+                    } else {
+                        addResult('step1-result', `❌ Error creating account: ${result.error}`, 'error');
+                    }
+                }
+
+            } catch (error) {
+                addResult('step1-result', `❌ Unexpected error: ${error.message}`, 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Create Super Admin Account';
+            }
+        }
+
+        async function testLogin() {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Testing...';
+
+            const resultDiv = document.getElementById('step2-result');
+            resultDiv.innerHTML = '';
+
+            try {
+                addResult('step2-result', '🔄 Testing login...', 'info');
+
+                // Try username login
+                const usernameResult = await window.authService.signInWithUsername('Alfredoxrock', '1936413gjhfa78d6');
+
+                if (usernameResult.success) {
+                    addResult('step2-result', '✅ Username login successful!', 'success');
+                    addResult('step2-result', `Logged in as: ${usernameResult.user.email}`, 'info');
+                    addResult('step2-result', `User role: ${window.authService.userRole}`, 'info');
+                } else {
+                    addResult('step2-result', `❌ Username login failed: ${usernameResult.error}`, 'error');
+
+                    // Try email login as fallback
+                    addResult('step2-result', '🔄 Trying email login as fallback...', 'info');
+                    const emailResult = await window.authService.signIn('alfredoxrock@dreamlog.com', '1936413gjhfa78d6');
+
+                    if (emailResult.success) {
+                        addResult('step2-result', '✅ Email login successful!', 'success');
+                        addResult('step2-result', `Logged in as: ${emailResult.user.email}`, 'info');
+                    } else {
+                        addResult('step2-result', `❌ Email login also failed: ${emailResult.error}`, 'error');
+                    }
+                }
+
+            } catch (error) {
+                addResult('step2-result', `❌ Unexpected error: ${error.message}`, 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Test Super Admin Login';
+            }
+        }
+
+        async function verifyPermissions() {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Verifying...';
+
+            const resultDiv = document.getElementById('step3-result');
+            resultDiv.innerHTML = '';
+
+            try {
+                addResult('step3-result', '🔄 Verifying permissions...', 'info');
+
+                if (!window.authService.currentUser) {
+                    addResult('step3-result', '❌ No user logged in. Please complete Step 2 first.', 'error');
+                    return;
+                }
+
+                const userInfo = window.authService.getUserDisplayInfo();
+                addResult('step3-result', `Current user: ${userInfo.email}`, 'info');
+                addResult('step3-result', `User role: ${userInfo.role}`, 'info');
+                addResult('step3-result', `Is super admin: ${window.authService.isSuperAdmin()}`, 'info');
+
+                if (window.authService.isSuperAdmin()) {
+                    addResult('step3-result', '✅ Super admin permissions verified!', 'success');
+
+                    // Try to access petition collection
+                    try {
+                        const petitions = await window.authService.getAllPetitions();
+                        addResult('step3-result', `✅ Can access petitions (${petitions.length} found)`, 'success');
+                    } catch (petitionError) {
+                        addResult('step3-result', `⚠️ Cannot access petitions: ${petitionError.message}`, 'error');
+                    }
+                } else {
+                    addResult('step3-result', '❌ User does not have super admin permissions', 'error');
+
+                    // Try to fix the role
+                    addResult('step3-result', '🔄 Attempting to fix role...', 'info');
+                    try {
+                        await window.db.collection('users').doc(window.authService.currentUser.uid).update({
+                            role: 'super_admin',
+                            updatedAt: new Date()
+                        });
+
+                        await window.authService.loadUserRole();
+                        addResult('step3-result', '✅ Role updated successfully!', 'success');
+                        addResult('step3-result', `New role: ${window.authService.userRole}`, 'info');
+                    } catch (roleError) {
+                        addResult('step3-result', `❌ Could not update role: ${roleError.message}`, 'error');
+                    }
+                }
+
+            } catch (error) {
+                addResult('step3-result', `❌ Unexpected error: ${error.message}`, 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Verify Super Admin Permissions';
+            }
+        }
+
+        // Log when services are ready
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (window.authService) {
+                    console.log('✅ Auth service loaded');
+                    console.log('Current user:', window.authService.currentUser?.email || 'None');
+                    console.log('User role:', window.authService.userRole || 'None');
+                } else {
+                    console.error('❌ Auth service not loaded');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>
