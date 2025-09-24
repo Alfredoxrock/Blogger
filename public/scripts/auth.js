@@ -143,7 +143,7 @@ class AuthService {
             await updateProfile(user, { displayName });
 
             // Create user document in Firestore
-            await this.createUserDocument(user.uid, {
+            console.log('Creating user document for:', user.uid, {
                 email: user.email,
                 displayName: displayName,
                 role: role,
@@ -151,6 +151,22 @@ class AuthService {
                 isActive: true,
                 lastLogin: new Date()
             });
+
+            const createResult = await this.createUserDocument(user.uid, {
+                email: user.email,
+                displayName: displayName,
+                role: role,
+                createdAt: new Date(),
+                isActive: true,
+                lastLogin: new Date()
+            });
+
+            if (!createResult.success) {
+                console.error('Failed to create user document:', createResult.error);
+                throw new Error('Failed to create user profile: ' + createResult.error);
+            }
+
+            console.log('User document created successfully for:', user.uid);
 
             return { success: true, user };
         } catch (error) {
@@ -233,10 +249,18 @@ class AuthService {
     // Create user document in Firestore
     async createUserDocument(uid, userData) {
         try {
+            console.log('Attempting to create user document:', uid, userData);
             await setDoc(doc(this.db, 'users', uid), userData);
+            console.log('User document created successfully in Firestore for:', uid);
             return { success: true };
         } catch (error) {
             console.error('Error creating user document:', error);
+            console.error('Error details:', {
+                code: error.code,
+                message: error.message,
+                uid: uid,
+                userData: userData
+            });
             return { success: false, error: error.message };
         }
     }
@@ -923,6 +947,60 @@ class AuthService {
         } catch (error) {
             console.error('Error checking petition eligibility:', error);
             return { canSubmit: false, reason: 'Error checking eligibility' };
+        }
+    }
+
+    // Manual function to create user document for existing Firebase Auth users
+    async createMissingUserDocument(user, role = 'user') {
+        try {
+            if (!user) {
+                throw new Error('No user provided');
+            }
+
+            console.log('Creating missing user document for:', user.uid);
+
+            // Check if document already exists
+            const existingDoc = await this.getUserDocument(user.uid);
+            if (existingDoc) {
+                console.log('User document already exists for:', user.uid);
+                return { success: true, exists: true };
+            }
+
+            // Create the user document
+            const userData = {
+                email: user.email,
+                displayName: user.displayName || user.email.split('@')[0],
+                role: role,
+                createdAt: new Date(),
+                isActive: true,
+                lastLogin: new Date()
+            };
+
+            const result = await this.createUserDocument(user.uid, userData);
+            return { success: result.success, error: result.error, exists: false };
+        } catch (error) {
+            console.error('Error creating missing user document:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Function to sync all Firebase Auth users to Firestore
+    async syncAllAuthUsers() {
+        try {
+            if (!this.isSuperAdmin()) {
+                throw new Error('Only super admin can sync users');
+            }
+
+            console.log('Starting sync of Firebase Auth users to Firestore...');
+
+            // This function would need to be called from Firebase Functions
+            // as client-side code cannot list all auth users
+            console.warn('Full user sync requires Firebase Admin SDK (server-side)');
+
+            return { success: false, error: 'This function requires server-side implementation' };
+        } catch (error) {
+            console.error('Error syncing auth users:', error);
+            return { success: false, error: error.message };
         }
     }
 }

@@ -639,6 +639,8 @@
                         <option value="user">User</option>
                     </select>
                     <button class="btn btn-primary" id="refreshUsers">Refresh</button>
+                    <button class="btn btn-secondary" id="syncUsers"
+                        title="Create missing user documents for authenticated users">Sync Users</button>
                 </div>
             </div>
 
@@ -989,6 +991,31 @@
                 window.location.href = 'index.html';
             } catch (error) {
                 showError('Failed to sign out');
+            }
+        });
+
+        // Sync users button functionality
+        document.getElementById('syncUsers').addEventListener('click', async () => {
+            if (confirm('This will create user documents for users who can log in but don\'t appear in the list. Continue?')) {
+                try {
+                    showLoading();
+
+                    // For now, create a document for the current user if missing
+                    if (currentUser) {
+                        const result = await authService.createMissingUserDocument(currentUser, 'user');
+                        if (result.success) {
+                            showSuccess(result.exists ? 'User document already exists' : 'Created missing user document');
+                            loadUsers(); // Refresh the list
+                        } else {
+                            showError('Failed to sync: ' + result.error);
+                        }
+                    }
+
+                    showSuccess('User sync completed. Note: This is a limited client-side sync. For full sync, server-side implementation is needed.');
+                } catch (error) {
+                    console.error('Sync error:', error);
+                    showError('Failed to sync users: ' + error.message);
+                }
             }
         });
 
