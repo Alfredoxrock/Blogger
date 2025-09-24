@@ -203,5 +203,25 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow write: if false; // Only server-side writes
     }
+
+    // Writer petitions - manage applications to become writers
+    match /writer-petitions/{petitionId} {
+      // Users can read their own petitions, super admin can read all
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.userId || 
+        isSuperAdmin()
+      );
+      
+      // Users can create their own petitions (one pending at a time enforced in app)
+      allow create: if isAuthenticated() && isActiveUser() && 
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.status == 'pending';
+      
+      // Only super admin can update petitions (approve/reject)
+      allow update: if isSuperAdmin();
+      
+      // Only super admin can delete petitions
+      allow delete: if isSuperAdmin();
+    }
   }
 }

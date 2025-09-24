@@ -765,6 +765,15 @@
                 `;
                 quickActions.appendChild(managePostsAction);
 
+                const managePetitionsAction = document.createElement('a');
+                managePetitionsAction.href = 'petition-management.html';
+                managePetitionsAction.className = 'quick-action';
+                managePetitionsAction.innerHTML = `
+                    <span class="quick-action-icon">📋</span>
+                    <span>Writer Petitions</span>
+                `;
+                quickActions.appendChild(managePetitionsAction);
+
                 const settingsAction = document.createElement('a');
                 settingsAction.href = '#';
                 settingsAction.className = 'quick-action';
@@ -805,6 +814,18 @@
                     <span>Manage Posts</span>
                 `;
                 quickActions.appendChild(manageDraftsAction);
+            }
+
+            // Add petition access for regular users
+            if (!authService.hasPermission('canWrite') && !authService.isSuperAdmin() && !authService.isAdmin()) {
+                const petitionAction = document.createElement('a');
+                petitionAction.href = 'writer-petition.html';
+                petitionAction.className = 'quick-action';
+                petitionAction.innerHTML = `
+                    <span class="quick-action-icon">✍️</span>
+                    <span>Become a Writer</span>
+                `;
+                quickActions.appendChild(petitionAction);
             }
         }
 

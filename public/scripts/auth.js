@@ -682,6 +682,249 @@ class AuthService {
             throw error;
         }
     }
+
+    // Petition Management Functions
+    async submitWriterPetition(petitionData) {
+        try {
+            if (!this.currentUser) {
+                throw new Error('You must be logged in to submit a petition');
+            }
+
+            // Check if user already has a pending petition
+            const existingPetition = await getDocs(
+                query(
+                    collection(this.db, 'writer-petitions'),
+                    where('userId', '==', this.currentUser.uid),
+                    where('status', '==', 'pending')
+                )
+            );
+
+            if (!existingPetition.empty) {
+                throw new Error('You already have a pending petition');
+            }
+
+            // Submit new petition
+            const petitionRef = doc(collection(this.db, 'writer-petitions'));
+            const petition = {
+                ...petitionData,
+                userId: this.currentUser.uid,
+                userEmail: this.currentUser.email,
+                status: 'pending',
+                submittedAt: new Date(),
+                reviewedAt: null,
+                reviewedBy: null,
+                reviewNotes: null
+            };
+
+            await setDoc(petitionRef, petition);
+            return petitionRef.id;
+        } catch (error) {
+            console.error('Error submitting petition:', error);
+            throw error;
+        }
+    }
+
+    async getAllPetitions() {
+        try {
+            if (!this.userRole || this.userRole !== 'super_admin') {
+                throw new Error('Insufficient permissions');
+            }
+
+            const petitionsSnapshot = await getDocs(collection(this.db, 'writer-petitions'));
+            return petitionsSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        } catch (error) {
+            console.error('Error getting petitions:', error);
+            throw error;
+        }
+    }
+
+    async getPetitionsByStatus(status) {
+        try {
+            if (!this.userRole || this.userRole !== 'super_admin') {
+                throw new Error('Insufficient permissions');
+            }
+
+            const petitionsSnapshot = await getDocs(
+                query(
+                    collection(this.db, 'writer-petitions'),
+                    where('status', '==', status)
+                )
+            );
+
+            return petitionsSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        } catch (error) {
+            console.error('Error getting petitions by status:', error);
+            throw error;
+        }
+    }
+
+    async getUserPetitions(userId) {
+        try {
+            const petitionsSnapshot = await getDocs(
+                query(
+                    collection(this.db, 'writer-petitions'),
+                    where('userId', '==', userId || this.currentUser.uid)
+                )
+            );
+
+            return petitionsSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        } catch (error) {
+            console.error('Error getting user petitions:', error);
+            throw error;
+        }
+    }
+
+    async approvePetition(petitionId, reviewNotes = null) {
+        try {
+            if (!this.userRole || this.userRole !== 'super_admin') {
+                throw new Error('Insufficient permissions');
+            }
+
+            // Get petition data
+            const petitionRef = doc(this.db, 'writer-petitions', petitionId);
+            const petitionDoc = await getDoc(petitionRef);
+
+            if (!petitionDoc.exists()) {
+                throw new Error('Petition not found');
+            }
+
+            const petitionData = petitionDoc.data();
+
+            // Update petition status
+            await updateDoc(petitionRef, {
+                status: 'approved',
+                reviewedAt: new Date(),
+                reviewedBy: this.currentUser.uid,
+                reviewNotes: reviewNotes
+            });
+
+            // Promote user to contributor role
+            const userRef = doc(this.db, 'users', petitionData.userId);
+            await updateDoc(userRef, {
+                role: 'contributor',
+                roleUpdatedAt: new Date(),
+                roleUpdatedBy: this.currentUser.uid
+            });
+
+            return true;
+        } catch (error) {
+            console.error('Error approving petition:', error);
+            throw error;
+        }
+    }
+
+    async rejectPetition(petitionId, reviewNotes = null) {
+        try {
+            if (!this.userRole || this.userRole !== 'super_admin') {
+                throw new Error('Insufficient permissions');
+            }
+
+            const petitionRef = doc(this.db, 'writer-petitions', petitionId);
+            await updateDoc(petitionRef, {
+                status: 'rejected',
+                reviewedAt: new Date(),
+                reviewedBy: this.currentUser.uid,
+                reviewNotes: reviewNotes
+            });
+
+            return true;
+        } catch (error) {
+            console.error('Error rejecting petition:', error);
+            throw error;
+        }
+    }
+
+    async getPetitionStats() {
+        try {
+            if (!this.userRole || this.userRole !== 'super_admin') {
+                throw new Error('Insufficient permissions');
+            }
+
+            const allPetitions = await this.getAllPetitions();
+
+            const stats = {
+                total: allPetitions.length,
+                pending: allPetitions.filter(p => p.status === 'pending').length,
+                approved: allPetitions.filter(p => p.status === 'approved').length,
+                rejected: allPetitions.filter(p => p.status === 'rejected').length,
+                thisMonth: 0
+            };
+
+            // Calculate this month's approved
+            const thisMonth = new Date();
+            thisMonth.setDate(1);
+            stats.thisMonth = allPetitions.filter(p =>
+                p.status === 'approved' &&
+                p.reviewedAt &&
+                new Date(p.reviewedAt) >= thisMonth
+            ).length;
+
+            return stats;
+        } catch (error) {
+            console.error('Error getting petition stats:', error);
+            throw error;
+        }
+    }
+
+    async deletePetition(petitionId) {
+        try {
+            if (!this.userRole || this.userRole !== 'super_admin') {
+                throw new Error('Insufficient permissions');
+            }
+
+            const petitionRef = doc(this.db, 'writer-petitions', petitionId);
+            await deleteDoc(petitionRef);
+            return true;
+        } catch (error) {
+            console.error('Error deleting petition:', error);
+            throw error;
+        }
+    }
+
+    async canSubmitPetition() {
+        try {
+            if (!this.currentUser) {
+                return { canSubmit: false, reason: 'Not logged in' };
+            }
+
+            // Check if user already has contributor role or higher
+            if (this.userRole && ['contributor', 'editor', 'admin', 'super_admin'].includes(this.userRole)) {
+                return { canSubmit: false, reason: 'Already has writer permissions' };
+            }
+
+            // Check for existing petitions
+            const existingPetitions = await this.getUserPetitions();
+            const pendingPetition = existingPetitions.find(p => p.status === 'pending');
+
+            if (pendingPetition) {
+                return { canSubmit: false, reason: 'Petition already pending review' };
+            }
+
+            const recentRejection = existingPetitions.find(p =>
+                p.status === 'rejected' &&
+                p.reviewedAt &&
+                (new Date() - new Date(p.reviewedAt)) < (30 * 24 * 60 * 60 * 1000) // 30 days
+            );
+
+            if (recentRejection) {
+                return { canSubmit: false, reason: 'Must wait 30 days after rejection to reapply' };
+            }
+
+            return { canSubmit: true, reason: null };
+        } catch (error) {
+            console.error('Error checking petition eligibility:', error);
+            return { canSubmit: false, reason: 'Error checking eligibility' };
+        }
+    }
 }
 
 // Create global auth service instance

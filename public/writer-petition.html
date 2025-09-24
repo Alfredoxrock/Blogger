@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writer Petition - Dream Log Together</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: #fff;
+            padding: 30px 0;
+            text-align: center;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 40px;
+        }
+
+        .header .title h1 {
+            color: #1f2937;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.025em;
+        }
+
+        .header .title h1 a {
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+        .header .title h1 a:hover {
+            color: #374151;
+        }
+
+        .header .title p {
+            color: #6b7280;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 0 0 25px 0;
+        }
+
+        .header .nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header .nav .btn {
+            padding: 10px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            color: #374151;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        .header .nav .btn:hover {
+            border-color: #6b7280;
+            background: #f9fafb;
+            transform: translateY(-2px);
+        }
+
+        .petition-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .petition-header {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            color: #fff;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .petition-header h1 {
+            font-size: 2.5rem;
+            margin: 0 0 15px 0;
+            font-weight: 700;
+        }
+
+        .petition-header p {
+            font-size: 1.2rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .petition-content {
+            padding: 40px;
+        }
+
+        .info-section {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .info-section h3 {
+            color: #374151;
+            font-size: 1.4rem;
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-section ul {
+            color: #64748b;
+            line-height: 1.8;
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fff;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #374151;
+            box-shadow: 0 0 0 3px rgba(55, 65, 81, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            color: #fff;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-message,
+        .error-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+
+        .requirements-list {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .requirements-list h4 {
+            color: #856404;
+            margin: 0 0 15px 0;
+            font-size: 1.2rem;
+        }
+
+        .requirements-list ul {
+            color: #856404;
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .petition-container {
+                margin: 0 10px 20px 10px;
+            }
+
+            .petition-header,
+            .petition-content {
+                padding: 30px 20px;
+            }
+
+            .petition-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="title">
+            <h1><a href="index.html">Dream Log Together</a></h1>
+            <p>Apply to become a writer and share your stories</p>
+        </div>
+        <nav class="nav">
+            <a href="index.html" class="btn">Home</a>
+            <a href="login.html" class="btn">Login</a>
+            <a href="user-dashboard.html" class="btn">Dashboard</a>
+        </nav>
+    </div>
+
+    <div class="petition-container">
+        <div class="petition-header">
+            <h1>📝 Writer Petition</h1>
+            <p>Apply to join our community of writers and content creators</p>
+        </div>
+
+        <div class="petition-content">
+            <div class="info-section">
+                <h3>🌟 Why become a writer?</h3>
+                <ul>
+                    <li>Share your unique stories and experiences with our community</li>
+                    <li>Access to advanced writing tools and analytics</li>
+                    <li>Connect with other writers and readers</li>
+                    <li>Build your personal brand and following</li>
+                    <li>Participate in writing challenges and contests</li>
+                </ul>
+            </div>
+
+            <div class="requirements-list">
+                <h4>⚠️ Requirements</h4>
+                <ul>
+                    <li>Must have an active account with Dream Log Together</li>
+                    <li>Demonstrate writing ability through your petition</li>
+                    <li>Commit to posting quality content regularly</li>
+                    <li>Follow community guidelines and standards</li>
+                    <li>Be respectful and supportive of other community members</li>
+                </ul>
+            </div>
+
+            <form id="petitionForm">
+                <div class="success-message" id="successMessage">
+                    Your petition has been submitted successfully! Our administrators will review it within 2-3 business
+                    days.
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    Please fix the errors and try again.
+                </div>
+
+                <div class="form-group">
+                    <label for="fullName">Full Name *</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="writingExperience">Writing Experience *</label>
+                    <textarea id="writingExperience" name="writingExperience"
+                        placeholder="Tell us about your writing background, published works, or relevant experience..."
+                        required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="contentPlan">Content Plans *</label>
+                    <textarea id="contentPlan" name="contentPlan"
+                        placeholder="What type of content do you plan to write? What topics interest you most?"
+                        required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="writingSample">Writing Sample *</label>
+                    <textarea id="writingSample" name="writingSample"
+                        placeholder="Please provide a short writing sample (300-500 words) that showcases your writing style..."
+                        required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="motivation">Why do you want to be a writer on our platform? *</label>
+                    <textarea id="motivation" name="motivation"
+                        placeholder="Share your motivation for joining our writing community..." required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Submit Petition
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="scripts/firebase.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script>
+        let currentUser = null;
+
+        // Check authentication on page load
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('email').value = user.email;
+
+                // Pre-fill full name if available
+                if (user.displayName) {
+                    document.getElementById('fullName').value = user.displayName;
+                }
+            } else {
+                // Redirect to login if not authenticated
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('petitionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!currentUser) {
+                showError('Please log in to submit a petition.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+
+                // Get form data
+                const formData = new FormData(e.target);
+                const petitionData = {
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    fullName: formData.get('fullName').trim(),
+                    writingExperience: formData.get('writingExperience').trim(),
+                    contentPlan: formData.get('contentPlan').trim(),
+                    writingSample: formData.get('writingSample').trim(),
+                    motivation: formData.get('motivation').trim(),
+                    status: 'pending',
+                    submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    reviewedAt: null,
+                    reviewedBy: null,
+                    reviewNotes: null
+                };
+
+                // Validate required fields
+                if (!petitionData.fullName || !petitionData.writingExperience ||
+                    !petitionData.contentPlan || !petitionData.writingSample ||
+                    !petitionData.motivation) {
+                    throw new Error('Please fill in all required fields.');
+                }
+
+                // Check if user already has a pending petition
+                const existingPetition = await firebase.firestore()
+                    .collection('writer-petitions')
+                    .where('userId', '==', currentUser.uid)
+                    .where('status', '==', 'pending')
+                    .get();
+
+                if (!existingPetition.empty) {
+                    throw new Error('You already have a pending petition. Please wait for review.');
+                }
+
+                // Submit petition
+                await firebase.firestore()
+                    .collection('writer-petitions')
+                    .add(petitionData);
+
+                // Show success message
+                showSuccess();
+
+                // Reset form
+                e.target.reset();
+                document.getElementById('email').value = currentUser.email;
+                if (currentUser.displayName) {
+                    document.getElementById('fullName').value = currentUser.displayName;
+                }
+
+            } catch (error) {
+                console.error('Error submitting petition:', error);
+                showError(error.message || 'Failed to submit petition. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+
+        function showSuccess() {
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'block';
+
+            // Scroll to top to show message
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showError(message) {
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+
+            successMsg.style.display = 'none';
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+
+            // Scroll to top to show message
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+
+</html>
