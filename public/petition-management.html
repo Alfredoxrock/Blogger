@@ -579,17 +579,37 @@
         async function loadPetitions() {
             try {
                 console.log('Loading petitions...');
-                const snapshot = await firebase.firestore()
-                    .collection('writer-petitions')
-                    .orderBy('submittedAt', 'desc')
-                    .get();
+
+                // First try to get petitions without ordering to avoid index issues
+                let snapshot;
+                try {
+                    snapshot = await firebase.firestore()
+                        .collection('writer-petitions')
+                        .orderBy('submittedAt', 'desc')
+                        .get();
+                } catch (indexError) {
+                    console.warn('Ordered query failed, trying without ordering:', indexError);
+                    // Fallback to unordered query if index doesn't exist
+                    snapshot = await firebase.firestore()
+                        .collection('writer-petitions')
+                        .get();
+                }
 
                 allPetitions = snapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
 
-                console.log('Loaded petitions:', allPetitions.length);
+                // Sort manually if we got unordered results
+                if (allPetitions.length > 0) {
+                    allPetitions.sort((a, b) => {
+                        const aTime = a.submittedAt?.toDate ? a.submittedAt.toDate() : new Date(a.submittedAt || 0);
+                        const bTime = b.submittedAt?.toDate ? b.submittedAt.toDate() : new Date(b.submittedAt || 0);
+                        return bTime - aTime; // Descending order
+                    });
+                }
+
+                console.log('Loaded petitions:', allPetitions.length, allPetitions);
                 updateStatistics();
                 displayPetitions();
             } catch (error) {
@@ -610,6 +630,8 @@
             const approved = allPetitions.filter(p => p.status === 'approved').length;
             const total = allPetitions.length;
 
+            console.log('Statistics:', { total, pending, approved });
+
             document.getElementById('pendingCount').textContent = pending;
             document.getElementById('approvedCount').textContent = approved;
             document.getElementById('totalCount').textContent = total;
@@ -617,16 +639,22 @@
 
         // Display petitions based on current filter
         function displayPetitions() {
+            console.log('Displaying petitions. Total:', allPetitions.length, 'Current filter:', currentFilter);
+
             const container = document.getElementById('petitionsContainer');
             const filteredPetitions = currentFilter === 'all'
                 ? allPetitions
                 : allPetitions.filter(p => p.status === currentFilter);
 
+            console.log('Filtered petitions:', filteredPetitions.length);
+
             if (filteredPetitions.length === 0) {
+                console.log('No petitions to display');
                 container.innerHTML = `
                     <div class="empty-state">
                         <h3>No petitions found</h3>
                         <p>${currentFilter === 'all' ? 'No writer petitions have been submitted yet.' : `No ${currentFilter} petitions found.`}</p>
+                        <p><small>Debug: Total petitions: ${allPetitions.length}, Filter: ${currentFilter}</small></p>
                     </div>
                 `;
                 return;

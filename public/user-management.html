@@ -722,8 +722,10 @@
         // Load all users
         async function loadUsers() {
             try {
+                console.log('Loading users...');
                 showLoading();
                 allUsers = await authService.getAllUsersDetailed();
+                console.log('Loaded users:', allUsers.length, allUsers);
                 filteredUsers = [...allUsers];
                 updateStats();
                 renderUsersTable();
