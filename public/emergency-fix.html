@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Super Admin Fix - DreamLogTogether</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 600px;
+            background: rgba(30, 41, 59, 0.9);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+        h1 {
+            color: #f8fafc;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        .step {
+            background: rgba(55, 65, 81, 0.5);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+            border-left: 4px solid #3b82f6;
+        }
+        .error { border-left-color: #dc2626; background: rgba(220, 38, 38, 0.1); }
+        .success { border-left-color: #16a34a; background: rgba(22, 163, 74, 0.1); }
+        .warning { border-left-color: #d97706; background: rgba(217, 119, 6, 0.1); }
+        button {
+            background: linear-gradient(145deg, #dc2626, #b91c1c);
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: linear-gradient(145deg, #b91c1c, #991b1b);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
+        }
+        .btn-success {
+            background: linear-gradient(145deg, #16a34a, #15803d);
+        }
+        .btn-success:hover {
+            background: linear-gradient(145deg, #15803d, #166534);
+        }
+        pre {
+            background: #111827;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Emergency Super Admin Fix</h1>
+        
+        <div class="step">
+            <h3>Step 1: Login First</h3>
+            <p>Before fixing permissions, you need to be logged in.</p>
+            <button onclick="window.location.href='login.html'">Go to Login</button>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Fix Your Account</h3>
+            <p>Click this button to automatically fix your user permissions:</p>
+            <button onclick="fixSuperAdminPermissions()" class="btn-success">Fix Super Admin Permissions</button>
+        </div>
+
+        <div id="status" class="step" style="display: none;">
+            <h3>Status</h3>
+            <pre id="statusText">Ready to fix permissions...</pre>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Test Access</h3>
+            <p>After fixing permissions, test your access:</p>
+            <button onclick="window.location.href='petition-management.html'">Test Petition Management</button>
+            <button onclick="window.location.href='user-management.html'">Test User Management</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore-compat.js"></script>
+    <script src="scripts/firebase.js"></script>
+    <script src="scripts/auth.js"></script>
+
+    <script>
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            const statusTextEl = document.getElementById('statusText');
+            
+            statusEl.style.display = 'block';
+            statusEl.className = 'step ' + type;
+            statusTextEl.textContent = message;
+        }
+
+        async function fixSuperAdminPermissions() {
+            showStatus('Starting super admin fix...', 'warning');
+
+            try {
+                // Wait for auth service
+                if (!window.authService) {
+                    showStatus('Waiting for auth service...', 'warning');
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+
+                if (!window.authService) {
+                    throw new Error('Auth service not available. Please refresh the page.');
+                }
+
+                const user = window.authService.currentUser || firebase.auth().currentUser;
+                
+                if (!user) {
+                    throw new Error('No user logged in. Please login first.');
+                }
+
+                showStatus(`Fixing permissions for: ${user.email}`, 'warning');
+
+                // Create/update user document with super admin role
+                const userData = {
+                    email: user.email,
+                    role: 'super_admin',
+                    isActive: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    permissions: {
+                        canManageUsers: true,
+                        canManagePosts: true,
+                        canManageSettings: true,
+                        canViewAnalytics: true
+                    },
+                    displayName: user.displayName || user.email.split('@')[0],
+                    photoURL: user.photoURL || null
+                };
+
+                const db = firebase.firestore();
+                await db.collection('users').doc(user.uid).set(userData, { merge: true });
+
+                // Test access to writer-petitions
+                try {
+                    const testQuery = await db.collection('writer-petitions').limit(1).get();
+                    showStatus(`✅ SUCCESS!\n\nSuper admin permissions granted to: ${user.email}\nWriter petitions accessible: ${testQuery.size} documents found\n\nYou can now access all admin panels!`, 'success');
+                } catch (testError) {
+                    showStatus(`⚠️ Permissions updated but test failed:\n${testError.message}\n\nThis might be normal if no petitions exist yet.`, 'warning');
+                }
+
+            } catch (error) {
+                showStatus(`❌ ERROR: ${error.message}\n\nPlease try:\n1. Make sure you're logged in\n2. Refresh the page\n3. Try again`, 'error');
+            }
+        }
+
+        // Check auth status on page load
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                showStatus(`Logged in as: ${user.email}\nReady to fix permissions!`, 'success');
+            } else {
+                showStatus('Not logged in. Please login first.', 'warning');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -963,4 +963,7 @@ class AuthService {
 // Create global auth service instance
 window.authService = new AuthService();
 
+// Export for ES6 modules
+export default window.authService;
+
 console.log('Authentication service initialized successfully');

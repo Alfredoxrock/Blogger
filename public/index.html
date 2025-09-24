@@ -190,30 +190,41 @@
   <script src="scripts/main.js"></script>
 
   <!-- Authentication integration -->
-  <script type="module">
-    import authService from './scripts/auth.js';
+  <script>
+    // Wait for authService to be available
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (!window.authService) {
+          console.warn('AuthService not available yet, retrying...');
+          setTimeout(() => initAuth(), 1000);
+        } else {
+          initAuth();
+        }
+      }, 500);
+    });
 
-    // DOM elements for authentication navigation
-    const guestNav = document.getElementById('guestNav');
-    const userNav = document.getElementById('userNav');
-    const dashboardLink = document.getElementById('dashboardLink');
-    const writePostLink = document.getElementById('writePostLink');
+    function initAuth() {
+      // DOM elements for authentication navigation
+      const guestNav = document.getElementById('guestNav');
+      const userNav = document.getElementById('userNav');
+      const dashboardLink = document.getElementById('dashboardLink');
+      const writePostLink = document.getElementById('writePostLink');
     const adminLink = document.getElementById('adminLink');
     const signOutBtn = document.getElementById('signOutBtn');
 
     // Handle authentication state changes
-    authService.onAuthStateChange = (user, role) => {
+    window.authService.onAuthStateChange = (user, role) => {
       if (user) {
         // User is logged in
         guestNav.style.display = 'none';
         userNav.style.display = 'flex';
 
         // Show role-based navigation
-        if (authService.hasPermission('canCreatePosts')) {
+        if (window.authService.hasPermission('canCreatePosts')) {
           writePostLink.style.display = 'inline-block';
         }
 
-        if (authService.isAdmin()) {
+        if (window.authService.isAdmin()) {
           adminLink.style.display = 'inline-block';
         }
 
@@ -232,7 +243,7 @@
     // Handle sign out
     signOutBtn.addEventListener('click', async () => {
       try {
-        await authService.signOut();
+        await window.authService.signOut();
         // Navigation will update automatically via onAuthStateChange
       } catch (error) {
         console.error('Sign out error:', error);
@@ -244,7 +255,7 @@
     function updateFooterLinks() {
       const footerWriteLink = document.querySelector('footer a[href="admin.html"]');
       if (footerWriteLink) {
-        if (authService.isAuthenticated() && authService.hasPermission('canCreatePosts')) {
+        if (window.authService.isAuthenticated() && window.authService.hasPermission('canCreatePosts')) {
           footerWriteLink.style.display = 'block';
         } else {
           footerWriteLink.style.display = 'none';
@@ -253,12 +264,14 @@
     }
 
     // Update footer when auth state changes
-    authService.onAuthStateChange = ((originalCallback) => {
+    window.authService.onAuthStateChange = ((originalCallback) => {
       return function (user, role) {
         if (originalCallback) originalCallback(user, role);
         updateFooterLinks();
       };
-    })(authService.onAuthStateChange);
+    })(window.authService.onAuthStateChange);
+    
+    } // End initAuth function
   </script>
 </body>
 

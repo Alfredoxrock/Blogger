@@ -73,8 +73,9 @@ class FirestoreBlogManager {
                 this.renderPosts();
             });
 
-            // If no posts exist, create sample posts
-            if (this.posts.length === 0) {
+            // If no posts exist, create sample posts (only for authenticated admins)
+            if (this.posts.length === 0 && window.authService && window.authService.isAuthenticated() && window.authService.isAdmin()) {
+                console.log('Creating sample posts for admin user...');
                 await this.createSamplePosts();
             }
 
