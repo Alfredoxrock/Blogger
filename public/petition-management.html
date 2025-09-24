@@ -553,10 +553,12 @@
         // Check authentication and permissions
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
+                console.log('User authenticated:', user.email);
                 currentUser = user;
                 try {
                     const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
                     const userData = userDoc.data();
+                    console.log('User data:', userData);
 
                     if (!userData || userData.role !== 'super_admin') {
                         alert('Access denied. Super Administrator privileges required.');
@@ -570,13 +572,13 @@
                     window.location.href = 'login.html';
                 }
             } else {
+                console.log('User not authenticated');
                 window.location.href = 'login.html';
             }
-        });
-
-        // Load all petitions
+        });        // Load all petitions
         async function loadPetitions() {
             try {
+                console.log('Loading petitions...');
                 const snapshot = await firebase.firestore()
                     .collection('writer-petitions')
                     .orderBy('submittedAt', 'desc')
@@ -587,6 +589,7 @@
                     ...doc.data()
                 }));
 
+                console.log('Loaded petitions:', allPetitions.length);
                 updateStatistics();
                 displayPetitions();
             } catch (error) {
@@ -595,6 +598,7 @@
                     <div class="empty-state">
                         <h3>Error loading petitions</h3>
                         <p>Please refresh the page and try again.</p>
+                        <p><small>Error: ${error.message}</small></p>
                     </div>
                 `;
             }

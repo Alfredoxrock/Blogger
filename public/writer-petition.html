@@ -151,6 +151,7 @@
             font-size: 1rem;
             transition: all 0.3s ease;
             background: #fff;
+            color: #1f2937;
             box-sizing: border-box;
         }
 
@@ -164,6 +165,12 @@
         .form-group textarea {
             resize: vertical;
             min-height: 120px;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #9ca3af;
+            opacity: 1;
         }
 
         .submit-btn {
@@ -421,9 +428,11 @@
                 }
 
                 // Submit petition
-                await firebase.firestore()
+                console.log('Submitting petition data:', petitionData);
+                const docRef = await firebase.firestore()
                     .collection('writer-petitions')
                     .add(petitionData);
+                console.log('Petition submitted successfully with ID:', docRef.id);
 
                 // Show success message
                 showSuccess();
