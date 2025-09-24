@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Permissions - DreamLogTogether</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(30, 41, 59, 0.8);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .debug-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(55, 65, 81, 0.5);
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .error {
+            border-left-color: #dc2626;
+        }
+
+        .success {
+            border-left-color: #16a34a;
+        }
+
+        .warning {
+            border-left-color: #d97706;
+        }
+
+        pre {
+            background: #111827;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+
+        button {
+            background: linear-gradient(145deg, #3b82f6, #2563eb);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: linear-gradient(145deg, #2563eb, #1d4ed8);
+        }
+
+        .btn-danger {
+            background: linear-gradient(145deg, #dc2626, #b91c1c);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(145deg, #b91c1c, #991b1b);
+        }
+
+        .btn-success {
+            background: linear-gradient(145deg, #16a34a, #15803d);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(145deg, #15803d, #166534);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🛠️ Debug Permissions & Fix Super Admin Access</h1>
+
+        <div class="debug-section">
+            <h3>🔍 Current Authentication Status</h3>
+            <div id="authStatus">Loading...</div>
+        </div>
+
+        <div class="debug-section">
+            <h3>👤 Current User Data</h3>
+            <div id="userData">Loading...</div>
+        </div>
+
+        <div class="debug-section">
+            <h3>🔐 Firestore Access Test</h3>
+            <div id="firestoreTest">Not tested</div>
+            <button onclick="testFirestoreAccess()">Test Firestore Access</button>
+        </div>
+
+        <div class="debug-section">
+            <h3>📝 Writer Petitions Collection Test</h3>
+            <div id="petitionsTest">Not tested</div>
+            <button onclick="testPetitionsAccess()">Test Petitions Access</button>
+        </div>
+
+        <div class="debug-section">
+            <h3>🛠️ Fix Super Admin</h3>
+            <p>If you're having permission issues, use these tools:</p>
+            <button onclick="createSuperAdminProfile()" class="btn-success">Create/Fix Super Admin Profile</button>
+            <button onclick="debugUserDocument()" class="btn-warning">Debug User Document</button>
+            <button onclick="testAllPermissions()" class="btn-info">Test All Permissions</button>
+        </div>
+
+        <div class="debug-section">
+            <h3>📋 Debug Log</h3>
+            <pre id="debugLog"></pre>
+            <button onclick="clearLog()" class="btn-danger">Clear Log</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA5dtKGbWZfjhwEJQQJHDwm3k3aeROEI5o",
+            authDomain: "dreamblog-f4e73.firebaseapp.com",
+            projectId: "dreamblog-f4e73",
+            storageBucket: "dreamblog-f4e73.appspot.com",
+            messagingSenderId: "135195474107",
+            appId: "1:135195474107:web:c89cfbc29de1ce67c25b41"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let debugMessages = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+            debugMessages.push(logEntry);
+            document.getElementById('debugLog').textContent = debugMessages.join('\n');
+            console.log(logEntry);
+        }
+
+        function clearLog() {
+            debugMessages = [];
+            document.getElementById('debugLog').textContent = '';
+        }
+
+        // Check authentication status
+        auth.onAuthStateChanged(async (user) => {
+            const authStatusEl = document.getElementById('authStatus');
+            const userDataEl = document.getElementById('userData');
+
+            if (user) {
+                authStatusEl.innerHTML = `
+                    <div class="success">
+                        <strong>✅ Authenticated</strong><br>
+                        Email: ${user.email}<br>
+                        UID: ${user.uid}<br>
+                        Email Verified: ${user.emailVerified}
+                    </div>
+                `;
+                log(`User authenticated: ${user.email}`);
+
+                // Get user document
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        userDataEl.innerHTML = `
+                            <div class="success">
+                                <strong>✅ User Document Found</strong><br>
+                                <pre>${JSON.stringify(userData, null, 2)}</pre>
+                            </div>
+                        `;
+                        log(`User document found with role: ${userData.role}`);
+                    } else {
+                        userDataEl.innerHTML = `
+                            <div class="error">
+                                <strong>❌ No User Document</strong><br>
+                                User document does not exist in Firestore
+                            </div>
+                        `;
+                        log('User document not found in Firestore', 'error');
+                    }
+                } catch (error) {
+                    userDataEl.innerHTML = `
+                        <div class="error">
+                            <strong>❌ Error Loading User Data</strong><br>
+                            ${error.message}
+                        </div>
+                    `;
+                    log(`Error loading user data: ${error.message}`, 'error');
+                }
+            } else {
+                authStatusEl.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Not Authenticated</strong><br>
+                        Please <a href="login.html">login</a> first
+                    </div>
+                `;
+                userDataEl.innerHTML = '<div class="warning">Not authenticated</div>';
+                log('User not authenticated', 'warning');
+            }
+        });
+
+        async function testFirestoreAccess() {
+            const testEl = document.getElementById('firestoreTest');
+            log('Testing basic Firestore access...');
+
+            try {
+                // Test basic read access
+                const testRef = db.collection('users').limit(1);
+                await testRef.get();
+
+                testEl.innerHTML = `
+                    <div class="success">
+                        <strong>✅ Firestore Access Working</strong><br>
+                        Basic Firestore read operations are working
+                    </div>
+                `;
+                log('Firestore access test successful');
+            } catch (error) {
+                testEl.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Firestore Access Failed</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+                log(`Firestore access failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testPetitionsAccess() {
+            const testEl = document.getElementById('petitionsTest');
+            log('Testing writer-petitions collection access...');
+
+            try {
+                const petitionsRef = db.collection('writer-petitions').limit(1);
+                const snapshot = await petitionsRef.get();
+
+                testEl.innerHTML = `
+                    <div class="success">
+                        <strong>✅ Petitions Access Working</strong><br>
+                        Found ${snapshot.size} petitions<br>
+                        Collection accessible with current permissions
+                    </div>
+                `;
+                log(`Petitions access successful, found ${snapshot.size} documents`);
+            } catch (error) {
+                testEl.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Petitions Access Failed</strong><br>
+                        ${error.message}<br><br>
+                        <strong>Likely causes:</strong><br>
+                        • User role is not 'super_admin'<br>
+                        • User document missing in Firestore<br>
+                        • Security rules blocking access
+                    </div>
+                `;
+                log(`Petitions access failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function createSuperAdminProfile() {
+            const user = auth.currentUser;
+            if (!user) {
+                alert('Please login first');
+                return;
+            }
+
+            log('Creating/updating super admin profile...');
+
+            try {
+                const userData = {
+                    email: user.email,
+                    role: 'super_admin',
+                    isActive: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    permissions: {
+                        canManageUsers: true,
+                        canManagePosts: true,
+                        canManageSettings: true,
+                        canViewAnalytics: true
+                    },
+                    displayName: user.displayName || user.email.split('@')[0]
+                };
+
+                await db.collection('users').doc(user.uid).set(userData, { merge: true });
+
+                log('Super admin profile created/updated successfully');
+                alert('Super admin profile created! Please refresh the page.');
+
+                // Refresh user data display
+                window.location.reload();
+            } catch (error) {
+                log(`Failed to create super admin profile: ${error.message}`, 'error');
+                alert(`Failed to create super admin profile: ${error.message}`);
+            }
+        }
+
+        async function debugUserDocument() {
+            const user = auth.currentUser;
+            if (!user) {
+                alert('Please login first');
+                return;
+            }
+
+            log('Debugging user document...');
+
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+
+                log('=== USER DOCUMENT DEBUG ===');
+                log(`Document exists: ${userDoc.exists}`);
+                log(`Document ID: ${userDoc.id}`);
+
+                if (userDoc.exists) {
+                    const data = userDoc.data();
+                    log(`Document data: ${JSON.stringify(data, null, 2)}`);
+                    log(`Role: ${data.role}`);
+                    log(`Is Active: ${data.isActive}`);
+                    log(`Created At: ${data.createdAt?.toDate()}`);
+                } else {
+                    log('Document does not exist!');
+                }
+
+                log('=== END DEBUG ===');
+            } catch (error) {
+                log(`Error debugging user document: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAllPermissions() {
+            log('Testing all permissions...');
+
+            await testFirestoreAccess();
+            await testPetitionsAccess();
+
+            // Test other collections
+            const collections = ['posts', 'users', 'settings'];
+
+            for (const collection of collections) {
+                try {
+                    await db.collection(collection).limit(1).get();
+                    log(`✅ ${collection} collection accessible`);
+                } catch (error) {
+                    log(`❌ ${collection} collection failed: ${error.message}`, 'error');
+                }
+            }
+
+            log('Permission testing complete');
+        }
+
+        // Initialize
+        log('Debug tool initialized');
+    </script>
+</body>
+
+</html>
