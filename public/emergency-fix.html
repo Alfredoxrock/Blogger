@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@
             align-items: center;
             justify-content: center;
         }
+
         .container {
             max-width: 600px;
             background: rgba(30, 41, 59, 0.9);
@@ -23,11 +25,13 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
             text-align: center;
         }
+
         h1 {
             color: #f8fafc;
             margin-bottom: 30px;
             font-size: 2.5rem;
         }
+
         .step {
             background: rgba(55, 65, 81, 0.5);
             padding: 20px;
@@ -35,9 +39,22 @@
             border-radius: 12px;
             border-left: 4px solid #3b82f6;
         }
-        .error { border-left-color: #dc2626; background: rgba(220, 38, 38, 0.1); }
-        .success { border-left-color: #16a34a; background: rgba(22, 163, 74, 0.1); }
-        .warning { border-left-color: #d97706; background: rgba(217, 119, 6, 0.1); }
+
+        .error {
+            border-left-color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .success {
+            border-left-color: #16a34a;
+            background: rgba(22, 163, 74, 0.1);
+        }
+
+        .warning {
+            border-left-color: #d97706;
+            background: rgba(217, 119, 6, 0.1);
+        }
+
         button {
             background: linear-gradient(145deg, #dc2626, #b91c1c);
             color: #fff;
@@ -50,17 +67,21 @@
             margin: 10px;
             transition: all 0.3s ease;
         }
+
         button:hover {
             background: linear-gradient(145deg, #b91c1c, #991b1b);
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
         }
+
         .btn-success {
             background: linear-gradient(145deg, #16a34a, #15803d);
         }
+
         .btn-success:hover {
             background: linear-gradient(145deg, #15803d, #166534);
         }
+
         pre {
             background: #111827;
             padding: 15px;
@@ -71,10 +92,11 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>🚨 Emergency Super Admin Fix</h1>
-        
+
         <div class="step">
             <h3>Step 1: Login First</h3>
             <p>Before fixing permissions, you need to be logged in.</p>
@@ -111,7 +133,7 @@
         function showStatus(message, type = 'info') {
             const statusEl = document.getElementById('status');
             const statusTextEl = document.getElementById('statusText');
-            
+
             statusEl.style.display = 'block';
             statusEl.className = 'step ' + type;
             statusTextEl.textContent = message;
@@ -132,7 +154,7 @@
                 }
 
                 const user = window.authService.currentUser || firebase.auth().currentUser;
-                
+
                 if (!user) {
                     throw new Error('No user logged in. Please login first.');
                 }
@@ -182,4 +204,5 @@
         });
     </script>
 </body>
+
 </html>

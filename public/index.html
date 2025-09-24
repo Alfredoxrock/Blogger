@@ -18,7 +18,7 @@
     import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 
     const firebaseConfig = {
-      apiKey: "AIzaSyCxLfRhjINJFiSjGJ7Vg2kCHYH3t9eTDgA",
+      apiKey: "AIzaSyDhvGnJ1QJgZsIrCy6E5tgiF7BbC66Xv9g",
       authDomain: "dreamworld-f7a4b.firebaseapp.com",
       projectId: "dreamworld-f7a4b",
       storageBucket: "dreamworld-f7a4b.firebasestorage.app",
@@ -187,20 +187,34 @@
   </div>
 
   <script src="scripts/firestore-blog.js" type="module"></script>
-  <script src="scripts/main.js"></script>
+  
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore-compat.js"></script>
+  <script src="scripts/firebase.js"></script>
+  <script src="scripts/auth.js"></script>
 
   <!-- Authentication integration -->
   <script>
-    // Wait for authService to be available
+    // Wait for authService to be available with better error handling
+    function waitForAuthService(attempts = 0) {
+      if (window.authService) {
+        console.log('✅ AuthService loaded successfully');
+        initAuth();
+      } else if (attempts < 10) {
+        console.log(`⏳ Waiting for AuthService... (attempt ${attempts + 1}/10)`);
+        setTimeout(() => waitForAuthService(attempts + 1), 1000);
+      } else {
+        console.error('❌ AuthService failed to load after 10 attempts');
+        // Try to initialize anyway for debugging
+        initAuth();
+      }
+    }
+
+    // Start waiting after page load
     window.addEventListener('load', () => {
-      setTimeout(() => {
-        if (!window.authService) {
-          console.warn('AuthService not available yet, retrying...');
-          setTimeout(() => initAuth(), 1000);
-        } else {
-          initAuth();
-        }
-      }, 500);
+      setTimeout(() => waitForAuthService(), 500);
     });
 
     function initAuth() {
@@ -209,68 +223,84 @@
       const userNav = document.getElementById('userNav');
       const dashboardLink = document.getElementById('dashboardLink');
       const writePostLink = document.getElementById('writePostLink');
-    const adminLink = document.getElementById('adminLink');
-    const signOutBtn = document.getElementById('signOutBtn');
+      const adminLink = document.getElementById('adminLink');
+      const signOutBtn = document.getElementById('signOutBtn');
 
-    // Handle authentication state changes
-    window.authService.onAuthStateChange = (user, role) => {
-      if (user) {
-        // User is logged in
-        guestNav.style.display = 'none';
-        userNav.style.display = 'flex';
+      // Ensure elements exist before proceeding
+      if (!guestNav || !userNav) {
+        console.warn('⚠️ Navigation elements not found, retrying...');
+        setTimeout(() => initAuth(), 1000);
+        return;
+      }
 
-        // Show role-based navigation
-        if (window.authService.hasPermission('canCreatePosts')) {
-          writePostLink.style.display = 'inline-block';
-        }
-
-        if (window.authService.isAdmin()) {
-          adminLink.style.display = 'inline-block';
-        }
-
-        // Update dashboard link with user name
-        if (user.displayName) {
-          dashboardLink.textContent = user.displayName.split(' ')[0];
-        }
-
-      } else {
-        // User is not logged in
+      // Check if authService is available
+      if (!window.authService) {
+        console.warn('⚠️ AuthService not available in initAuth, using fallback');
+        // Show guest navigation by default
         guestNav.style.display = 'flex';
         userNav.style.display = 'none';
+        return;
       }
-    };
 
-    // Handle sign out
-    signOutBtn.addEventListener('click', async () => {
-      try {
-        await window.authService.signOut();
-        // Navigation will update automatically via onAuthStateChange
-      } catch (error) {
-        console.error('Sign out error:', error);
-        alert('Failed to sign out. Please try again.');
-      }
-    });
+      // Handle authentication state changes
+      window.authService.onAuthStateChange = (user, role) => {
+        if (user) {
+          // User is logged in
+          guestNav.style.display = 'none';
+          userNav.style.display = 'flex';
 
-    // Update footer links based on auth state
-    function updateFooterLinks() {
-      const footerWriteLink = document.querySelector('footer a[href="admin.html"]');
-      if (footerWriteLink) {
-        if (window.authService.isAuthenticated() && window.authService.hasPermission('canCreatePosts')) {
-          footerWriteLink.style.display = 'block';
+          // Show role-based navigation
+          if (window.authService.hasPermission('canCreatePosts')) {
+            writePostLink.style.display = 'inline-block';
+          }
+
+          if (window.authService.isAdmin()) {
+            adminLink.style.display = 'inline-block';
+          }
+
+          // Update dashboard link with user name
+          if (user.displayName) {
+            dashboardLink.textContent = user.displayName.split(' ')[0];
+          }
+
         } else {
-          footerWriteLink.style.display = 'none';
+          // User is not logged in
+          guestNav.style.display = 'flex';
+          userNav.style.display = 'none';
+        }
+      };
+
+      // Handle sign out
+      signOutBtn.addEventListener('click', async () => {
+        try {
+          await window.authService.signOut();
+          // Navigation will update automatically via onAuthStateChange
+        } catch (error) {
+          console.error('Sign out error:', error);
+          alert('Failed to sign out. Please try again.');
+        }
+      });
+
+      // Update footer links based on auth state
+      function updateFooterLinks() {
+        const footerWriteLink = document.querySelector('footer a[href="admin.html"]');
+        if (footerWriteLink) {
+          if (window.authService.isAuthenticated() && window.authService.hasPermission('canCreatePosts')) {
+            footerWriteLink.style.display = 'block';
+          } else {
+            footerWriteLink.style.display = 'none';
+          }
         }
       }
-    }
 
-    // Update footer when auth state changes
-    window.authService.onAuthStateChange = ((originalCallback) => {
-      return function (user, role) {
-        if (originalCallback) originalCallback(user, role);
-        updateFooterLinks();
-      };
-    })(window.authService.onAuthStateChange);
-    
+      // Update footer when auth state changes
+      window.authService.onAuthStateChange = ((originalCallback) => {
+        return function (user, role) {
+          if (originalCallback) originalCallback(user, role);
+          updateFooterLinks();
+        };
+      })(window.authService.onAuthStateChange);
+
     } // End initAuth function
   </script>
 </body>
