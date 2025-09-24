@@ -137,9 +137,10 @@
         .form-group label {
             display: block;
             font-weight: 600;
-            color: #374151;
+            color: #ffffff;
             margin-bottom: 8px;
             font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .form-group input,
@@ -152,6 +153,7 @@
             transition: all 0.3s ease;
             background: #fff;
             color: #1f2937;
+            font-weight: 500;
             box-sizing: border-box;
         }
 
@@ -160,6 +162,16 @@
             outline: none;
             border-color: #374151;
             box-shadow: 0 0 0 3px rgba(55, 65, 81, 0.1);
+            background: #fff !important;
+            color: #1f2937 !important;
+        }
+
+        .form-group input:hover,
+        .form-group textarea:hover,
+        .form-group input:active,
+        .form-group textarea:active {
+            background: #fff !important;
+            color: #1f2937 !important;
         }
 
         .form-group textarea {
@@ -171,6 +183,10 @@
         .form-group textarea::placeholder {
             color: #9ca3af;
             opacity: 1;
+        }
+
+        .email-field {
+            display: none;
         }
 
         .submit-btn {
@@ -313,7 +329,7 @@
                     <input type="text" id="fullName" name="fullName" required>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group email-field">
                     <label for="email">Email Address *</label>
                     <input type="email" id="email" name="email" required readonly>
                 </div>
